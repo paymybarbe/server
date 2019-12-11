@@ -5,3 +5,4 @@ app/certs/*-key.pem
 app/certs/*-csr.pem
 app/certs/*.cnf
 app/certs/Makefile
+.directory

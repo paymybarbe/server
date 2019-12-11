@@ -16,6 +16,8 @@ Pour les tests:
 npm run test
 ```
 
+# TODO:
+
 # IMPORTANT:
 
 - NE PAS UPLOAD LA CONFIG DE LA PROD (donc le fichier contenant le mot de passe de la database, notamment.) Il s'agit du fichier ```./app/config/production.json```. La prod est la phase où le logiciel sera en fonctionnement.
@@ -82,6 +84,9 @@ On peut renvoyer une command nulle pour abort, par exemple.
 | Bunyan   | Logs                                       | 
 | Debug    | Debugging dans la console                  | 
 | Chokidar | Vérification des modifications de fichiers | 
+
+# Ressources utiles:
+- https://github.com/electron/electron-api-demos : Excellent exemple d'utilisation de electron, de communication entre fenêtres et de navigation.
 
 
 # Pour la prod:
