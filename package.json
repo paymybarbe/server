@@ -1,0 +1,52 @@
+{
+    "name": "paymybarbe-server",
+    "version": "1.0.0",
+    "description": "Le serveur du Bar de Telecom.",
+    "main": "./app/server.js",
+    "scripts": {
+        "test": "mocha --recursive",
+        "start": "electron ./app/server.js",
+        "server": "electron ./app/server.js",
+        "lint": "eslint './**/*.js'",
+        "linting": "eslint './**/*.js' --fix",
+        "build": "electron-packager .  --overwrite --out ./out/"
+    },
+    "author": "Mael WILMO, Frantz DARBON",
+    "license": "ISC",
+    "devDependencies": {
+        "chai": "^4.2.0",
+        "decache": "^4.5.1",
+        "eslint": "^6.1.0",
+        "eslint-config-airbnb": "^18.0.1",
+        "eslint-config-node": "^4.0.0",
+        "eslint-config-prettier": "^6.7.0",
+        "eslint-plugin-import": "^2.18.2",
+        "eslint-plugin-jsx-a11y": "^6.2.3",
+        "eslint-plugin-node": "^10.0.0",
+        "eslint-plugin-react": "^7.17.0",
+        "eslint-plugin-react-hooks": "^1.7.0",
+        "mocha": "^6.2.2",
+        "spectron": "^5.0.0",
+        "husky": "^3.1.0",
+        "lint-staged": "^9.5.0"
+    },
+    "dependencies": {
+        "debug": "^4.1.1",
+        "electron": "^5.0.12",
+        "sqlite3": "^4.1.1"
+    },
+    "lint-staged": {
+        "**/*.js": [
+            "eslint . --fix",
+            "git add"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "mocha": {
+        "spec": "./app/test/"
+      }
+}
