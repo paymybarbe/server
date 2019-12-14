@@ -2,11 +2,11 @@
     "name": "paymybarbe-server",
     "version": "1.0.0",
     "description": "Le serveur du Bar de Telecom.",
-    "main": "./app/server.js",
+    "main": "./app/main.js",
     "scripts": {
         "test": "mocha --recursive",
-        "start": "electron ./app/server.js",
-        "server": "electron ./app/server.js",
+        "start": "electron ./app/main.js",
+        "server": "electron ./app/main.js",
         "lint": "eslint './**/*.js'",
         "linting": "eslint './**/*.js' --fix",
         "build": "electron-packager .  --overwrite --out ./out/"
