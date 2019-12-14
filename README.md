@@ -1,6 +1,17 @@
 # payMyBarbe - Server
 
-# Pour commencer
+# Pour installer le serveur
+
+- Il faut avoir postgresql d'installé.
+- Créer une database nommée pmbre_db, un utilisateur read only, un utilisateur ayant les droits d'écriture.
+- Créer un script .sh contenant: 
+``` bash
+ENV=production DATABASE_URL=postgres://<db_user>:<db_password>@127.0.0.1:5432/pmbre_db npm start --prefix 
+```
+- Donner les droits d'exécution à l'utilisateur normal de l'ordinateur, mais retirer les autres droits.
+- git clone https://gitlab.telecomnancy.univ-lorraine.fr/paymybarbe/server.git
+
+# Pour programmer
 Pour programmer, après avoir clone le repos:
 ```
 npm install
@@ -20,20 +31,21 @@ npm run test
 
 # IMPORTANT:
 
-- NE PAS UPLOAD LA CONFIG DE LA PROD (donc le fichier contenant le mot de passe de la database, notamment.) Il s'agit du fichier ```./app/config/production.json```. La prod est la phase où le logiciel sera en fonctionnement.
-- NE PAS UPLOAD LES KEYS DES CERTIFICATS, c'est à dire les fichiers ```./app/certs/*-key.pem```. Les ```./app/certs/*-csr.pem``` ne sont pas utiles mais pas critiques.
+- NE PAS UPLOAD LES MOTS DE PASSE UTILISÉS EN PRODUCTION (en utilisation réél.)
+- NE PAS UPLOAD LES KEYS DES CERTIFICATS, c'est à dire les fichiers ```./certs/*-key.pem```. Les ```./certs/*-csr.pem``` ne sont pas utiles mais pas critiques.
 
 # À respecter:
+
 ## Architecture
-- Les fichiers dans ```app/``` seront inclus dans le build. Les autres, non. Pour des fichiers modifiables même après le build (e.g dossier photo), les mettre en dehors de ```app/```.
+
 
 ## Tests
 - METTRE DES TESTS
 
 ## Divers
-- Pour accéder à un fichier situé dans le dossier ```app/```, utiliser ```path.resolve(process.env.APP_RESOURCES, "path/to/file")```.  
+- Pour accéder à un fichier situé dans le dossier contenant ce fichier README, utiliser ```path.resolve(process.env.APP_RESOURCES, "path/to/file")```.  
 Cela évitera les problèmes lors du build.  
-Pour accéder à des fichiers en dehors du dossier app (et qui ne seront pas incluts dans le build), remplacer ```process.env.APP_RESOURCES``` par ```process.env.BIN_FOLDER```
+Pour accéder à des fichiers en dehors de ce dossier (et qui ne seront pas incluts dans le build), remplacer ```process.env.APP_RESOURCES``` par ```process.env.BIN_FOLDER```
 
 # Principes
 Le serveur est le seul à avoir accès à la database. Tout action sur le client envoie une info au serveur sur l'action.  

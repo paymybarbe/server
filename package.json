@@ -2,11 +2,11 @@
     "name": "paymybarbe-server",
     "version": "1.0.0",
     "description": "Le serveur du Bar de Telecom.",
-    "main": "./app/main.js",
+    "main": "./main.js",
     "scripts": {
         "test": "mocha --recursive",
-        "start": "electron ./app/main.js",
-        "server": "electron ./app/main.js",
+        "start": "electron .",
+        "server": "electron .",
         "lint": "eslint './**/*.js'",
         "linting": "eslint './**/*.js' --fix",
         "build": "electron-packager .  --overwrite --out ./out/"
@@ -45,8 +45,5 @@
         "hooks": {
             "pre-commit": "lint-staged"
         }
-    },
-    "mocha": {
-        "spec": "./app/test/"
     }
 }

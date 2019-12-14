@@ -1,8 +1,7 @@
 node_modules/
 out/
-app/config/production.json
-app/certs/*-key.pem
-app/certs/*-csr.pem
-app/certs/*.cnf
-app/certs/Makefile
+certs/*-key.pem
+certs/*-csr.pem
+certs/*.cnf
+certs/Makefile
 .directory
