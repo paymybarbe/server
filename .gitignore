@@ -4,4 +4,4 @@ certs/*-key.pem
 certs/*-csr.pem
 certs/*.cnf
 certs/Makefile
-.directory
+**/.directory
