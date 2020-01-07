@@ -5,6 +5,7 @@ const tls = require("tls");
 const debug = require("debug")("server:test:certs");
 const config = require("./../../config/config");
 
+config.config();
 chai.should();
 
 describe("Certs authorization checker", function config_fetcher_test() {

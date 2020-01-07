@@ -1,0 +1,809 @@
+{"error":{},"level":"error","message":"uncaughtException: format is not defined\nReferenceError: format is not defined\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:69:13)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","stack":"ReferenceError: format is not defined\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:69:13)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)\n    at internal/main/run_main_module.js:17:11","exception":true,"date":"Mon Dec 23 2019 14:27:28 GMT+0100 (Central European Standard Time)","process":{"pid":3867,"uid":1000,"gid":1000,"cwd":"/home/metapeng/Projects/payMyBarbe/server","execPath":"/usr/local/bin/node","version":"v12.13.1","argv":["/usr/local/bin/node","/home/metapeng/Projects/payMyBarbe/server/services/logger.js"],"memoryUsage":{"rss":39514112,"heapTotal":8855552,"heapUsed":5732680,"external":973564}},"os":{"loadavg":[0.923828125,0.89453125,0.97705078125],"uptime":70296},"trace":[{"column":13,"file":"/home/metapeng/Projects/payMyBarbe/server/services/logger.js","function":null,"line":69,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module.runMain","line":1047,"method":"runMain","native":false},{"column":11,"file":"internal/main/run_main_module.js","function":null,"line":17,"method":null,"native":false}],"service":"general-log"}
+{"error":{},"level":"error","message":"uncaughtException: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\nError: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\n    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n    at Array.every (<anonymous>)\n    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:53:32)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)","stack":"Error: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\n    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n    at Array.every (<anonymous>)\n    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:53:32)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)","exception":true,"date":"Mon Dec 23 2019 14:29:42 GMT+0100 (Central European Standard Time)","process":{"pid":4315,"uid":1000,"gid":1000,"cwd":"/home/metapeng/Projects/payMyBarbe/server","execPath":"/usr/local/bin/node","version":"v12.13.1","argv":["/usr/local/bin/node","/home/metapeng/Projects/payMyBarbe/server/services/logger.js"],"memoryUsage":{"rss":39305216,"heapTotal":8855552,"heapUsed":5750280,"external":973564}},"os":{"loadavg":[1.88232421875,1.2490234375,1.09619140625],"uptime":70429},"trace":[{"column":null,"file":null,"function":null,"line":null,"method":null,"native":false},{"column":11,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"isValidFormat","line":37,"method":null,"native":false},{"column":null,"file":null,"function":"Array.every","line":null,"method":"every","native":false},{"column":16,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"cascade","line":13,"method":null,"native":false},{"column":33,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"Function.module.exports","line":55,"method":"exports","native":false},{"column":32,"file":"/home/metapeng/Projects/payMyBarbe/server/services/logger.js","function":null,"line":53,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module.runMain","line":1047,"method":"runMain","native":false}],"service":"general-log"}
+{"error":{},"level":"error","message":"uncaughtException: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\nError: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\n    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n    at Array.every (<anonymous>)\n    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:53:32)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)","stack":"Error: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\n    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n    at Array.every (<anonymous>)\n    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:53:32)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)","exception":true,"date":"Mon Dec 23 2019 14:29:49 GMT+0100 (Central European Standard Time)","process":{"pid":4352,"uid":1000,"gid":1000,"cwd":"/home/metapeng/Projects/payMyBarbe/server","execPath":"/usr/local/bin/node","version":"v12.13.1","argv":["/usr/local/bin/node","/home/metapeng/Projects/payMyBarbe/server/services/logger.js"],"memoryUsage":{"rss":39157760,"heapTotal":8855552,"heapUsed":5740296,"external":973564}},"os":{"loadavg":[2.05224609375,1.294921875,1.11181640625],"uptime":70437},"trace":[{"column":null,"file":null,"function":null,"line":null,"method":null,"native":false},{"column":11,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"isValidFormat","line":37,"method":null,"native":false},{"column":null,"file":null,"function":"Array.every","line":null,"method":"every","native":false},{"column":16,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"cascade","line":13,"method":null,"native":false},{"column":33,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"Function.module.exports","line":55,"method":"exports","native":false},{"column":32,"file":"/home/metapeng/Projects/payMyBarbe/server/services/logger.js","function":null,"line":53,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module.runMain","line":1047,"method":"runMain","native":false}],"service":"general-log"}
+{"error":{},"level":"error","message":"uncaughtException: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\nError: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\n    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n    at Array.every (<anonymous>)\n    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:53:32)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)","stack":"Error: No transform function found on format. Did you create a format instance?\nconst myFormat = format(formatFn);\nconst instance = myFormat();\n    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n    at Array.every (<anonymous>)\n    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:53:32)\n    at Module._compile (internal/modules/cjs/loader.js:959:30)\n    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n    at Module.load (internal/modules/cjs/loader.js:815:32)\n    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)","exception":true,"date":"Mon Dec 23 2019 14:32:13 GMT+0100 (Central European Standard Time)","process":{"pid":4817,"uid":1000,"gid":1000,"cwd":"/home/metapeng/Projects/payMyBarbe/server","execPath":"/usr/local/bin/node","version":"v12.13.1","argv":["/usr/local/bin/node","/home/metapeng/Projects/payMyBarbe/server/services/logger.js"],"memoryUsage":{"rss":39981056,"heapTotal":8855552,"heapUsed":5733264,"external":973564}},"os":{"loadavg":[1.390625,1.22509765625,1.1044921875],"uptime":70580},"trace":[{"column":null,"file":null,"function":null,"line":null,"method":null,"native":false},{"column":11,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"isValidFormat","line":37,"method":null,"native":false},{"column":null,"file":null,"function":"Array.every","line":null,"method":"every","native":false},{"column":16,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"cascade","line":13,"method":null,"native":false},{"column":33,"file":"/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js","function":"Function.module.exports","line":55,"method":"exports","native":false},{"column":32,"file":"/home/metapeng/Projects/payMyBarbe/server/services/logger.js","function":null,"line":53,"method":null,"native":false},{"column":30,"file":"internal/modules/cjs/loader.js","function":"Module._compile","line":959,"method":"_compile","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module._extensions..js","line":995,"method":".js","native":false},{"column":32,"file":"internal/modules/cjs/loader.js","function":"Module.load","line":815,"method":"load","native":false},{"column":14,"file":"internal/modules/cjs/loader.js","function":"Module._load","line":727,"method":"_load","native":false},{"column":10,"file":"internal/modules/cjs/loader.js","function":"Module.runMain","line":1047,"method":"runMain","native":false}],"service":"general-log"}
+{
+  error: Error: No transform function found on format. Did you create a format instance?
+  const myFormat = format(formatFn);
+  const instance = myFormat();
+      at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)
+      at Array.every (<anonymous>)
+      at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)
+      at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)
+      at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)
+      at Module._compile (internal/modules/cjs/loader.js:959:30)
+      at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)
+      at Module.load (internal/modules/cjs/loader.js:815:32)
+      at Function.Module._load (internal/modules/cjs/loader.js:727:14)
+      at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10),
+  level: 'ERROR',
+  message: 'uncaughtException: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  stack: 'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  exception: true,
+  date: 'Mon Dec 23 2019 19:43:01 GMT+0100 (Central European Standard Time)',
+  process: {
+    pid: 32497,
+    uid: 1000,
+    gid: 1000,
+    cwd: '/home/metapeng/Projects/payMyBarbe/server',
+    execPath: '/usr/local/bin/node',
+    version: 'v12.13.1',
+    argv: [
+      '/usr/local/bin/node',
+      '/home/metapeng/Projects/payMyBarbe/server/services/logger.js'
+    ],
+    memoryUsage: {
+      rss: 37871616,
+      heapTotal: 8855552,
+      heapUsed: 5811816,
+      external: 981756
+    }
+  },
+  os: {
+    loadavg: [ 1.26220703125, 0.814453125, 0.4580078125 ],
+    uptime: 89228
+  },
+  trace: [
+    {
+      column: null,
+      file: null,
+      function: null,
+      line: null,
+      method: null,
+      native: false
+    },
+    {
+      column: 11,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'isValidFormat',
+      line: 37,
+      method: null,
+      native: false
+    },
+    {
+      column: null,
+      file: null,
+      function: 'Array.every',
+      line: null,
+      method: 'every',
+      native: false
+    },
+    {
+      column: 16,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'cascade',
+      line: 13,
+      method: null,
+      native: false
+    },
+    {
+      column: 33,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'Function.module.exports',
+      line: 55,
+      method: 'exports',
+      native: false
+    },
+    {
+      column: 32,
+      file: '/home/metapeng/Projects/payMyBarbe/server/services/logger.js',
+      function: null,
+      line: 79,
+      method: null,
+      native: false
+    },
+    {
+      column: 30,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._compile',
+      line: 959,
+      method: '_compile',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._extensions..js',
+      line: 995,
+      method: '.js',
+      native: false
+    },
+    {
+      column: 32,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.load',
+      line: 815,
+      method: 'load',
+      native: false
+    },
+    {
+      column: 14,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._load',
+      line: 727,
+      method: '_load',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.runMain',
+      line: 1047,
+      method: 'runMain',
+      native: false
+    }
+  ],
+  service: 'general-log',
+  timestamp: '2019-12-23T18:43:01.329Z'
+}
+{
+  error: Error: No transform function found on format. Did you create a format instance?
+  const myFormat = format(formatFn);
+  const instance = myFormat();
+      at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)
+      at Array.every (<anonymous>)
+      at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)
+      at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)
+      at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)
+      at Module._compile (internal/modules/cjs/loader.js:959:30)
+      at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)
+      at Module.load (internal/modules/cjs/loader.js:815:32)
+      at Function.Module._load (internal/modules/cjs/loader.js:727:14)
+      at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10),
+  level: 'ERROR',
+  message: 'uncaughtException: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  stack: 'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  exception: true,
+  date: 'Mon Dec 23 2019 19:43:03 GMT+0100 (Central European Standard Time)',
+  process: {
+    pid: 32534,
+    uid: 1000,
+    gid: 1000,
+    cwd: '/home/metapeng/Projects/payMyBarbe/server',
+    execPath: '/usr/local/bin/node',
+    version: 'v12.13.1',
+    argv: [
+      '/usr/local/bin/node',
+      '/home/metapeng/Projects/payMyBarbe/server/services/logger.js'
+    ],
+    memoryUsage: {
+      rss: 39301120,
+      heapTotal: 8855552,
+      heapUsed: 5799000,
+      external: 981756
+    }
+  },
+  os: {
+    loadavg: [ 1.26220703125, 0.814453125, 0.4580078125 ],
+    uptime: 89230
+  },
+  trace: [
+    {
+      column: null,
+      file: null,
+      function: null,
+      line: null,
+      method: null,
+      native: false
+    },
+    {
+      column: 11,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'isValidFormat',
+      line: 37,
+      method: null,
+      native: false
+    },
+    {
+      column: null,
+      file: null,
+      function: 'Array.every',
+      line: null,
+      method: 'every',
+      native: false
+    },
+    {
+      column: 16,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'cascade',
+      line: 13,
+      method: null,
+      native: false
+    },
+    {
+      column: 33,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'Function.module.exports',
+      line: 55,
+      method: 'exports',
+      native: false
+    },
+    {
+      column: 32,
+      file: '/home/metapeng/Projects/payMyBarbe/server/services/logger.js',
+      function: null,
+      line: 79,
+      method: null,
+      native: false
+    },
+    {
+      column: 30,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._compile',
+      line: 959,
+      method: '_compile',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._extensions..js',
+      line: 995,
+      method: '.js',
+      native: false
+    },
+    {
+      column: 32,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.load',
+      line: 815,
+      method: 'load',
+      native: false
+    },
+    {
+      column: 14,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._load',
+      line: 727,
+      method: '_load',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.runMain',
+      line: 1047,
+      method: 'runMain',
+      native: false
+    }
+  ],
+  service: 'general-log',
+  timestamp: '2019-12-23T18:43:03.381Z'
+}
+{
+  error: Error: No transform function found on format. Did you create a format instance?
+  const myFormat = format(formatFn);
+  const instance = myFormat();
+      at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)
+      at Array.every (<anonymous>)
+      at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)
+      at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)
+      at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)
+      at Module._compile (internal/modules/cjs/loader.js:959:30)
+      at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)
+      at Module.load (internal/modules/cjs/loader.js:815:32)
+      at Function.Module._load (internal/modules/cjs/loader.js:727:14)
+      at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10),
+  level: 'ERROR',
+  message: 'uncaughtException: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  stack: 'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  exception: true,
+  date: 'Mon Dec 23 2019 19:43:07 GMT+0100 (Central European Standard Time)',
+  process: {
+    pid: 32584,
+    uid: 1000,
+    gid: 1000,
+    cwd: '/home/metapeng/Projects/payMyBarbe/server',
+    execPath: '/usr/local/bin/node',
+    version: 'v12.13.1',
+    argv: [
+      '/usr/local/bin/node',
+      '/home/metapeng/Projects/payMyBarbe/server/services/logger.js'
+    ],
+    memoryUsage: {
+      rss: 39243776,
+      heapTotal: 8855552,
+      heapUsed: 5789088,
+      external: 981756
+    }
+  },
+  os: {
+    loadavg: [ 1.3212890625, 0.83447265625, 0.46630859375 ],
+    uptime: 89234
+  },
+  trace: [
+    {
+      column: null,
+      file: null,
+      function: null,
+      line: null,
+      method: null,
+      native: false
+    },
+    {
+      column: 11,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'isValidFormat',
+      line: 37,
+      method: null,
+      native: false
+    },
+    {
+      column: null,
+      file: null,
+      function: 'Array.every',
+      line: null,
+      method: 'every',
+      native: false
+    },
+    {
+      column: 16,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'cascade',
+      line: 13,
+      method: null,
+      native: false
+    },
+    {
+      column: 33,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'Function.module.exports',
+      line: 55,
+      method: 'exports',
+      native: false
+    },
+    {
+      column: 32,
+      file: '/home/metapeng/Projects/payMyBarbe/server/services/logger.js',
+      function: null,
+      line: 79,
+      method: null,
+      native: false
+    },
+    {
+      column: 30,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._compile',
+      line: 959,
+      method: '_compile',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._extensions..js',
+      line: 995,
+      method: '.js',
+      native: false
+    },
+    {
+      column: 32,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.load',
+      line: 815,
+      method: 'load',
+      native: false
+    },
+    {
+      column: 14,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._load',
+      line: 727,
+      method: '_load',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.runMain',
+      line: 1047,
+      method: 'runMain',
+      native: false
+    }
+  ],
+  service: 'general-log',
+  timestamp: '2019-12-23T18:43:07.230Z'
+}
+{
+  error: Error: No transform function found on format. Did you create a format instance?
+  const myFormat = format(formatFn);
+  const instance = myFormat();
+      at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)
+      at Array.every (<anonymous>)
+      at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)
+      at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)
+      at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)
+      at Module._compile (internal/modules/cjs/loader.js:959:30)
+      at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)
+      at Module.load (internal/modules/cjs/loader.js:815:32)
+      at Function.Module._load (internal/modules/cjs/loader.js:727:14)
+      at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10),
+  level: 'ERROR',
+  message: 'uncaughtException: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  stack: 'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:79:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  exception: true,
+  date: 'Mon Dec 23 2019 19:43:09 GMT+0100 (Central European Standard Time)',
+  process: {
+    pid: 32598,
+    uid: 1000,
+    gid: 1000,
+    cwd: '/home/metapeng/Projects/payMyBarbe/server',
+    execPath: '/usr/local/bin/node',
+    version: 'v12.13.1',
+    argv: [
+      '/usr/local/bin/node',
+      '/home/metapeng/Projects/payMyBarbe/server/services/logger.js'
+    ],
+    memoryUsage: {
+      rss: 39190528,
+      heapTotal: 8855552,
+      heapUsed: 5770688,
+      external: 981756
+    }
+  },
+  os: {
+    loadavg: [ 1.3212890625, 0.83447265625, 0.46630859375 ],
+    uptime: 89236
+  },
+  trace: [
+    {
+      column: null,
+      file: null,
+      function: null,
+      line: null,
+      method: null,
+      native: false
+    },
+    {
+      column: 11,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'isValidFormat',
+      line: 37,
+      method: null,
+      native: false
+    },
+    {
+      column: null,
+      file: null,
+      function: 'Array.every',
+      line: null,
+      method: 'every',
+      native: false
+    },
+    {
+      column: 16,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'cascade',
+      line: 13,
+      method: null,
+      native: false
+    },
+    {
+      column: 33,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'Function.module.exports',
+      line: 55,
+      method: 'exports',
+      native: false
+    },
+    {
+      column: 32,
+      file: '/home/metapeng/Projects/payMyBarbe/server/services/logger.js',
+      function: null,
+      line: 79,
+      method: null,
+      native: false
+    },
+    {
+      column: 30,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._compile',
+      line: 959,
+      method: '_compile',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._extensions..js',
+      line: 995,
+      method: '.js',
+      native: false
+    },
+    {
+      column: 32,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.load',
+      line: 815,
+      method: 'load',
+      native: false
+    },
+    {
+      column: 14,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._load',
+      line: 727,
+      method: '_load',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.runMain',
+      line: 1047,
+      method: 'runMain',
+      native: false
+    }
+  ],
+  service: 'general-log',
+  timestamp: '2019-12-23T18:43:09.615Z'
+}
+{
+  error: Error: No transform function found on format. Did you create a format instance?
+  const myFormat = format(formatFn);
+  const instance = myFormat();
+      at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)
+      at Array.every (<anonymous>)
+      at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)
+      at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)
+      at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:71:32)
+      at Module._compile (internal/modules/cjs/loader.js:959:30)
+      at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)
+      at Module.load (internal/modules/cjs/loader.js:815:32)
+      at Function.Module._load (internal/modules/cjs/loader.js:727:14)
+      at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10),
+  level: 'ERROR',
+  message: 'uncaughtException: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:71:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  stack: 'Error: No transform function found on format. Did you create a format instance?\n' +
+    'const myFormat = format(formatFn);\n' +
+    'const instance = myFormat();\n' +
+    '    at isValidFormat (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:37:11)\n' +
+    '    at Array.every (<anonymous>)\n' +
+    '    at cascade (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:13:16)\n' +
+    '    at Function.module.exports (/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js:55:33)\n' +
+    '    at Object.<anonymous> (/home/metapeng/Projects/payMyBarbe/server/services/logger.js:71:32)\n' +
+    '    at Module._compile (internal/modules/cjs/loader.js:959:30)\n' +
+    '    at Object.Module._extensions..js (internal/modules/cjs/loader.js:995:10)\n' +
+    '    at Module.load (internal/modules/cjs/loader.js:815:32)\n' +
+    '    at Function.Module._load (internal/modules/cjs/loader.js:727:14)\n' +
+    '    at Function.Module.runMain (internal/modules/cjs/loader.js:1047:10)',
+  exception: true,
+  date: 'Mon Dec 23 2019 19:43:45 GMT+0100 (Central European Standard Time)',
+  process: {
+    pid: 32701,
+    uid: 1000,
+    gid: 1000,
+    cwd: '/home/metapeng/Projects/payMyBarbe/server',
+    execPath: '/usr/local/bin/node',
+    version: 'v12.13.1',
+    argv: [
+      '/usr/local/bin/node',
+      '/home/metapeng/Projects/payMyBarbe/server/services/logger.js'
+    ],
+    memoryUsage: {
+      rss: 39211008,
+      heapTotal: 8855552,
+      heapUsed: 5774856,
+      external: 981756
+    }
+  },
+  os: {
+    loadavg: [ 1.31689453125, 0.88818359375, 0.4990234375 ],
+    uptime: 89273
+  },
+  trace: [
+    {
+      column: null,
+      file: null,
+      function: null,
+      line: null,
+      method: null,
+      native: false
+    },
+    {
+      column: 11,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'isValidFormat',
+      line: 37,
+      method: null,
+      native: false
+    },
+    {
+      column: null,
+      file: null,
+      function: 'Array.every',
+      line: null,
+      method: 'every',
+      native: false
+    },
+    {
+      column: 16,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'cascade',
+      line: 13,
+      method: null,
+      native: false
+    },
+    {
+      column: 33,
+      file: '/home/metapeng/Projects/payMyBarbe/server/node_modules/logform/combine.js',
+      function: 'Function.module.exports',
+      line: 55,
+      method: 'exports',
+      native: false
+    },
+    {
+      column: 32,
+      file: '/home/metapeng/Projects/payMyBarbe/server/services/logger.js',
+      function: null,
+      line: 71,
+      method: null,
+      native: false
+    },
+    {
+      column: 30,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._compile',
+      line: 959,
+      method: '_compile',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._extensions..js',
+      line: 995,
+      method: '.js',
+      native: false
+    },
+    {
+      column: 32,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.load',
+      line: 815,
+      method: 'load',
+      native: false
+    },
+    {
+      column: 14,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module._load',
+      line: 727,
+      method: '_load',
+      native: false
+    },
+    {
+      column: 10,
+      file: 'internal/modules/cjs/loader.js',
+      function: 'Module.runMain',
+      line: 1047,
+      method: 'runMain',
+      native: false
+    }
+  ],
+  service: 'general-log',
+  timestamp: '2019-12-23T18:43:45.706Z'
+}

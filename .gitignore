@@ -5,3 +5,4 @@ certs/*-csr.pem
 certs/*.cnf
 certs/Makefile
 **/.directory
+logs/

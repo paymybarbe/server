@@ -1,34 +1,6 @@
 const { app, BrowserWindow } = require("electron");
 // const debug = require("debug")("server:server");
 const path = require("path");
-const tls = require("tls");
-const fs = require("fs");
-const config = require("./config/config");
-
-process.env.BIN_FOLDER = process.cwd();
-process.env.APP_RESOURCES = __dirname;
-
-const certs_folder = (config.server.certs_folder === undefined) ? path.resolve(process.env.APP_RESOURCES, "certs/") : path.resolve(process.env.APP_RESOURCES, "certs/", config.server.certs_folder);
-
-const options = {
-    key: fs.readFileSync(path.resolve(certs_folder, "server-key.pem")),
-    cert: fs.readFileSync(path.resolve(certs_folder, "server-crt.pem")),
-    ca: fs.readFileSync(path.resolve(certs_folder, "ca-crt.pem")),
-    requestCert: true,
-    rejectUnauthorized: true
-};
-
-const server = tls.createServer(options, (socket) => {
-    console.log("server connected", socket.authorized ? "authorized" : "unauthorized");
-    socket.write("welcome!\n");
-    socket.setEncoding("utf8");
-    socket.pipe(socket);
-});
-
-server.listen(config.server.port, () => {
-    console.log("server bound");
-});
-
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -68,7 +40,6 @@ app.on("ready", createWindow);
 app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    server.close();
     if (process.platform !== "darwin") {
         app.quit();
     }
