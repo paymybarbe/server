@@ -2,7 +2,9 @@
 const path = require("path");
 const tls = require("tls");
 const fs = require("fs");
-const logger = require("./logger");
+const logger = require("./logger").child({
+    service: "server:services:server"
+});
 const config = require("../config/config");
 
 const certs_folder = (config.server.certs_folder === undefined) ? path.resolve(process.env.APP_RESOURCES, "certs/") : path.resolve(process.env.APP_RESOURCES, "certs/", config.server.certs_folder);

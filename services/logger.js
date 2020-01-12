@@ -28,6 +28,9 @@ const logger = winston.createLogger({
         utilFormatter(),
         winston.format((info) => {
             // eslint-disable-next-line no-param-reassign
+            if (!info.service) {
+                info.service = "general-node c  log";
+            }
             info.level = info.level.toUpperCase();
             if (info.stack) {
                 if (info[Symbol.for("splat")]) {
@@ -45,9 +48,6 @@ const logger = winston.createLogger({
         winston.format.json(),
         winston.format.prettyPrint()
     ),
-    defaultMeta: {
-        service: 'general-log'
-    },
     transports: [
         //
         // - Write to all logs with level `info` and below to `combined.log`
