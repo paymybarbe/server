@@ -22,19 +22,19 @@ describe("Config fetcher test", function config_fetcher_test() {
     });
 
     it("Get default env", () => {
-        process.env.NODE_ENV = null;
+        process.env.ENV = null;
         const config = require("../../config/config");
         config.env.should.equal("development");
     });
 
     it("Get production env", () => {
-        process.env.NODE_ENV = "production";
+        process.env.ENV = "production";
         const config = require("../../config/config");
         config.env.should.equal("production");
     });
 
     it("Get test env", () => {
-        process.env.NODE_ENV = "test";
+        process.env.ENV = "test";
         const config = require("../../config/config");
         config.env.should.equal("test");
     });

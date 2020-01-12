@@ -26,13 +26,5 @@ try {
 catch (ex) {
     throw new Error("No config file for this environnement.");
 }
-
-if (!env_conf.database) {
-    logger.error(new Error("No database.URI in configuration file ! Can't connect !"));
-    process.exit(1);
-}
-if (!env_conf.database.uri) {
-    logger.error(new Error("No database URI in configuration file ! Can't connect !"));
-    process.exit(1);
-}
 module.exports = env_conf;
+logger.silly("Actual config: ", env_conf);

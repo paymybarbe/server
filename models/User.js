@@ -10,8 +10,7 @@ module.exports = class User {
     points = 0;
     pseudo;
     email;
-    hashed_pass;
-    salt;
+    pass;
     date_of_birth;
     image;
     created_at;
