@@ -1,21 +1,16 @@
 # payMyBarbe - Server
 
-# Pour installer le serveur
-
-- Il faut avoir postgresql d'installé.
-- Créer une database nommée pmbre_db, un utilisateur read only, un utilisateur ayant les droits d'écriture.
-- Créer un script .sh contenant: 
-``` bash
-ENV=production DATABASE_URL=postgres://<db_user>:<db_password>@127.0.0.1:5432/pmbre_db npm start --prefix 
-```
-- Donner les droits d'exécution à l'utilisateur normal de l'ordinateur, mais retirer les autres droits.
-- git clone https://gitlab.telecomnancy.univ-lorraine.fr/paymybarbe/server.git
-
-# Pour programmer
-Pour programmer, après avoir clone le repos:
+## Installation
+- [Installez PostgreSQL](doc/setup_dev_DB.md)
+- Clonez le repo dans un dossier vide.
+- Installez les dépendances:
 ```
 npm install
 ```
+
+## Utilisation
+Pour programmer, après avoir clone le repos:
+
 
 Pour lancer le server:
 ```

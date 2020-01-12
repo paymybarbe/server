@@ -2,6 +2,7 @@
     "env": {
         "node": true
     },
+    "parser": "babel-eslint",
     "extends": ["eslint:recommended", "airbnb-base"],
     "rules": {
         // Indent with 4 spaces
@@ -16,7 +17,8 @@
         "no-use-before-define": ["error", { "functions": false }],
         "brace-style": ["error", "stroustrup", { "allowSingleLine": true }],
         "quotes": [0],
-        "comma-dangle": ["error", "never"]
+        "comma-dangle": ["error", "never"],
+        "lines-between-class-members": [0]
         // // Indent JSX with 4 spaces
         // "react/jsx-indent": ["error", 4],
 

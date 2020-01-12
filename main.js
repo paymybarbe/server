@@ -1,7 +1,9 @@
 const { app, BrowserWindow } = require("electron");
 // const debug = require("debug")("server:server");
 const path = require("path");
+const init = require("./scripts/init");
 
+init.init();
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;

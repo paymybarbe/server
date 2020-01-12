@@ -1,22 +1,44 @@
+/* eslint-disable no-param-reassign */
 const winston = require("winston");
 const path = require("path");
 const fs = require("fs");
-const config = require("../config/config");
+const util = require('util');
 
-config.config();
+function transform(info) {
+    const args = info[Symbol.for('splat')];
+    if (args) {
+        info.message = util.format(info.message, ...args);
+    }
+    return info;
+}
 
-const log_folder = (process.env.NODE_ENV === "production") ? path.resolve(process.env.BIN_FOLDER, "../logs/") : path.resolve(process.env.BIN_FOLDER, "./logs/");
+function utilFormatter() {
+    return {
+        transform
+    };
+}
+const log_folder = (process.env.NODE_ENV === "production") ? path.resolve(process.cwd(), "../logs/") : path.resolve(process.cwd(), "./logs/");
 fs.mkdirSync(log_folder, {
     recursive: true
 });
 
-
 const logger = winston.createLogger({
     level: 'silly',
     format: winston.format.combine(
+        utilFormatter(),
         winston.format((info) => {
             // eslint-disable-next-line no-param-reassign
+            if (!info.service) {
+                info.service = "general-log";
+            }
             info.level = info.level.toUpperCase();
+            if (info.stack) {
+                if (info[Symbol.for("splat")]) {
+                    const errorMessage = info[Symbol.for("splat")][0].message;
+                    info.message = info.message.replace(errorMessage, "");
+                }
+                info.message = info.message.replace(`\n${info.stack}`, "");
+            }
             return info;
         })(),
         winston.format.errors({
@@ -26,9 +48,6 @@ const logger = winston.createLogger({
         winston.format.json(),
         winston.format.prettyPrint()
     ),
-    defaultMeta: {
-        service: 'general-log'
-    },
     transports: [
         //
         // - Write to all logs with level `info` and below to `combined.log`
@@ -45,7 +64,7 @@ const logger = winston.createLogger({
     ],
     exceptionHandlers: [
         new winston.transports.File({
-            filename: 'exceptions.log'
+            filename: path.resolve(log_folder, 'exceptions.log')
         })
     ]
 });
@@ -58,6 +77,7 @@ const logger = winston.createLogger({
 
 if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console({
+        handleExceptions: true,
         format: winston.format.combine(
             winston.format.colorize(),
             winston.format.splat(),
@@ -65,10 +85,12 @@ if (process.env.NODE_ENV !== 'production') {
                 format: 'YYYY-MM-DD HH:mm:ss'
             }),
             winston.format.printf((info) => {
-                if (info.stack) {
-                    return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}\n${info.stack}`;
+                if (info.message.constructor === Object) {
+                    info.message = JSON.stringify(info.message, null, 4);
                 }
-                console.log(info);
+                if (info.stack) {
+                    return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}\n\u001b[31m${info.stack}\u001b[39m`;
+                }
                 return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}`;
             }),
 
@@ -80,4 +102,4 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 }
 
-logger.error("Trying to show an error.", new Error("This be an error"));
+module.exports = logger;

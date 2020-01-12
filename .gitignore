@@ -3,6 +3,7 @@ out/
 certs/*-key.pem
 certs/*-csr.pem
 certs/*.cnf
+config/production.json
 certs/Makefile
 **/.directory
 logs/
