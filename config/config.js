@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-const debug = require("debug")("server:config");
+// const logger = require("./../services/logger").child({ service: "server:config" });
+
+process.env.BIN_FOLDER = process.cwd(); // External Resources
+process.env.APP_RESOURCES = __dirname; // Internal Resources
 
 if (process.env.NODE_ENV === undefined || process.env.NODE_ENV === "null") {
     process.env.NODE_ENV = "development";
@@ -13,5 +16,3 @@ try {
 catch (ex) {
     throw new Error("No config file for this environnement.");
 }
-
-debug(module.exports);

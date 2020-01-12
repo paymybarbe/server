@@ -4,4 +4,6 @@ certs/*-key.pem
 certs/*-csr.pem
 certs/*.cnf
 config/production.json
-.directory
+certs/Makefile
+**/.directory
+logs/
