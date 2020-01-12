@@ -29,7 +29,7 @@ const logger = winston.createLogger({
         winston.format((info) => {
             // eslint-disable-next-line no-param-reassign
             if (!info.service) {
-                info.service = "general-node c  log";
+                info.service = "general-log";
             }
             info.level = info.level.toUpperCase();
             if (info.stack) {
