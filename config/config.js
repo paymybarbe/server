@@ -6,7 +6,7 @@ const logger = require("./../services/logger").child({
 // const logger = require("./../services/logger").child({ service: "server:config" });
 
 process.env.BIN_FOLDER = process.cwd(); // External Resources
-process.env.APP_RESOURCES = __dirname; // Internal Resources
+process.env.APP_RESOURCES = path.resolve(__dirname, '../'); // Internal Resources
 
 if (process.env.ENV === undefined || process.env.ENV === "null") {
     process.env.NODE_ENV = "development";
@@ -19,12 +19,15 @@ else {
     process.env.NODE_ENV = "development";
 }
 
-let env_conf;
+let env_conf = {};
 try {
     env_conf = JSON.parse(fs.readFileSync(path.resolve(__dirname, `${process.env.ENV}.json`)));
 }
 catch (ex) {
-    throw new Error("No config file for this environnement.");
+    logger.error("No config file for this environnement.", ex);
+    process.exit(-1);
 }
+env_conf.BIN_FOLDER = process.env.BIN_FOLDER;
+env_conf.APP_RESOURCES = process.env.APP_RESOURCES;
 module.exports = env_conf;
 logger.silly("Actual config: ", env_conf);

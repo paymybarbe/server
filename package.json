@@ -9,7 +9,8 @@
         "server": "electron .",
         "lint": "eslint './**/*.js'",
         "linting": "eslint './**/*.js' --fix",
-        "build": "electron-packager .  --overwrite --out ./out/"
+        "build": "electron-packager .  --overwrite --out ./out/",
+        "migrate": "node scripts/script.migrate.js"
     },
     "author": "Mael WILMO, Frantz DARBON",
     "license": "ISC",
@@ -35,6 +36,7 @@
         "debug": "^4.1.1",
         "electron": "^5.0.12",
         "pg": "^7.17.1",
+        "postgrator": "^3.11.0",
         "sqlite3": "^4.1.1",
         "winston": "^3.2.1"
     },

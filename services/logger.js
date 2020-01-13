@@ -48,20 +48,7 @@ const logger = winston.createLogger({
         winston.format.json(),
         winston.format.prettyPrint()
     ),
-    transports: [
-        //
-        // - Write to all logs with level `info` and below to `combined.log`
-        // - Write all logs error (and below) to `error.log`.
-        //
-        new winston.transports.File({
-            filename: path.resolve(log_folder, 'error.log'),
-            level: 'error'
-        }),
-        new winston.transports.File({
-            filename: path.resolve(log_folder, 'combined.log'),
-            level: 'info'
-        })
-    ],
+    transports: [],
     exceptionHandlers: [
         new winston.transports.File({
             filename: path.resolve(log_folder, 'exceptions.log')
@@ -104,6 +91,17 @@ if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.File({
         filename: path.resolve(log_folder, 'silly.log'),
         level: 'silly'
+    }));
+}
+
+if (process.env.env !== "test") {
+    logger.add(new winston.transports.File({
+        filename: path.resolve(log_folder, 'error.log'),
+        level: 'error'
+    }));
+    logger.add(new winston.transports.File({
+        filename: path.resolve(log_folder, 'info.log'),
+        level: 'info'
     }));
 }
 

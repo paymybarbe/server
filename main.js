@@ -2,8 +2,11 @@ const { app, BrowserWindow } = require("electron");
 // const debug = require("debug")("server:server");
 const path = require("path");
 const init = require("./scripts/init");
+const logger = require("./services/logger").child({
+    service: "server:main"
+});
 
-init.init();
+init();
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win;
@@ -43,6 +46,7 @@ app.on("window-all-closed", () => {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== "darwin") {
+        logger.info("App closed normally.");
         app.quit();
     }
 });

@@ -1,3 +1,5 @@
-module.exports.init = function init() {
-    // Do nothing. Just to make linter be at ease.
+const { migrate } = require("../services/db/dbinit");
+
+module.exports = function init() {
+    migrate();
 };
