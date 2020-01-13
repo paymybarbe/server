@@ -26,7 +26,7 @@ npm run test
 
 # IMPORTANT:
 
-- NE PAS UPLOAD LES MOTS DE PASSE UTILISÉS EN PRODUCTION (en utilisation réél.)
+- NE PAS UPLOAD LES MOTS DE PASSE UTILISÉS EN PRODUCTION (en utilisation réelle.)
 - NE PAS UPLOAD LES KEYS DES CERTIFICATS, c'est à dire les fichiers ```./certs/*-key.pem```. Les ```./certs/*-csr.pem``` ne sont pas utiles mais pas critiques.
 
 # À respecter:
