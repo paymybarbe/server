@@ -7,7 +7,7 @@ const logger = require("./logger").child({
 });
 const config = require("../config/config");
 
-const certs_folder = (config.server.certs_folder === undefined) ? path.resolve(process.env.APP_RESOURCES, "certs/") : path.resolve(process.env.APP_RESOURCES, "certs/", config.server.certs_folder);
+const certs_folder = (config.server.certs_folder === undefined) ? path.resolve(config.APP_RESOURCES, "certs/") : path.resolve(config.APP_RESOURCES, config.server.certs_folder);
 
 const options = {
     key: fs.readFileSync(path.resolve(certs_folder, "server-key.pem")),

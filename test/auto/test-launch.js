@@ -26,7 +26,7 @@ describe("Application Launch", function testAppLaunch() {
 
             // The following line tells spectron to look and use the main.js file
             // and the package.json located 1 level above.
-            args: [path.join(__dirname, "../main.js")]
+            args: [path.join(__dirname, "../../main.js")]
         });
         return this.app.start();
     });

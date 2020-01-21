@@ -1,5 +1,5 @@
 const { migrate } = require("../services/db/dbinit");
 
-module.exports = function init() {
-    migrate();
+module.exports = async function init() {
+    await migrate();
 };

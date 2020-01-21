@@ -3,13 +3,13 @@ const path = require("path");
 const chai = require("chai");
 const tls = require("tls");
 const debug = require("debug")("server:test:certs");
-const config = require("./../../config/config");
+const config = require("./../../../config/config");
 
 chai.should();
 
 describe("Certs authorization checker", function config_fetcher_test() {
     this.timeout(5000);
-    const certs_folder = (config.server.certs_folder === undefined) ? path.resolve(__dirname, "./../../certs/") : path.resolve(__dirname, "./../../certs/", config.server.certs_folder);
+    const certs_folder = (config.server.certs_folder === undefined) ? path.resolve(config.APP_RESOURCES, "certs/") : path.resolve(config.APP_RESOURCES, config.server.certs_folder);
     let options_serv;
     let server;
 
