@@ -38,16 +38,18 @@ const postgrator = new Postgrator({
     schemaTable: "migration_tracking"
 });
 
-function migrate(vers = '') {
+function migrate(vers = '', callback) {
     postgrator
         .migrate(vers)
         .then((appliedMigrations) => {
             if (Object.keys(appliedMigrations).length !== 0) {
                 logger.info("Migrated: ", appliedMigrations);
             }
+            callback(null, appliedMigrations);
         })
         .catch((error) => {
             logger.error(error);
+            callback(error);
             // Because migrations prior to the migration with error would have run
             // error object is decorated with appliedMigrations
             process.exit(-1);
