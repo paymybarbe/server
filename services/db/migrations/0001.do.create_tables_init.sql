@@ -61,7 +61,7 @@ CREATE TABLE tags (
 
 CREATE TABLE roles (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
   parent_role INT DEFAULT NULL,
   next_role INT DEFAULT NULL
 );

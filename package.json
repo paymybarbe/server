@@ -10,7 +10,8 @@
         "lint": "eslint './**/*.js'",
         "linting": "eslint './**/*.js' --fix",
         "build": "electron-packager .  --overwrite --out ./out/",
-        "migrate": "node scripts/script.migrate.js"
+        "migrate": "node scripts/script.migrate.js",
+        "debug": "electron --nolazy --inspect-brk=5858 main.js"
     },
     "author": "Mael WILMO, Frantz DARBON",
     "license": "ISC",

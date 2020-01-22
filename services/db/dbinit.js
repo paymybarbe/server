@@ -39,19 +39,18 @@ const postgrator = new Postgrator({
 });
 
 async function migrate(vers = '') {
-    postgrator
-        .migrate(vers)
-        .then((appliedMigrations) => {
-            if (Object.keys(appliedMigrations).length !== 0) {
-                logger.info("Migrated: ", appliedMigrations);
-            }
-        })
-        .catch((error) => {
-            logger.error(error);
-            // Because migrations prior to the migration with error would have run
-            // error object is decorated with appliedMigrations
-            process.exit(-1);
-        });
+    try {
+        const appliedMigrations = await postgrator.migrate(vers);
+        if (Object.keys(appliedMigrations).length !== 0) {
+            logger.info("Migrated: ", appliedMigrations);
+        }
+    }
+    catch (error) {
+        logger.error(error);
+        // Because migrations prior to the migration with error would have run
+        // error object is decorated with appliedMigrations
+        process.exit(-1);
+    }
 
     // Migrate to max version (optionally can provide 'max')
     // postgrator
