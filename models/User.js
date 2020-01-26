@@ -24,7 +24,7 @@ module.exports = class User {
      */
     tags;
     /**
-     * Array of the roles related to the user.
+     * Array of the names of the roles related to the user.
      * @type {string[]}
      */
     roles;
@@ -34,12 +34,13 @@ module.exports = class User {
      */
     permissions;
     /**
-     * Favorites products of an user in key:value
+     * Favorites products of an user in key/value: index:product_id
      * @type {Object.<number,number>} index:product_id
      */
     favorites;
     /**
      * Array of the transactions of the user
+     * @type {Transaction[]}
     */
-    transactions
+    transactions;
 };

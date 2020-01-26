@@ -74,7 +74,7 @@ CREATE TABLE roles_to_users (
 
 CREATE TABLE permissions (
   id SERIAL PRIMARY KEY,
-  permission TEXT NOT NULL,
+  permission TEXT UNIQUE NOT NULL,
   comment TEXT NOT NULL
 );
 
@@ -97,7 +97,7 @@ CREATE TABLE products (
   stock INT,
   description TEXT,
   threshold INT NOT NULL DEFAULT 0,
-  fixed_treshold BOOLEAN NOT NULL DEFAULT false,
+  fixed_threshold BOOLEAN NOT NULL DEFAULT false,
   hidden BOOLEAN NOT NULL DEFAULT false,
   deleted BOOLEAN NOT NULL DEFAULT false
 );
@@ -119,15 +119,15 @@ CREATE TABLE ingredients (
 
 CREATE TABLE ingredients_to_dishes (
   ingredient_id INT,
-  dishes_id INT,
+  dish_id INT,
   quantity FLOAT,
   count_in_stock BOOLEAN DEFAULT FALSE,
-  PRIMARY KEY (ingredient_id, dishes_id)
+  PRIMARY KEY (ingredient_id, dish_id)
 );
 
 CREATE TABLE dishes_options (
   id SERIAL PRIMARY KEY,
-  dishes_id INT NOT NULL,
+  dish_id INT NOT NULL,
   name TEXT NOT NULL,
   price_change FLOAT NOT NULL DEFAULT 0
 );
@@ -265,19 +265,28 @@ CREATE TABLE menus_inside_orders (
 );
 
 CREATE TABLE products_inside_menus_orders (
-  menu_order_id INT PRIMARY KEY,
+  menu_order_id INT,
   index INT NOT NULL,
   product_id INT,
   quantity INT NOT NULL,
-  taken INT NOT NULL
+  taken INT NOT NULL,
+  PRIMARY KEY (menu_order_id, product_id)
 );
 
 CREATE TABLE dishes_inside_menus_orders (
-  menu_order_id INT PRIMARY KEY,
+  menu_order_id INT,
   index INT NOT NULL,
   dish_id INT,
   quantity INT NOT NULL,
-  taken INT NOT NULL
+  taken INT NOT NULL,
+  PRIMARY KEY (menu_order_id, dish_id)
+);
+
+CREATE TABLE dishes_options_inside_menus_orders (
+  menu_order_id INT,
+  dish_id INT,
+  dish_option_id INT,
+  PRIMARY KEY (menu_order_id, dish_id, dish_option_id)
 );
 
 CREATE TABLE services (
@@ -459,9 +468,9 @@ ALTER TABLE dishes ADD FOREIGN KEY (menu_id) REFERENCES menus (id) ON UPDATE CAS
 
 ALTER TABLE ingredients_to_dishes ADD FOREIGN KEY (ingredient_id) REFERENCES ingredients (id)  ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE ingredients_to_dishes ADD FOREIGN KEY (dishes_id) REFERENCES dishes (id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE ingredients_to_dishes ADD FOREIGN KEY (dish_id) REFERENCES dishes (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE dishes_options ADD FOREIGN KEY (dishes_id) REFERENCES dishes (id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE dishes_options ADD FOREIGN KEY (dish_id) REFERENCES dishes (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE products_ranked_prices ADD FOREIGN KEY (product_id) REFERENCES products (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -574,6 +583,12 @@ ALTER TABLE products_inside_expiring ADD FOREIGN KEY (product_id) REFERENCES pro
 ALTER TABLE ingredients_inside_expiring ADD FOREIGN KEY (expiring_id) REFERENCES expiring (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE ingredients_inside_expiring ADD FOREIGN KEY (ingredient_id) REFERENCES ingredients (id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE dishes_options_inside_menus_orders ADD FOREIGN KEY (menu_order_id) REFERENCES menus_inside_orders (id);
+
+ALTER TABLE dishes_options_inside_menus_orders ADD FOREIGN KEY (dish_id) REFERENCES dishes (id);
+
+ALTER TABLE dishes_options_inside_menus_orders ADD FOREIGN KEY (dish_option_id) REFERENCES dishes_options (id);
 
 COMMENT ON COLUMN permissions.permission IS 'prix coutant est une perm';
 
