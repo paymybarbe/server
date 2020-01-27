@@ -4,7 +4,7 @@
 module.exports = class Product {
     /**
      * ID of the database's column
-     * @type {number}
+     * @type number
      */
     _id;
     name;
@@ -13,15 +13,15 @@ module.exports = class Product {
     description;
     threshold;
     /**
-     * @type {boolean}
+     * @type boolean
      */
     fixed_threshold;
     /**
-     * @type {boolean}
+     * @type boolean
      */
     hidden;
     /**
-     * @type {boolean}
+     * @type boolean
      */
     deleted;
     /**

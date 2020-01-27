@@ -4,19 +4,19 @@
 module.exports = class Category {
     /**
      * ID of the database's column
-     * @type {number}
+     * @type number
      */
     _id;
     name;
     image;
     description;
     /**
-     * @type {boolean}
+     * @type boolean
      */
     hidden;
     /**
      * Give the display order of the categories. First is 0, then 1...
-     * @type {number}
+     * @type number
      */
     index;
     /**

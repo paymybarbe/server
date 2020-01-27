@@ -4,17 +4,17 @@
 module.exports = class Role {
     /**
      * ID of the database's column
-     * @type {number}
+     * @type number
      */
     _id;
     /**
      * ID of the parent role of this role, if there is one.
-     * @type {number}
+     * @type number
      */
     parent_role;
     /**
      * ID of the next role of this role, if there is one. (1st year -> 2nd year for example)
-     * @type {number}
+     * @type number
      */
     next_role;
     /**

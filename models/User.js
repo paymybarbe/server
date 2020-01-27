@@ -4,7 +4,7 @@
 module.exports = class User {
     /**
      * ID of the database's column
-     * @type {number}
+     * @type number
      */
     _id;
     first_name;

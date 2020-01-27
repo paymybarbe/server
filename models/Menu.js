@@ -4,14 +4,14 @@
 module.exports = class Menu {
     /**
      * ID of the database's column
-     * @type {number}
+     * @type number
      */
     _id;
     name;
     image;
     description;
     /**
-     * @type {boolean}
+     * @type boolean
      */
     deleted;
     /**

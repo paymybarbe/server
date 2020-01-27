@@ -4,7 +4,7 @@
 module.exports = class Ingredient {
     /**
      * ID of the database's column
-     * @type {number}
+     * @type number
      */
     _id;
     name;
