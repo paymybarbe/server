@@ -27,4 +27,9 @@ module.exports = class Dish {
      * @type {{_id:number, name:string, price_change:number}[]}
      */
     options;
+    /**
+     * Prices of a product in key/value: (role | "default"):{multiplier, add}
+     * @type {Object.<string,{multiplier:number, add:number}>} (role | "default"):{multiplier, add}
+     */
+    settings;
 };

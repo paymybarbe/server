@@ -193,6 +193,8 @@ CREATE TABLE settings_dishes_prices (
 CREATE TABLE categories (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
+  image TEXT,
+  description TEXT,
   hidden BOOLEAN NOT NULL DEFAULT false,
   index INT NOT NULL
 );

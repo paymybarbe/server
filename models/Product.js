@@ -29,4 +29,9 @@ module.exports = class Product {
      * @type {Object.<string,number>} (role | "menu" | "cost"):price
      */
     prices;
+    /**
+     * Prices of a product in key/value: (role | "default"):{multiplier, add}
+     * @type {Object.<string,{multiplier:number, add:number}>} (role | "default"):{multiplier, add}
+     */
+    settings;
 };
