@@ -293,7 +293,6 @@ CREATE TABLE dishes_options_inside_menus_orders (
 
 CREATE TABLE services (
   id SERIAL PRIMARY KEY,
-  menu_id INT NOT NULL,
   description TEXT,
   start_ordering TIMESTAMP,
   end_ordering TIMESTAMP,
@@ -533,8 +532,6 @@ ALTER TABLE products_inside_menus_orders ADD FOREIGN KEY (product_id) REFERENCES
 ALTER TABLE dishes_inside_menus_orders ADD FOREIGN KEY (menu_order_id) REFERENCES menus_inside_orders (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE dishes_inside_menus_orders ADD FOREIGN KEY (dish_id) REFERENCES dishes (id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE services ADD FOREIGN KEY (menu_id) REFERENCES menus (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE menus_inside_services ADD FOREIGN KEY (service_id) REFERENCES services (id) ON UPDATE CASCADE ON DELETE CASCADE;
 

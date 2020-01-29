@@ -24,17 +24,17 @@ module.exports = class Order {
     status;
     /**
      * Date and hour at which the order was created
-     * @type date
+     * @type Date
      */
     ordered_at;
     /**
      * Date and hour at which the order should be served
-     * @type date
+     * @type Date
      */
     for_date;
     /**
      * Date and hour at which the order was last updated
-     * @type date
+     * @type Date
      */
     last_change;
     /**
