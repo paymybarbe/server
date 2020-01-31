@@ -98,6 +98,8 @@ DROP TABLE products_inside_expiring CASCADE;
 
 DROP TABLE ingredients_inside_expiring CASCADE;
 
+DROP TABLE dishes_options_inside_menus_orders CASCADE;
+
 DROP TYPE ORDER_STATUS CASCADE;
 
 DROP TYPE PLANNING_STATUS CASCADE;

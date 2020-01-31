@@ -63,7 +63,7 @@ module.exports = class Service {
     menus;
     /**
      * Users participating in the service
-     * @type {{user:User, points:number, status:PLANNING_STATUS}[]}
+     * @type {{user:User, points:number, status:enums.PLANNING_STATUS}[]}
      */
     users;
 };

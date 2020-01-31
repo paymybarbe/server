@@ -39,7 +39,7 @@ module.exports = class User {
      */
     favorites;
     /**
-     * Array of the transactions of the user
+     * Array of the transactions of the user. To be left empty if not used. Beware of cyclic call.
      * @type {Transaction[]}
     */
     transactions;

@@ -325,7 +325,8 @@ CREATE TABLE users_inside_services (
 CREATE TABLE inventories (
   id SERIAL PRIMARY KEY,
   date TIMESTAMP NOT NULL,
-  manager_id INT
+  manager_id INT,
+  error BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE inside_inventory (
@@ -389,7 +390,7 @@ CREATE TABLE cash_funds (
 CREATE TABLE cash_funds_operations (
   id SERIAL PRIMARY KEY,
   manager_id INT,
-  source_cash_fund_id INT NOT NULL,
+  source_cash_fund_id INT,
   destination_cash_fund_id INT NOT NULL,
   type CASH_FUNDS_OPERATIONS_TYPE NOT NULL,
   description TEXT,
@@ -593,7 +594,7 @@ COMMENT ON COLUMN permissions.permission IS 'prix coutant est une perm';
 
 COMMENT ON COLUMN products.threshold IS 'Seuil qu''il faut avoir par semaine.';
 
-COMMENT ON COLUMN products.fixed_treshold IS 'Seuil defini par l''utilisateur.';
+COMMENT ON COLUMN products.fixed_threshold IS 'Seuil defini par l''utilisateur.';
 
 COMMENT ON COLUMN ingredients_to_dishes.count_in_stock IS 'Si on enlève les produits du stock';
 
@@ -644,3 +645,5 @@ COMMENT ON COLUMN connections_history.user_id IS 'null si inconnu';
 COMMENT ON COLUMN transactions.means IS 'Carte Bleue, Chèque, Liquide, Points, Lydia';
 
 COMMENT ON COLUMN expiring.diverse_cost IS 'Coûts divers ne rentrant pas dans les produits.';
+
+COMMENT ON COLUMN inventories.error IS 'Permet de rectifier une erreur. Le produit n''a jamais existé. Il ne s''agit donc pas d''une perte.';
