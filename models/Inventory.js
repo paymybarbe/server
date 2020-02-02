@@ -19,7 +19,7 @@ module.exports = class Inventory {
      */
     manager;
     /**
-     * Array of the products of the category
+     * Array of the products of the inventory
      * @type {{product:product, nbr:number}[]}
      */
     products;
