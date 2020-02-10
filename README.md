@@ -22,7 +22,41 @@ Pour les tests:
 npm run test
 ```
 
-# TODO:
+# TODO Backend:
+
+- :runner: Établir les classes modèles à partir du modèle de la database 
+
+- [ ] Établir les business rules: fonctions permettant d'enregistrer les classes dans la database, de les lire, de les supprimer, de les modifier. Changer les classes au besoin. 
+
+- [ ] Faire les tests automatiques pour la tâche précédente
+
+- [ ] Établir les fonctions permettant le traitement de données. Exemple: images des produits, clients,..., calcul de la trésorerie à chaque nouveau changement... Ne vise que les fonctionnalités critiques
+
+- [ ] Établir la réception des requêtes par le serveur et son protocole
+
+- [ ] Établir un fichier routes permettant de répartir les événements reçus du client et manager à exécuter par le serveur ainsi qu'un autre listant les événements du serveur. Ils ne contiendront pas la partie principale du code, qui sera située dans des fichiers dédiés.
+
+- [ ] Faire les tests automatiques pour les tâches précédentes
+
+- Débuter le Client et le Manager !
+
+- [ ] Établir et implémanter le reste des fonctions permettant le traitement de données.
+
+# TODO Frontend:
+
+- [ ] Interface à débuter: squelette avec les onglets, listviews, boutons... Onglets utilisateurs et commandes.
+
+- [ ] Fonctions permettant de peupler les listes de l'interface, ou de les mettre à jour, onglets utilisateurs et commandes.
+
+- [ ] Fenêtres et fonctions permettant l'ajout d'objets onglets utilisateurs et commandes.
+
+- [ ] Fenêtres et fonctions permettant la modification et suppression d'objets onglets utilisateurs et commandes.
+
+- [ ] Faire les tests automatiques pour les tâches précédentes
+
+- [ ] Fenêtres et fonctions permettant le listing, l'ajout, la modification, la suppression onglets Menus et Planning
+
+- [ ] Fenêtres et fonctions permettant le listing, l'ajout, la modification, la suppression onglets Trésorerie
 
 # IMPORTANT:
 
