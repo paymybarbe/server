@@ -75,7 +75,7 @@ CREATE TABLE roles_to_users (
 CREATE TABLE permissions (
   id SERIAL PRIMARY KEY,
   permission TEXT UNIQUE NOT NULL,
-  comment TEXT NOT NULL
+  description TEXT NOT NULL
 );
 
 CREATE TABLE permissions_to_roles (
@@ -411,9 +411,9 @@ CREATE TABLE transactions (
   user_id INT,
   manager_id INT,
   name TEXT NOT NULL,
-  comment TEXT,
+  description TEXT,
   type TRANSACTION_TYPE NOT NULL,
-  means TEXT NOT NULL,
+  means TRANSACTION_MEANS NOT NULL,
   money FLOAT NOT NULL,
   points INT NOT NULL,
   previous_money FLOAT NOT NULL,
@@ -424,7 +424,7 @@ CREATE TABLE transactions (
 CREATE TABLE settings (
   name TEXT PRIMARY KEY,
   value TEXT NOT NULL,
-  comment TEXT
+  description TEXT
 );
 
 CREATE TABLE expiring (
