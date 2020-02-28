@@ -70,7 +70,9 @@ DROP TABLE users_inside_services CASCADE;
 
 DROP TABLE inventories CASCADE;
 
-DROP TABLE inside_inventory CASCADE;
+DROP TABLE products_inside_inventory CASCADE;
+
+DROP TABLE ingredients_inside_inventory CASCADE;
 
 DROP TABLE restocking CASCADE;
 

@@ -325,15 +325,23 @@ CREATE TABLE users_inside_services (
 CREATE TABLE inventories (
   id SERIAL PRIMARY KEY,
   date TIMESTAMP NOT NULL,
-  manager_id INT,
-  error BOOLEAN NOT NULL DEFAULT false
+  manager_id INT
 );
 
-CREATE TABLE inside_inventory (
+CREATE TABLE products_inside_inventory (
   id SERIAL PRIMARY KEY,
   inventory_id INT NOT NULL,
   product_id INT NOT NULL,
-  nbr INT NOT NULL DEFAULT 0
+  nbr INT NOT NULL DEFAULT 0,
+  pure BOOLEAN NOT NULL DEFAULT false
+);
+
+CREATE TABLE ingredients_inside_inventory (
+  id SERIAL PRIMARY KEY,
+  inventory_id INT NOT NULL,
+  ingredient_id INT NOT NULL,
+  nbr INT NOT NULL DEFAULT 0,
+  pure BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE restocking (
@@ -373,7 +381,7 @@ CREATE TABLE funds_stats (
   id SERIAL PRIMARY KEY,
   CA FLOAT NOT NULL,
   benefits FLOAT NOT NULL,
-  loss FLOAT NOT NULL,
+  losses FLOAT NOT NULL,
   stocks_value FLOAT NOT NULL,
   points_given INT NOT NULL,
   date TIMESTAMP NOT NULL
@@ -544,9 +552,13 @@ ALTER TABLE users_inside_services ADD FOREIGN KEY (user_id) REFERENCES users (id
 
 ALTER TABLE inventories ADD FOREIGN KEY (manager_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE SET NULL;
 
-ALTER TABLE inside_inventory ADD FOREIGN KEY (inventory_id) REFERENCES inventories (id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE products_inside_inventory ADD FOREIGN KEY (inventory_id) REFERENCES inventories (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE inside_inventory ADD FOREIGN KEY (product_id) REFERENCES products (id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE products_inside_inventory ADD FOREIGN KEY (product_id) REFERENCES products (id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ingredients_inside_inventory ADD FOREIGN KEY (inventory_id) REFERENCES inventories (id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+ALTER TABLE ingredients_inside_inventory ADD FOREIGN KEY (ingredient_id) REFERENCES ingredients (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE restocking ADD FOREIGN KEY (place_id) REFERENCES restocking_places (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -645,5 +657,3 @@ COMMENT ON COLUMN connections_history.user_id IS 'null si inconnu';
 COMMENT ON COLUMN transactions.means IS 'Carte Bleue, Chèque, Liquide, Points, Lydia';
 
 COMMENT ON COLUMN expiring.diverse_cost IS 'Coûts divers ne rentrant pas dans les produits.';
-
-COMMENT ON COLUMN inventories.error IS 'Permet de rectifier une erreur. Le produit n''a jamais existé. Il ne s''agit donc pas d''une perte.';
