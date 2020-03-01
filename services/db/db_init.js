@@ -42,7 +42,7 @@ async function migrate(vers = '') {
     try {
         const appliedMigrations = await postgrator.migrate(vers);
         if (Object.keys(appliedMigrations).length !== 0) {
-            logger.info("Migrated: ", appliedMigrations);
+            logger.silly("Migrated: ", appliedMigrations);
         }
     }
     catch (error) {

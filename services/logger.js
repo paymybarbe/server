@@ -73,10 +73,16 @@ if (process.env.NODE_ENV !== 'production') {
                 format: 'YYYY-MM-DD HH:mm:ss'
             }),
             winston.format.printf((info) => {
-                if (info.message.constructor === Object) {
-                    info.message = JSON.stringify(info.message, null, 4);
+                if (info.message.constructor === Object || info.message.constructor === Array) {
+                    // info.message = JSON.stringify(info.message, null, 4);
+                    info.message = util.inspect(info.message, {
+                        showHidden: true,
+                        depth: 3,
+                        colors: true
+                    });
                 }
                 if (info.stack) {
+                    info.message = info.message.replace(info.stack, '');
                     return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}\n\u001b[31m${info.stack}\u001b[39m`;
                 }
                 return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}`;

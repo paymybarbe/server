@@ -7,6 +7,7 @@ module.exports = class Role {
      * @type number
      */
     _id;
+    name;
     /**
      * ID of the parent role of this role, if there is one.
      * @type number
@@ -19,7 +20,7 @@ module.exports = class Role {
     next_role;
     /**
      * Array of the name of the permissions given to the role.
-     * @type {string[]}
+     * @type {Permission[]}
      */
     permissions;
 };

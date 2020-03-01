@@ -30,7 +30,7 @@ module.exports = class User {
     roles;
     /**
      * Array of the permissions given to the user.
-     * @type {string[]}
+     * @type {Permission[]}
      */
     permissions;
     /**
