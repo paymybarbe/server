@@ -11,6 +11,7 @@
         "linting": "eslint './**/*.js' --fix",
         "build": "electron-packager .  --overwrite --out ./out/",
         "migrate": "node scripts/script.migrate.js",
+        "seed": "node scripts/script.seed.js",
         "debug": "electron --nolazy --inspect-brk=5858 main.js"
     },
     "author": "Mael WILMO, Frantz DARBON",
@@ -28,10 +29,11 @@
         "eslint-plugin-node": "^10.0.0",
         "eslint-plugin-react": "^7.17.0",
         "eslint-plugin-react-hooks": "^1.7.0",
-        "mocha": "^6.2.2",
-        "spectron": "^5.0.0",
+        "faker": "^4.1.0",
         "husky": "^3.1.0",
-        "lint-staged": "^9.5.0"
+        "lint-staged": "^9.5.0",
+        "mocha": "^6.2.2",
+        "spectron": "^5.0.0"
     },
     "dependencies": {
         "debug": "^4.1.1",

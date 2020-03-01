@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const { migrate } = require("../services/db/dbinit");
+const { migrate } = require("../services/db/db_init");
 // This script is used only to migrate DB via npm, not in the app.
 
 if (!process.env.MIGRATE) {

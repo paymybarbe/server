@@ -59,6 +59,12 @@ async function migrate(vers = '') {
     //   .catch((error) => console.log(error));
 }
 
-module.exports.getPool = () => new pg.Pool(dbConfig);
+let pool = new pg.Pool(dbConfig);
+module.exports.getPool = () => {
+    if (!pool) {
+        pool = new pg.Pool(dbConfig);
+    }
+    return pool;
+};
 module.exports.migrate = migrate;
 logger.silly("dbinit was called.");

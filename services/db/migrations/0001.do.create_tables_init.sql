@@ -48,7 +48,7 @@ CREATE TABLE users (
   salt TEXT,
   date_of_birth DATE,
   image TEXT,
-  created_at DATE NOT NULL,
+  created_at DATE NOT NULL DEFAULT current_date,
   last_logged DATE,
   active BOOLEAN NOT NULL DEFAULT true
 );
@@ -137,21 +137,21 @@ CREATE TABLE products_ranked_prices (
   product_id INT NOT NULL,
   rank INT NOT NULL,
   price FLOAT NOT NULL,
-  date DATE NOT NULL
+  date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE products_menu_prices (
   id SERIAL PRIMARY KEY,
   product_id INT NOT NULL,
   price FLOAT NOT NULL,
-  date DATE NOT NULL
+  date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE products_cost_prices (
   id SERIAL PRIMARY KEY,
   product_id INT NOT NULL,
   price FLOAT NOT NULL,
-  date DATE NOT NULL
+  date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE dishes_ranked_prices (
@@ -159,21 +159,21 @@ CREATE TABLE dishes_ranked_prices (
   dish_id INT NOT NULL,
   rank INT NOT NULL,
   price FLOAT NOT NULL,
-  date DATE NOT NULL
+  date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE dishes_cost_prices (
   id SERIAL PRIMARY KEY,
   dish_id INT NOT NULL,
   price FLOAT NOT NULL,
-  date DATE NOT NULL
+  date TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE ingredients_cost_prices (
   id SERIAL PRIMARY KEY,
   ingredient_id INT NOT NULL,
   price FLOAT NOT NULL,
-  date DATE NOT NULL
+  date DATE NOT NULL DEFAULT current_date
 );
 
 CREATE TABLE settings_products_prices (
@@ -246,9 +246,9 @@ CREATE TABLE orders (
   user_id INT NOT NULL,
   manager_id INT,
   status ORDER_STATUS NOT NULL,
-  ordered_at TIMESTAMP,
+  ordered_at TIMESTAMP NOT NULL DEFAULT now(),
   for_date TIMESTAMP DEFAULT NULL,
-  last_change TIMESTAMP
+  last_change TIMESTAMP NOT NULL DEFAULT now()
 );
 
 CREATE TABLE products_inside_orders (
@@ -324,7 +324,7 @@ CREATE TABLE users_inside_services (
 
 CREATE TABLE inventories (
   id SERIAL PRIMARY KEY,
-  date TIMESTAMP NOT NULL,
+  date TIMESTAMP NOT NULL DEFAULT now(),
   manager_id INT
 );
 
@@ -350,7 +350,7 @@ CREATE TABLE restocking (
   manager_id INT,
   driver_id INT,
   diverse_cost FLOAT DEFAULT 0,
-  date DATE NOT NULL
+  date DATE NOT NULL default now()
 );
 
 CREATE TABLE restocking_places (
@@ -384,7 +384,7 @@ CREATE TABLE funds_stats (
   losses FLOAT NOT NULL,
   stocks_value FLOAT NOT NULL,
   points_given INT NOT NULL,
-  date TIMESTAMP NOT NULL
+  date TIMESTAMP NOT NULL default now()
 );
 
 CREATE TABLE cash_funds (
@@ -404,14 +404,14 @@ CREATE TABLE cash_funds_operations (
   description TEXT,
   means TRANSACTION_MEANS NOT NULL,
   amount FLOAT NOT NULL,
-  date TIMESTAMP
+  date TIMESTAMP default now()
 );
 
 CREATE TABLE connections_history (
   id SERIAL PRIMARY KEY,
   user_id INT,
   tag TEXT,
-  date TIMESTAMP
+  date TIMESTAMP default now()
 );
 
 CREATE TABLE transactions (
@@ -426,7 +426,7 @@ CREATE TABLE transactions (
   points INT NOT NULL,
   previous_money FLOAT NOT NULL,
   previous_points INT NOT NULL,
-  date TIMESTAMP NOT NULL
+  date TIMESTAMP NOT NULL default now()
 );
 
 CREATE TABLE settings (
@@ -439,7 +439,7 @@ CREATE TABLE expiring (
   id SERIAL PRIMARY KEY,
   manager_id INT,
   diverse_cost FLOAT DEFAULT 0,
-  date DATE NOT NULL
+  date DATE NOT NULL default now()
 );
 
 CREATE TABLE products_inside_expiring (
