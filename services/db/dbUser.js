@@ -12,13 +12,19 @@ const pool = db_init.getPool();
  * @return {User[]}
  */
 async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
-    const queryText = "SELECT users.*, array_agg(tags.tag_id) AS tags FROM users "
-                    + "LEFT JOIN tags ON users.id = tags.user_id "
-                    + "GROUP BY users.id, tags.user_id;";
+    const queryText = "SELECT * FROM users LEFT JOIN "
+                    + "(SELECT tagged.id, tagged.tags, array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) as user_perms "
+                         + "FROM (SELECT users.id, array_agg(tags.tag_id) AS tags FROM users "
+                            + "LEFT JOIN tags ON users.id = tags.user_id "
+                            + "GROUP BY users.id, tags.user_id) AS tagged "
+                        + "LEFT JOIN permissions_to_users AS p_to_u ON p_to_u.user_id = tagged.id "
+                        + "LEFT JOIN permissions ON p_to_u.perm_id = permissions.id "
+                        + "GROUP BY tagged.id, tagged.tags) AS permed "
+                    + "ON users.id = permed.id;";
     const {
         rows
     } = await pool.query(queryText);
-
+    // logger.debug(rows)
     const users = [];
 
     rows.forEach((row) => {
@@ -43,6 +49,21 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
             }
 
             user.roles = getRolesFromUser(user);
+
+            user.permissions = [];
+            user.personnal_permissions = [];
+            if (row.user_perms) {
+                row.user_perms.forEach((user_perm) => {
+                    if (user_perm[0] !== null) {
+                        const the_perm = new Permission();
+                        the_perm._id = user_perm[0];
+                        the_perm.permission = user_perm[1];
+                        the_perm.description = user_perm[2];
+                        user.permissions.push(the_perm);
+                        user.personnal_permissions.push(the_perm);
+                    }
+                });
+            }
 
             users.push(user);
         }

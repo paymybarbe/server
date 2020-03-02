@@ -14,7 +14,7 @@ const logger = require("../services/logger").child({
 const start = Date.now();
 dbUser.getAllUsers()
     .then((rows) => {
-        // logger.debug(rows);
+        logger.debug(rows);
         db_init.getPool().end().then(() => logger.debug("Pool closed."));
         const millis = Date.now() - start;
         logger.debug(`Test finished in ${millis / 1000} seconds. ${rows.length} rows fetched.`);

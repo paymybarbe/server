@@ -34,6 +34,16 @@ module.exports = class User {
      */
     permissions;
     /**
+     * Array of all the permissions given to the user.
+     * @type {Permission[]}
+     */
+    permissions;
+    /**
+     * Array of the permissions given to the user, but not coming from roles.
+     * @type {Permission[]}
+     */
+    personnal_permissions;
+    /**
      * Favorites products of an user in key/value: index:product_id
      * @type {Object.<number,number>} index:product_id
      */
