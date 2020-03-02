@@ -31,6 +31,9 @@ const logger = winston.createLogger({
             if (!info.service) {
                 info.service = "general-log";
             }
+            if (!info.inspect_depth) {
+                info.inspect_depth = 3;
+            }
             info.level = info.level.toUpperCase();
             if (info.stack) {
                 if (info[Symbol.for("splat")]) {
@@ -77,7 +80,7 @@ if (process.env.NODE_ENV !== 'production') {
                     // info.message = JSON.stringify(info.message, null, 4);
                     info.message = util.inspect(info.message, {
                         showHidden: true,
-                        depth: 3,
+                        depth: info.inspect_depth,
                         colors: true
                     });
                 }

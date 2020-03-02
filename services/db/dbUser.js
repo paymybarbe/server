@@ -3,6 +3,8 @@ const logger = require("../logger").child({
     service: "server:services:db:dbUser"
 });
 const User = require("../../models/User");
+const Role = require("../../models/Role");
+const Permission = require("../../models/Permission");
 const pool = db_init.getPool();
 
 /**
@@ -18,28 +20,37 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
     } = await pool.query(queryText);
 
     const users = [];
+
     rows.forEach((row) => {
-        const user = new User();
-        user._id = row.id;
-        user.first_name = row.first_name;
-        user.last_name = row.last_name;
-        user.solde = row.solde;
-        user.points = row.points;
-        user.pseudo = row.pseudo;
-        user.email = row.email;
-        user.date_of_birth = row.date_of_birth;
-        user.created_at = row.created_at;
-        user.active = row.active;
+        if (row.id !== null) {
+            const user = new User();
+            user._id = row.id;
+            user.first_name = row.first_name;
+            user.last_name = row.last_name;
+            user.solde = row.solde;
+            user.points = row.points;
+            user.pseudo = row.pseudo;
+            user.email = row.email;
+            user.date_of_birth = row.date_of_birth;
+            user.created_at = row.created_at;
+            user.active = row.active;
 
-        if (row.tags[0] === null) {
-            user.tags = [];
-        }
-        else {
-            user.tags = row.tags;
-        }
+            if (row.tags[0] === null) {
+                user.tags = [];
+            }
+            else {
+                user.tags = row.tags;
+            }
 
-        users.push(user);
+            user.roles = getRolesFromUser(user);
+
+            users.push(user);
+        }
     });
+    for (let i = 0; i < users.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        users[i].roles = await users[i].roles;
+    }
     return users;
 }
 
@@ -96,6 +107,14 @@ async function addUser(user) {
                 );
             });
         }
+
+        if (user.roles) {
+            user.roles.forEach((role) => {
+                promises.push(
+                    client.query('INSERT INTO roles_to_users (user_id, role_id) VALUES ($1, $2)', [user_ret._id, role._id])
+                );
+            });
+        }
         // TODO: dbRole, completer cette fonction...
 
         await Promise.all(promises);
@@ -112,5 +131,62 @@ async function addUser(user) {
     }
 }
 
+/**
+ * Remove a user
+ * @param {User} user
+ */
+async function removeUser(user) {
+    if (!user) {
+        throw new Error("User was undefined: can't remove user from database.");
+    }
+
+    await pool.query("DELETE FROM users WHERE id = $1;", [user._id]);
+}
+
+/**
+ * Get all Roles from a User
+ * @param User user
+ * @returns {Role[]}
+ */
+async function getRolesFromUser(user) {
+    const queryText = "SELECT roles.*, "
+                        + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) AS perm_array "
+                    + "FROM roles "
+                    + "LEFT JOIN permissions_to_roles ON roles.id = permissions_to_roles.role_id "
+                    + "LEFT JOIN permissions ON permissions.id = permissions_to_roles.perm_id "
+                    + "WHERE roles.id IN (SELECT role_id FROM roles_to_users WHERE user_id = $1) "
+                    + "GROUP BY roles.id;";
+    const {
+        rows
+    } = await pool.query(queryText, [user._id]);
+
+    const roles = [];
+    rows.forEach((row) => {
+        if (row.id !== null) {
+            const role = new Role();
+            role._id = row.id;
+            role.next_role = row.next_role;
+            role.name = row.name;
+            role.parent_role = row.parent_role;
+
+            role.permissions = [];
+
+            row.perm_array.forEach((arr) => {
+                if (arr[0] !== null) {
+                    const perm = new Permission();
+                    perm._id = parseInt(arr[0]);
+                    perm.permission = arr[1];
+                    perm.description = arr[2];
+                    role.permissions.push(perm);
+                }
+            });
+
+            roles.push(role);
+        }
+    });
+    return roles;
+}
+
 module.exports.getAllUsers = getAllUsers;
 module.exports.addUser = addUser;
+module.exports.removeUser = removeUser;

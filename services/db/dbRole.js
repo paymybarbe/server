@@ -24,25 +24,30 @@ async function getAllRoles() {
     } = await pool.query(queryText);
 
     const roles = [];
-    rows.forEach((row) => {
-        const role = new Role();
-        role._id = row.id;
-        role.next_role = row.next_role;
-        role.name = row.name;
-        role.parent_role = row.parent_role;
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].id !== null) {
+            const role = new Role();
+            role._id = rows[i].id;
+            role.next_role = rows[i].next_role;
+            role.name = rows[i].name;
+            role.parent_role = rows[i].parent_role;
 
-        role.permissions = [];
+            role.permissions = [];
 
-        row.perm_array.forEach((arr) => {
-            const perm = new Permission();
-            perm._id = parseInt(arr[0]);
-            perm.permission = arr[1];
-            perm.description = arr[2];
-            role.permissions.push(perm);
-        });
+            rows[i].perm_array.forEach((arr) => {
+                if (arr[0] !== null) {
+                    const perm = new Permission();
+                    perm._id = parseInt(arr[0]);
+                    perm.permission = arr[1];
+                    perm.description = arr[2];
+                    role.permissions.push(perm);
+                }
+            });
 
-        roles.push(role);
-    });
+            roles.push(role);
+        }
+    }
+
     return roles;
 }
 

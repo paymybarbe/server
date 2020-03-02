@@ -19,12 +19,14 @@ async function getAllPermissions() {
     const permissions = [];
 
     rows.forEach((row) => {
-        const permission = new Permission();
-        permission._id = row.id;
-        permission.permission = row.permission;
-        permission.description = row.description;
+        if (row.id !== null) {
+            const permission = new Permission();
+            permission._id = row.id;
+            permission.permission = row.permission;
+            permission.description = row.description;
 
-        permissions.push(permission);
+            permissions.push(permission);
+        }
     });
     return permissions;
 }

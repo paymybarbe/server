@@ -158,6 +158,16 @@ async function main() {
 
             the_user.roles = [];
 
+            if (roles.length > 0) {
+                for (let d = 0; d < Math.floor(Math.random() * 5); d++) {
+                    const the_role = roles[Math.floor(Math.random() * roles.length)];
+                    if (the_user.roles.filter(
+                        (role) => role._id === the_role._id
+                    ).length === 0) {
+                        the_user.roles.push(the_role);
+                    }
+                }
+            }
 
             // if (permissions.length !== 0) {
             //     for (let j = 0; j < Math.floor(Math.random() * 5); j++) {
