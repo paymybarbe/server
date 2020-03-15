@@ -5,5 +5,5 @@ const logger = require("../services/logger").child({
 
 module.exports = async function quit() {
     logger.info("Closing database pool...");
-    await db_init.getPool().end();
+    await db_init.end();
 };

@@ -20,7 +20,7 @@ const logger = require("../services/logger").child({
 //         await dbUser.getAllUsers();
 //         the_time += Date.now() - start;
 //     }
-//     await db_init.getPool().end();
+//     await db_init.end();
 //    logger.debug(`Test finished in ${the_time / 1000} seconds.
 // ${the_time / 1000 / 200} in mean.`);
 // }
@@ -30,7 +30,7 @@ const start = Date.now();
 dbUser.getAllUsers()
     .then((rows) => {
         logger.debug(rows);
-        db_init.getPool().end().then(() => logger.debug("Pool closed."));
+        db_init.end().then(() => logger.debug("Pool closed."));
         const millis = Date.now() - start;
         logger.debug(`Test finished in ${millis / 1000} seconds. ${rows.length} rows fetched.`);
     })
@@ -49,7 +49,7 @@ dbUser.getAllUsers()
 //         logger.debug(err);
 //     })
 //     .then(() => {
-//         db_init.getPool().end().then(() => logger.debug("Pool closed."));
+//         db_init.end().then(() => logger.debug("Pool closed."));
 //         const millis = Date.now() - start;
 //         logger.debug(`Test finished in ${millis / 1000} seconds.`);
 //     });

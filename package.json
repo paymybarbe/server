@@ -4,7 +4,7 @@
     "description": "Le serveur du Bar de Telecom.",
     "main": "./main.js",
     "scripts": {
-        "test": "mocha --recursive test/auto",
+        "test": "ENV=test mocha --recursive test/auto",
         "start": "electron .",
         "server": "electron .",
         "lint": "eslint './**/*.js'",

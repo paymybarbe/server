@@ -24,7 +24,9 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
             + "GROUP BY tagged.id, tagged.tags) AS permed "
         + "ON users.id = permed.id;"; */
 
-    const queryText = "SELECT u.*, array_agg(tags.tag_id) AS tags, array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) as user_perms "
+    const queryText = "SELECT u.*, array_agg(tags.tag_id) AS tags, "
+                    + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
+                    + " as user_perms "
                     + "FROM users u "
                     + "LEFT JOIN tags ON u.id = tags.user_id "
                     + "LEFT JOIN permissions_to_users AS p_to_u ON p_to_u.user_id = u.id "
@@ -67,7 +69,6 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
                         the_perm._id = user_perm[0];
                         the_perm.permission = user_perm[1];
                         the_perm.description = user_perm[2];
-                        user.permissions.push(the_perm);
                         user.personnal_permissions.push(the_perm);
                     }
                 });
@@ -139,7 +140,8 @@ async function addUser(user) {
         if (user.roles) {
             user.roles.forEach((role) => {
                 promises.push(
-                    client.query('INSERT INTO roles_to_users (user_id, role_id) VALUES ($1, $2)', [user_ret._id, role._id])
+                    client.query('INSERT INTO roles_to_users (user_id, role_id) VALUES ($1, $2)',
+                        [user_ret._id, role._id])
                 );
             });
         }
@@ -147,7 +149,8 @@ async function addUser(user) {
         if (user.personnal_permissions) {
             user.personnal_permissions.forEach((the_perm) => {
                 promises.push(
-                    client.query('INSERT INTO roles_to_users (user_id, perm_id) VALUES ($1, $2)', [user_ret._id, the_perm._id])
+                    client.query('INSERT INTO permissions_to_users (user_id, perm_id) VALUES ($1, $2)',
+                        [user_ret._id, the_perm._id])
                 );
             });
         }
@@ -192,7 +195,8 @@ async function getRolesFromUser(user) {
         throw new Error("User id was undefined: can't add user");
     }
     const queryText = "SELECT roles.*, "
-                        + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) AS perm_array "
+                        + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
+                        + " AS perm_array "
                     + "FROM roles "
                     + "LEFT JOIN permissions_to_roles ON roles.id = permissions_to_roles.role_id "
                     + "LEFT JOIN permissions ON permissions.id = permissions_to_roles.perm_id "

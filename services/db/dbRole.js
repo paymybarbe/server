@@ -14,7 +14,8 @@ const pool = db_init.getPool();
  */
 async function getAllRoles() {
     const queryText = "SELECT roles.*, "
-                        + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) AS perm_array "
+                    + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
+                    + " AS perm_array "
                     + "FROM roles "
                     + "LEFT JOIN permissions_to_roles ON roles.id = permissions_to_roles.role_id "
                     + "LEFT JOIN permissions ON permissions.id = permissions_to_roles.perm_id "
@@ -84,7 +85,8 @@ async function addRole(role) {
         if (role_ret.permissions) {
             role_ret.permissions.forEach((permission) => {
                 promises.push(
-                    client.query('INSERT INTO permissions_to_roles (role_id, perm_id) VALUES ($1, $2)', [role_ret._id, permission._id])
+                    client.query('INSERT INTO permissions_to_roles (role_id, perm_id) VALUES ($1, $2)',
+                        [role_ret._id, permission._id])
                 );
             });
         }
@@ -128,7 +130,8 @@ async function getPermissionsFromRole(role) {
         throw new Error("Role id was undefined: can't get role permissions.");
     }
     const queryText = "SELECT roles.*, "
-                        + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) AS perm_array "
+                        + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
+                        + " AS perm_array "
                     + "FROM roles "
                     + "LEFT JOIN permissions_to_roles ON roles.id = permissions_to_roles.role_id "
                     + "LEFT JOIN permissions ON permissions.id = permissions_to_roles.perm_id "
@@ -165,7 +168,31 @@ async function getPermissionsFromRole(role) {
     return roles;
 }
 
+/**
+ * Check if Role exists
+ * @param {Role} role
+ */
+async function roleExists(role) {
+    if (!role) {
+        throw new Error("Permission was undefined: can't remove permission from database.");
+    }
+    if (role._id) {
+        const {
+            rows
+        } = pool.query("SELECT COUNT(*) FROM roles WHERE id = $1;", [role._id]);
+        return rows.length;
+    }
+    if (role.name) {
+        const {
+            rows
+        } = pool.query("SELECT COUNT(*) FROM roles WHERE name = $1;", [role.name]);
+        return rows.length;
+    }
+    return false;
+}
+
 module.exports.getAllRoles = getAllRoles;
 module.exports.addRole = addRole;
 module.exports.removeRole = removeRole;
 module.exports.getPermissionsFromRole = getPermissionsFromRole;
+module.exports.roleExists = roleExists;

@@ -23,7 +23,10 @@
         "no-underscore-dangle": [0],
         "no-plusplus": [0],
         "radix": [0],
-        "prefer-destructuring": [0]
+        "prefer-destructuring": [0],
+        "max-len": ["error", { "code": 120, "tabWidth": 4, "ignoreComments": true,
+                             "ignoreUrls": true, "ignoreTemplateLiterals": true, "ignoreStrings": true}],
+        "no-continue": [0]
         // // Indent JSX with 4 spaces
         // "react/jsx-indent": ["error", 4],
 

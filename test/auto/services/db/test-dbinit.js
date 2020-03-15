@@ -10,7 +10,6 @@ describe("Database initialize", function _test() {
         pool.query('SELECT NOW()', (err, res) => {
             expect(err).to.not.exist;
             expect(res).to.exist;
-            pool.end();
             done();
         });
     });

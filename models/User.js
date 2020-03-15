@@ -37,14 +37,19 @@ module.exports = class User {
         let all_perms = [];
 
         all_perms = [];
-        this.roles.forEach((role) => {
-            all_perms.concat(role.permissions);
-        });
-        this.personnal_permissions.forEach((perm) => {
-            if (all_perms.filter((p) => p.permission === perm.permission).length === 0) {
-                all_perms.push(perm);
-            }
-        });
+        if (this.roles) {
+            this.roles.forEach((role) => {
+                all_perms.concat(role.permissions);
+            });
+        }
+
+        if (this.personnal_permissions) {
+            this.personnal_permissions.forEach((perm) => {
+                if (all_perms.filter((p) => p.permission === perm.permission).length === 0) {
+                    all_perms.push(perm);
+                }
+            });
+        }
 
         return all_perms;
     }

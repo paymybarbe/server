@@ -67,6 +67,29 @@ async function removePermission(permission) {
     }
     await pool.query("DELETE FROM permissions WHERE id = $1;", [permission._id]);
 }
+
+/**
+ * Check if Permission exists
+ * @param {Permission} permission
+ */
+async function permissionExists(permission) {
+    if (!permission) {
+        throw new Error("Permission was undefined: can't remove permission from database.");
+    }
+    if (permission._id) {
+        const {
+            rows
+        } = pool.query("SELECT COUNT(*) FROM permissions WHERE id = $1;", [permission._id]);
+        return rows.length;
+    }
+    if (permission.permission) {
+        const answ = pool.query("SELECT COUNT(*) FROM permissions WHERE permission = $1;", [permission.permission]);
+        return answ;
+    }
+    return false;
+}
+
 module.exports.getAllPermissions = getAllPermissions;
 module.exports.addPermission = addPermission;
 module.exports.removePermission = removePermission;
+module.exports.permissionExists = permissionExists;

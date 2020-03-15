@@ -66,5 +66,12 @@ module.exports.getPool = () => {
     }
     return pool;
 };
+
+module.exports.end = async function end() {
+    if (pool) {
+        await pool.end();
+        pool = null;
+    }
+};
 module.exports.migrate = migrate;
 logger.silly("dbinit was called.");
