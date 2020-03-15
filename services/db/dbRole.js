@@ -115,6 +115,57 @@ async function removeRole(role) {
     await pool.query("DELETE FROM roles WHERE id = $1;", [role._id]);
 }
 
+/**
+ * Get all permissions from a role.
+ * @param {Role} role
+ * @return {Permission[]}
+ */
+async function getPermissionsFromRole(role) {
+    if (!role) {
+        throw new Error("Role was undefined: can't get role permissions."); // TODO: custom errors
+    }
+    if (!role._id) {
+        throw new Error("Role id was undefined: can't get role permissions.");
+    }
+    const queryText = "SELECT roles.*, "
+                        + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) AS perm_array "
+                    + "FROM roles "
+                    + "LEFT JOIN permissions_to_roles ON roles.id = permissions_to_roles.role_id "
+                    + "LEFT JOIN permissions ON permissions.id = permissions_to_roles.perm_id "
+                    + "WHERE roles.id = $1"
+                    + "GROUP BY roles.id;";
+    const {
+        rows
+    } = await pool.query(queryText, [role._id]);
+    const roles = [];
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].id !== null) {
+            const my_role = new Role();
+            my_role._id = rows[i].id;
+            my_role.next_role = rows[i].next_role;
+            my_role.name = rows[i].name;
+            my_role.parent_role = rows[i].parent_role;
+
+            my_role.permissions = [];
+
+            rows[i].perm_array.forEach((arr) => {
+                if (arr[0] !== null) {
+                    const perm = new Permission();
+                    perm._id = parseInt(arr[0]);
+                    perm.permission = arr[1];
+                    perm.description = arr[2];
+                    my_role.permissions.push(perm);
+                }
+            });
+
+            roles.push(my_role);
+        }
+    }
+
+    return roles;
+}
+
 module.exports.getAllRoles = getAllRoles;
 module.exports.addRole = addRole;
 module.exports.removeRole = removeRole;
+module.exports.getPermissionsFromRole = getPermissionsFromRole;

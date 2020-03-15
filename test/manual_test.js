@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 // eslint-disable-next-line import/no-extraneous-dependencies
+const util = require('util');
 const faker = require("faker");
 const User = require("./../models/User");
 const db_init = require("../services/db/db_init");
@@ -10,6 +11,20 @@ const logger = require("../services/logger").child({
     service: "server:manualtest:db",
     inspect_depth: 5
 });
+
+// async function looping() {
+//     let the_time = 0;
+//     for (let di = 0; di < 200; di++) {
+//         const start = Date.now();
+//         // eslint-disable-next-line no-await-in-loop
+//         await dbUser.getAllUsers();
+//         the_time += Date.now() - start;
+//     }
+//     await db_init.getPool().end();
+//    logger.debug(`Test finished in ${the_time / 1000} seconds.
+// ${the_time / 1000 / 200} in mean.`);
+// }
+// looping().then();
 
 const start = Date.now();
 dbUser.getAllUsers()

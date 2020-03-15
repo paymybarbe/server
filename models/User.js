@@ -24,20 +24,30 @@ module.exports = class User {
      */
     tags;
     /**
-     * Array of the names of the roles related to the user.
-     * @type {string[]}
+     * Array of the roles given to the user.
+     * @type {Roles[]}
      */
     roles;
+
     /**
-     * Array of the permissions given to the user.
+     * Array of all the permissions given to the user, from Roles and personnal.
      * @type {Permission[]}
      */
-    permissions;
-    /**
-     * Array of all the permissions given to the user.
-     * @type {Permission[]}
-     */
-    permissions;
+    get permissions() {
+        let all_perms = [];
+
+        all_perms = [];
+        this.roles.forEach((role) => {
+            all_perms.concat(role.permissions);
+        });
+        this.personnal_permissions.forEach((perm) => {
+            if (all_perms.filter((p) => p.permission === perm.permission).length === 0) {
+                all_perms.push(perm);
+            }
+        });
+
+        return all_perms;
+    }
     /**
      * Array of the permissions given to the user, but not coming from roles.
      * @type {Permission[]}

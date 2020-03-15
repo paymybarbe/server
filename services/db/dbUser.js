@@ -1,7 +1,7 @@
 const db_init = require("./db_init");
-const logger = require("../logger").child({
-    service: "server:services:db:dbUser"
-});
+// const logger = require("../logger").child({
+//     service: "server:services:db:dbUser"
+// });
 const User = require("../../models/User");
 const Role = require("../../models/Role");
 const Permission = require("../../models/Permission");
@@ -12,15 +12,24 @@ const pool = db_init.getPool();
  * @return {User[]}
  */
 async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
-    const queryText = "SELECT * FROM users LEFT JOIN "
-                    + "(SELECT tagged.id, tagged.tags, array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) as user_perms "
-                         + "FROM (SELECT users.id, array_agg(tags.tag_id) AS tags FROM users "
-                            + "LEFT JOIN tags ON users.id = tags.user_id "
-                            + "GROUP BY users.id, tags.user_id) AS tagged "
-                        + "LEFT JOIN permissions_to_users AS p_to_u ON p_to_u.user_id = tagged.id "
-                        + "LEFT JOIN permissions ON p_to_u.perm_id = permissions.id "
-                        + "GROUP BY tagged.id, tagged.tags) AS permed "
-                    + "ON users.id = permed.id;";
+    /* const queryText = "SELECT * FROM users LEFT JOIN "
+        + "(SELECT tagged.id, tagged.tags,
+            array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])
+            as user_perms "
+                + "FROM (SELECT users.id, array_agg(tags.tag_id) AS tags FROM users "
+                + "LEFT JOIN tags ON users.id = tags.user_id "
+                + "GROUP BY users.id, tags.user_id) AS tagged "
+            + "LEFT JOIN permissions_to_users AS p_to_u ON p_to_u.user_id = tagged.id "
+            + "LEFT JOIN permissions ON p_to_u.perm_id = permissions.id "
+            + "GROUP BY tagged.id, tagged.tags) AS permed "
+        + "ON users.id = permed.id;"; */
+
+    const queryText = "SELECT u.*, array_agg(tags.tag_id) AS tags, array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) as user_perms "
+                    + "FROM users u "
+                    + "LEFT JOIN tags ON u.id = tags.user_id "
+                    + "LEFT JOIN permissions_to_users AS p_to_u ON p_to_u.user_id = u.id "
+                    + "LEFT JOIN permissions ON p_to_u.perm_id = permissions.id "
+                    + "GROUP BY u.id;";
     const {
         rows
     } = await pool.query(queryText);
@@ -50,7 +59,6 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
 
             user.roles = getRolesFromUser(user);
 
-            user.permissions = [];
             user.personnal_permissions = [];
             if (row.user_perms) {
                 row.user_perms.forEach((user_perm) => {
@@ -83,8 +91,7 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
  */
 async function addUser(user) {
     if (!user) {
-        logger.error("User was undefined: can't add user.");
-        return undefined;
+        throw new Error("User was undefined: can't add user.");
     }
     const user_ret = JSON.parse(JSON.stringify(user));
     const client = await pool.connect();
@@ -136,7 +143,15 @@ async function addUser(user) {
                 );
             });
         }
-        // TODO: dbRole, completer cette fonction...
+
+        if (user.personnal_permissions) {
+            user.personnal_permissions.forEach((the_perm) => {
+                promises.push(
+                    client.query('INSERT INTO roles_to_users (user_id, perm_id) VALUES ($1, $2)', [user_ret._id, the_perm._id])
+                );
+            });
+        }
+        // TODO: completer cette fonction...
 
         await Promise.all(promises);
         await client.query('COMMIT');
@@ -170,6 +185,12 @@ async function removeUser(user) {
  * @returns {Role[]}
  */
 async function getRolesFromUser(user) {
+    if (!user) {
+        throw new Error("User was undefined: can't add user."); // TODO: custom errors
+    }
+    if (!user._id) {
+        throw new Error("User id was undefined: can't add user");
+    }
     const queryText = "SELECT roles.*, "
                         + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description]) AS perm_array "
                     + "FROM roles "
