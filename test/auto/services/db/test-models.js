@@ -17,8 +17,8 @@ describe("Permissions From Database", function _test() {
         seeder.cleanDB().then(() => done());
     });
 
-    this.afterAll(() => {
-        dbinit.end();
+    this.afterAll((done) => {
+        seeder.cleanDB().then(() => dbinit.end().then(() => done()));
     });
 
     it("Permissions Insert", (done) => {

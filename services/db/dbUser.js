@@ -26,11 +26,13 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
 
     const queryText = "SELECT u.*, array_agg(tags.tag_id) AS tags, "
                     + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
-                    + " as user_perms "
+                    + " as user_perms, "
+                    + "array_agg(ARRAY[fav.index, fav.product_id]) as favorites "
                     + "FROM users u "
                     + "LEFT JOIN tags ON u.id = tags.user_id "
                     + "LEFT JOIN permissions_to_users AS p_to_u ON p_to_u.user_id = u.id "
                     + "LEFT JOIN permissions ON p_to_u.perm_id = permissions.id "
+                    + "LEFT JOIN favorites fav ON u.id = fav.user_id "
                     + "GROUP BY u.id;";
     const {
         rows
@@ -74,9 +76,19 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
                 });
             }
 
+            if (row.favorites[0] === null || row.favorites[0][0] === null) {
+                user.favorites = [];
+            }
+            else {
+                for (let ind = 0; ind < row.favorites.length; ind++) {
+                    user.favorites[row.favorites[ind][0]] = row.favorites[ind][1];
+                }
+            }
+
             users.push(user);
         }
     });
+
     for (let i = 0; i < users.length; i++) {
         // eslint-disable-next-line no-await-in-loop
         users[i].roles = await users[i].roles;
@@ -151,6 +163,15 @@ async function addUser(user) {
                 promises.push(
                     client.query('INSERT INTO permissions_to_users (user_id, perm_id) VALUES ($1, $2)',
                         [user_ret._id, the_perm._id])
+                );
+            });
+        }
+
+        if (user.favorites) {
+            user.favorites.forEach((the_prod) => {
+                promises.push(
+                    client.query('INSERT INTO favorites (user_id, product_id, index) VALUES ($1, $2, $3)',
+                        [user_ret._id, the_prod._id, user.favorites.indexOf(the_prod)])
                 );
             });
         }

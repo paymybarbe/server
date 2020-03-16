@@ -59,8 +59,9 @@ module.exports = class User {
      */
     personnal_permissions;
     /**
-     * Favorites products of an user in key/value: index:product_id
-     * @type {Object.<number,number>} index:product_id
+     * Favorites products of an user in an array.
+     * First product is the most liked.
+     * @type Product[]
      */
     favorites;
     /**

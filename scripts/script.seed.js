@@ -163,6 +163,8 @@ async function generateUsers(amount, permissions, roles) {
             }
         }
 
+        // TODO: Add favorites
+
         user_adding.push(the_user);
     }
 
