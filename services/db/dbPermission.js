@@ -40,21 +40,21 @@ async function addPermission(permission) {
     if (!permission) {
         throw new Error("Permission was undefined: can't add permission to database.");
     }
-    const permission_ret = JSON.parse(JSON.stringify(permission));
 
     const queryText = "INSERT INTO permissions (permission, "
                                             + "description) "
     + "VALUES ($1, $2) RETURNING id;";
 
     const params = [
-        permission_ret.permission,
-        permission_ret.description
+        permission.permission,
+        permission.description
     ];
 
     const res = await pool.query(queryText, params);
-    permission_ret._id = res.rows[0].id;
+    // eslint-disable-next-line no-param-reassign
+    permission._id = res.rows[0].id;
 
-    return permission_ret;
+    return permission;
 }
 
 /**

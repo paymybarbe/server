@@ -61,7 +61,6 @@ async function addRole(role) {
     if (!role) {
         throw new Error("Role was undefined: can't add role to database.");
     }
-    const role_ret = JSON.parse(JSON.stringify(role));
     const client = await pool.connect();
     try {
         await client.query('BEGIN');
@@ -72,21 +71,22 @@ async function addRole(role) {
         + "VALUES ($1, $2, $3) RETURNING id;";
 
         const params = [
-            role_ret.name,
-            role_ret.parent_role,
-            role_ret.next_role
+            role.name,
+            role.parent_role,
+            role.next_role
         ];
 
         const res = await client.query(queryText, params);
-        role_ret._id = res.rows[0].id;
+        // eslint-disable-next-line no-param-reassign
+        role._id = res.rows[0].id;
 
         const promises = []; // array of promises to know when everything is done.
 
-        if (role_ret.permissions) {
-            role_ret.permissions.forEach((permission) => {
+        if (role.permissions) {
+            role.permissions.forEach((permission) => {
                 promises.push(
                     client.query('INSERT INTO permissions_to_roles (role_id, perm_id) VALUES ($1, $2)',
-                        [role_ret._id, permission._id])
+                        [role._id, permission._id])
                 );
             });
         }
@@ -94,7 +94,7 @@ async function addRole(role) {
         await Promise.all(promises);
         await client.query('COMMIT');
 
-        return role_ret;
+        return role;
     }
     catch (e) {
         await client.query('ROLLBACK');

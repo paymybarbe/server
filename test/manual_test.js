@@ -7,6 +7,7 @@ const db_init = require("../services/db/db_init");
 const dbUser = require("../services/db/dbUser");
 const dbRole = require("../services/db/dbRole");
 const dbPermission = require("../services/db/dbPermission");
+const config = require("../config/config");
 const logger = require("../services/logger").child({
     service: "server:manualtest:db",
     inspect_depth: 5
@@ -26,20 +27,20 @@ const logger = require("../services/logger").child({
 // }
 // looping().then();
 
-const start = Date.now();
-dbUser.getAllUsers()
-    .then((rows) => {
-        logger.debug(rows);
-        db_init.end().then(() => logger.debug("Pool closed."));
-        const millis = Date.now() - start;
-        logger.debug(`Test finished in ${millis / 1000} seconds. ${rows.length} rows fetched.`);
-    })
-    .catch((err) => {
-        logger.debug(err);
-    })
-    .then(() => {
+// const start = Date.now();
+// dbUser.getAllUsers()
+//     .then((rows) => {
+//         logger.debug(rows);
+//         db_init.end().then(() => logger.debug("Pool closed."));
+//         const millis = Date.now() - start;
+//         logger.debug(`Test finished in ${millis / 1000} seconds. ${rows.length} rows fetched.`);
+//     })
+//     .catch((err) => {
+//         logger.debug(err);
+//     })
+//     .then(() => {
 
-    });
+//     });
 
 // dbPermission.getAllPermissions()
 //     .then((rows) => {
@@ -53,3 +54,13 @@ dbUser.getAllUsers()
 //         const millis = Date.now() - start;
 //         logger.debug(`Test finished in ${millis / 1000} seconds.`);
 //     });
+
+
+// async function tryIt() {
+//     const pool = db_init.getPool();
+//     console.log(config);
+//     console.log(await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [8]));
+//     await pool.end();
+// }
+
+// tryIt().then();

@@ -40,7 +40,7 @@ describe("Certs authorization checker", function config_fetcher_test() {
         server.close();
     });
 
-    it("client 1 authorized", () => {
+    it("Client 1 authorized", () => {
         const options = {
             host: config.server.host,
             port: config.server.port,

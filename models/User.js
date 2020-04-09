@@ -7,27 +7,27 @@ module.exports = class User {
      * @type number
      */
     _id;
-    first_name;
-    last_name;
+    first_name = null;
+    last_name = null;
     solde = 0;
     points = 0;
-    pseudo;
-    email;
-    pass;
-    date_of_birth;
-    image;
-    created_at;
-    active;
+    pseudo = null;
+    email = null;
+    pass = null;
+    date_of_birth = null;
+    image = null;
+    created_at = null;
+    active = true;
     /**
      * Array of the tags related to the user.
      * @type {string[]}
      */
-    tags;
+    tags = [];
     /**
      * Array of the roles given to the user.
      * @type {Roles[]}
      */
-    roles;
+    roles = [];
 
     /**
      * Array of all the permissions given to the user, from Roles and personnal.
@@ -57,16 +57,16 @@ module.exports = class User {
      * Array of the permissions given to the user, but not coming from roles.
      * @type {Permission[]}
      */
-    personnal_permissions;
+    personnal_permissions = [];
     /**
      * Favorites products of an user in an array.
      * First product is the most liked.
      * @type Product[]
      */
-    favorites;
+    favorites = [];
     /**
      * Array of the transactions of the user. To be left empty if not used. Beware of cyclic call.
      * @type {Transaction[]}
     */
-    transactions;
+    transactions = [];
 };

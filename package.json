@@ -20,6 +20,7 @@
         "babel-eslint": "^10.0.3",
         "chai": "^4.2.0",
         "decache": "^4.5.1",
+        "deep-equal-in-any-order": "^1.0.27",
         "eslint": "^6.1.0",
         "eslint-config-airbnb": "^18.0.1",
         "eslint-config-node": "^4.0.0",

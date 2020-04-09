@@ -101,7 +101,6 @@ async function generateRoles(amount, permissions, roles) {
         role_added.push(role);
         roles_used.push(role.name);
     }
-
     return role_added;
 }
 
@@ -122,7 +121,7 @@ async function addRoles(amount, permissions, roles) {
 async function generateUsers(amount, permissions, roles) {
     const user_adding = [];
 
-    for (let i = 0; i < process.env.USERS; i++) {
+    for (let i = 0; i < amount; i++) {
         const the_user = new User();
         the_user.first_name = faker.name.firstName();
         the_user.last_name = faker.name.lastName();
@@ -130,7 +129,6 @@ async function generateUsers(amount, permissions, roles) {
         the_user.points = Math.floor(Math.random() * 101);
         the_user.pseudo = faker.internet.userName();
         the_user.email = faker.internet.email();
-        the_user.pass = faker.internet.password();
         the_user.date_of_birth = faker.date.past();
         the_user.created_at = faker.date.recent();
         the_user.active = Math.random() > 0.5;
@@ -167,7 +165,6 @@ async function generateUsers(amount, permissions, roles) {
 
         user_adding.push(the_user);
     }
-
     return user_adding;
 }
 
