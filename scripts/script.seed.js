@@ -177,6 +177,7 @@ async function addUsers(amount, permissions, roles) {
         // eslint-disable-next-line no-await-in-loop
         user_added[i] = await user_added[i];
     }
+    logger.debug(user_added);
 
     return user_added;
 }

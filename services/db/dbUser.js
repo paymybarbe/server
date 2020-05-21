@@ -132,6 +132,7 @@ async function getUser(askedUser) {
             user.date_of_birth = row.date_of_birth;
             user.created_at = row.created_at;
             user.active = row.active;
+            user.image = row.image;
 
             if (row.tags[0] === null) {
                 user.tags = [];
