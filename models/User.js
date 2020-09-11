@@ -14,10 +14,20 @@ module.exports = class User {
     pseudo = null;
     email = null;
     pass = null;
+    /**
+     * @type Date
+     */
     date_of_birth = null;
     image = null;
+    /**
+     * @type Date
+     */
     created_at = null;
     active = true;
+    /**
+     * @type Date
+     */
+    last_logged;
     /**
      * Array of the tags related to the user.
      * @type {string[]}

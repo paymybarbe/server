@@ -25,13 +25,28 @@ module.exports = class Product {
      */
     deleted;
     /**
-     * Prices of a product in key/value: (role | "menu" | "cost"):price
-     * @type {Object.<string,number>} (role | "menu" | "cost"):price
+     * Prices of a product based on rank in key/value: role:price
+     * @type {Object.<role:Role,price:number>} role:price
      */
-    prices;
+    roles_prices;
     /**
-     * Prices of a product in key/value: (role | "default"):{multiplier, add}
-     * @type {Object.<string,{multiplier:number, add:number}>} (role | "default"):{multiplier, add}
+     * Price of a product in menu.
+     * @type {number}
      */
-    settings;
+    menu_price;
+    /**
+     * Cost price of a product.
+     * @type {number}
+     */
+    cost_price;
+    // /**
+    //  * Prices modifier of the product in key/value: role:{multiplier, add}
+    //  * @type {Object.<role:Role,{multiplier:number, add:number}>} role:{multiplier, add}
+    //  */
+    // roles_settings;
+    // /**
+    //  * Prices modifier of the product in a menu: {multiplier, add}
+    //  * @type {{multiplier:number, add:number}}
+    //  */
+    // menu_settings;
 };

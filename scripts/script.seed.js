@@ -130,7 +130,9 @@ async function generateUsers(amount, permissions, roles) {
         the_user.pseudo = faker.internet.userName();
         the_user.email = faker.internet.email();
         the_user.date_of_birth = faker.date.past();
+        the_user.date_of_birth.setHours(0, 0, 0, 0);
         the_user.created_at = faker.date.recent();
+        the_user.created_at.setHours(0, 0, 0, 0);
         the_user.active = Math.random() > 0.5;
 
         the_user.tags = [];
@@ -171,6 +173,7 @@ async function generateUsers(amount, permissions, roles) {
 async function addUsers(amount, permissions, roles) {
     const user_added = [];
     const userings = await generateUsers(amount, permissions, roles);
+    logger.debug(userings);
     userings.forEach((user) => user_added.push(dbUser.addUser(user)));
 
     for (let i = 0; i < user_added.length; i++) {

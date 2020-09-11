@@ -219,7 +219,7 @@ async function addUser(user) {
                                             + "image, "
                                             + "last_logged, "
                                             + "active) "
-        + "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, date_of_birth;";
+        + "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, created_at;";
 
         const params = [
             user.first_name,
@@ -238,7 +238,7 @@ async function addUser(user) {
         // eslint-disable-next-line no-param-reassign
         user._id = res.rows[0].id;
         // eslint-disable-next-line no-param-reassign
-        user.date_of_birth = res.rows[0].date_of_birth;
+        user.created_at = res.rows[0].created_at;
 
         const promises = []; // array of promises to know when everything is done.
 

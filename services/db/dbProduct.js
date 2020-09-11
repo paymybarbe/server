@@ -41,12 +41,14 @@ async function getAllProducts() {
     return products;
 }
 
-async function getPrices(date) { // TODO: THIS ENTIRE FUCKING FUNCTION and the following of the file
-    return date;
+async function getRankedPrices(product, datetime) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
+    // const queryText = "SELECT DISTINCT ON (rank) rank, price FROM products_ranked_prices "
+    //                 + "WHERE product_id = $1 AND ;";
+    return { product, datetime };
 }
 
 /**
- * Get a product from the database. You just need to set his _id.
+ * Get a product from the database. You just need to set his _id in the parameter.
  * @param {Product} askedProduct
  * @return {Product}
  */
@@ -294,4 +296,4 @@ module.exports.removeProduct = removeProduct;
 module.exports.updateProduct = updateProduct;
 module.exports.addOrUpdateProduct = addOrUpdateProduct;
 module.exports.getProduct = getProduct;
-module.exports.getPrices = getPrices;
+module.exports.getPrices = getRankedPrices;
