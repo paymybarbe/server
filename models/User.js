@@ -27,7 +27,7 @@ module.exports = class User {
     /**
      * @type Date
      */
-    last_logged;
+    last_logged = null;
     /**
      * Array of the tags related to the user.
      * @type {string[]}

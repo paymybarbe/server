@@ -65,5 +65,9 @@ const logger = require("../services/logger").child({
 
 // tryIt().then();
 const userr = new User();
-userr._id = 1;
-dbUser.getUser(userr).then((user) => logger.debug(user));
+userr._id = 11;
+
+dbUser.getUser(userr).then((user) => {
+    logger.debug(user);
+    db_init.end();
+});

@@ -76,7 +76,10 @@ if (process.env.NODE_ENV !== 'production') {
                 format: 'YYYY-MM-DD HH:mm:ss'
             }),
             winston.format.printf((info) => {
-                if (info.message.constructor === Object || info.message.constructor === Array) {
+                if (!info.message) {
+                    return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}`;
+                }
+                if (info.message.constructor === Object || info.message.constructor === Array || typeof info.message === "object") {
                     // info.message = JSON.stringify(info.message, null, 4);
                     info.message = util.inspect(info.message, {
                         showHidden: true,

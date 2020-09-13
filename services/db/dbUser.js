@@ -11,7 +11,7 @@ const pool = db_init.getPool();
  * Get all users from the database.
  * @return {User[]}
  */
-async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
+async function getAllUsers() {
     /* const queryText = "SELECT * FROM users LEFT JOIN "
         + "(SELECT tagged.id, tagged.tags,
             array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])
@@ -53,6 +53,7 @@ async function getAllUsers() { // TODO: THIS ENTIRE FUCKING FUNCTION
             user.date_of_birth = row.date_of_birth;
             user.created_at = row.created_at;
             user.active = row.active;
+            user.last_logged = row.last_logged;
 
             if (row.tags[0] === null) {
                 user.tags = [];
@@ -133,6 +134,7 @@ async function getUser(askedUser) {
             user.created_at = row.created_at;
             user.active = row.active;
             user.image = row.image;
+            user.last_logged = row.last_logged;
 
             if (row.tags[0] === null) {
                 user.tags = [];
@@ -459,6 +461,8 @@ async function getRolesFromUser(user) {
     });
     return roles;
 }
+
+// TODO: function to change password, function to check login
 
 module.exports.getAllUsers = getAllUsers;
 module.exports.addUser = addUser;

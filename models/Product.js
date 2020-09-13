@@ -25,8 +25,8 @@ module.exports = class Product {
      */
     deleted;
     /**
-     * Prices of a product based on rank in key/value: role:price
-     * @type {Object.<role:Role,price:number>} role:price
+     * Prices of a product based on rank in key/value: role_id:price.
+     * @type {Object.<number,price:number>} role_id:price
      */
     roles_prices;
     /**

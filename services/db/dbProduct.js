@@ -10,7 +10,7 @@ const pool = db_init.getPool();
  * @return {Product[]}
  */
 async function getAllProducts() {
-    const queryText = "SELECT * FROM products;";
+    const queryText = "SELECT * FROM products P;";
     const {
         rows
     } = await pool.query(queryText);
@@ -30,21 +30,101 @@ async function getAllProducts() {
             product.hidden = row.hidden;
             product.deleted = row.deleted;
 
+            product.roles_prices = getRankedPrices(product);
+            product.menu_price = getMenuPrice(product);
+            product.cost_price = getCostprice(product);
+
             products.push(product);
         }
     });
 
-    // for (let i = 0; i < products.length; i++) {
-    //     // eslint-disable-next-line no-await-in-loop
-    //     products[i].roles = await products[i].roles;
-    // }
+    for (let i = 0; i < products.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        products[i].roles_prices = await products[i].roles_prices;
+        // eslint-disable-next-line no-await-in-loop
+        products[i].menu_price = await products[i].menu_price;
+        // eslint-disable-next-line no-await-in-loop
+        products[i].cost_price = await products[i].cost_price;
+    }
     return products;
 }
 
+/**
+ * Return prices of a product based on rank at a choosen time in key/value: role_id:price.
+ * @param {Product} product
+ * @param {Date} datetime
+ * @return {Object.<number,price:number>} role_id:price
+*/
 async function getRankedPrices(product, datetime) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
-    // const queryText = "SELECT DISTINCT ON (rank) rank, price FROM products_ranked_prices "
-    //                 + "WHERE product_id = $1 AND ;";
-    return { product, datetime };
+    let checkdate = datetime;
+    if (!datetime) {
+        checkdate = new Date();
+    }
+    const queryText = "SELECT DISTINCT ON (rank) rank, price FROM products_ranked_prices "
+                    + "WHERE product_id = $1 AND date <= $2 "
+                    + "ORDER BY date DESC;";
+    const {
+        rows
+    } = await pool.query(queryText, [product._id, checkdate]);
+    // logger.debug(rows)
+    const roles_prices = {};
+
+    rows.forEach((row) => {
+        if (row.rank !== null) {
+            roles_prices[row.rank.toString()] = row.price;
+        }
+    });
+
+    return roles_prices;
+}
+
+/**
+ * Return price of a product in a menu at a choosen time. Return -1 if no price.
+ * @param {Product} product
+ * @param {Date} datetime
+ * @return {number}
+*/
+async function getMenuPrice(product, datetime) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
+    let checkdate = datetime;
+    if (!datetime) {
+        checkdate = new Date();
+    }
+    const queryText = "SELECT price FROM products_menu_prices "
+                    + "WHERE product_id = $1 AND date <= $2 "
+                    + "ORDER BY date DESC LIMIT 1;";
+    const {
+        rows
+    } = await pool.query(queryText, [product._id, checkdate]);
+    // logger.debug(rows)
+
+    if (rows[0].price !== null) {
+        return rows[0].price;
+    }
+    return -1;
+}
+
+/**
+ * Return cost price of a product at a choosen time. Return -1 if no price.
+ * @param {Product} product
+ * @param {Date} datetime
+ * @return {number}
+*/
+async function getCostprice(product, datetime) {
+    let checkdate = datetime;
+    if (!datetime) {
+        checkdate = new Date();
+    }
+    const queryText = "SELECT price FROM products_cost_prices "
+                    + "WHERE product_id = $1 AND date <= $2 "
+                    + "ORDER BY date DESC LIMIT 1;";
+    const {
+        rows
+    } = await pool.query(queryText, [product._id, checkdate]);
+    // logger.debug(rows)
+    if (rows[0].price !== null) {
+        return rows[0].price;
+    }
+    return -1;
 }
 
 /**
@@ -53,7 +133,34 @@ async function getRankedPrices(product, datetime) { // TODO: THIS ENTIRE FUCKING
  * @return {Product}
  */
 async function getProduct(askedProduct) {
-    return askedProduct;
+    const queryText = "SELECT * FROM products P WHERE id = $1;";
+    const {
+        rows
+    } = await pool.query(queryText, [askedProduct._id]);
+    // logger.debug(rows)
+
+    if (rows[0].id !== null) {
+        const product = new Product();
+        product._id = rows[0].id;
+        product.name = rows[0].name;
+        product.image = rows[0].image;
+        product.stock = rows[0].stock;
+        product.description = rows[0].description;
+        product.threshold = rows[0].threshold;
+        product.fixed_threshold = rows[0].fixed_threshold;
+        product.hidden = rows[0].hidden;
+        product.deleted = rows[0].deleted;
+
+        product.roles_prices = getRankedPrices(product);
+        product.menu_price = getMenuPrice(product);
+        product.cost_price = getCostprice(product);
+        product.roles_prices = await product.roles_prices;
+        product.menu_price = await product.menu_price;
+        product.cost_price = await product.cost_price;
+
+        return product;
+    }
+    return undefined;
 }
 
 /**
@@ -81,7 +188,7 @@ async function addOrUpdateProduct(product) {
  * @param {Product} product
  * @returns {Product}
  */
-async function addProduct(product) {
+async function addProduct(product) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
     if (!product) {
         throw new Error("Product was undefined: can't add product.");
     }
@@ -289,6 +396,7 @@ async function removeProduct(product) {
     await pool.query("DELETE FROM products WHERE id = $1;", [product._id]);
 }
 
+// TODO: add price by rank, by menu, cost price.
 
 module.exports.getAllProducts = getAllProducts;
 module.exports.addProduct = addProduct;
@@ -296,4 +404,6 @@ module.exports.removeProduct = removeProduct;
 module.exports.updateProduct = updateProduct;
 module.exports.addOrUpdateProduct = addOrUpdateProduct;
 module.exports.getProduct = getProduct;
-module.exports.getPrices = getRankedPrices;
+module.exports.getRankedPrices = getRankedPrices;
+module.exports.getMenuPrice = getMenuPrice;
+module.exports.getCostprice = getCostprice;
