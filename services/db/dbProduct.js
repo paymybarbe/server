@@ -164,7 +164,9 @@ async function getProduct(askedProduct) {
 }
 
 /**
- * Add a product. Don't take into account the password. It will not add transactions anywhere.
+ * Add or Update a product. Don't take into account the password. It will not add transactions anywhere.
+ * Product's prices are not changed.
+ *
  * return the product added.
  * @param {Product} product
  * @returns {Product}
@@ -184,7 +186,9 @@ async function addOrUpdateProduct(product) {
 
 /**
  * Add a product. Don't take into account the password. It will not add transactions anywhere.
- * return the product added.
+ * Product's prices are not changed.
+ *
+ * Return the product added.
  * @param {Product} product
  * @returns {Product}
  */
@@ -196,75 +200,31 @@ async function addProduct(product) { // TODO: THIS ENTIRE FUCKING FUNCTION and a
     try {
         await client.query('BEGIN');
 
-        const queryText = "INSERT INTO products (first_name, "
-                                            + "last_name, "
-                                            + "solde, "
-                                            + "points, "
-                                            + "pseudo, "
-                                            + "email, "
-                                            + "date_of_birth, "
+        const queryText = "INSERT INTO products (name, "
                                             + "image, "
-                                            + "last_logged, "
-                                            + "active) "
-        + "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, date_of_birth;";
+                                            + "stock, "
+                                            + "description, "
+                                            + "threshold, "
+                                            + "fixed_threshold, "
+                                            + "hidden, "
+                                            + "deleted) "
+        + "VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id;";
 
         const params = [
-            product.first_name,
-            product.last_name,
-            product.solde,
-            product.points,
-            product.pseudo,
-            product.email,
-            product.date_of_birth,
+            product.name,
             product.image,
-            product.last_logged,
-            product.active
+            product.stock,
+            product.description,
+            product.threshold,
+            product.fixed_threshold,
+            product.hidden,
+            product.deleted
         ];
 
         const res = await client.query(queryText, params);
         // eslint-disable-next-line no-param-reassign
         product._id = res.rows[0].id;
-        // eslint-disable-next-line no-param-reassign
-        product.date_of_birth = res.rows[0].date_of_birth;
 
-        const promises = []; // array of promises to know when everything is done.
-
-        if (product.tags) {
-            product.tags.forEach((tag) => {
-                promises.push(
-                    client.query('INSERT INTO tags (product_id, tag_id) VALUES ($1, $2)', [product._id, tag])
-                );
-            });
-        }
-
-        if (product.roles) {
-            product.roles.forEach((role) => {
-                promises.push(
-                    client.query('INSERT INTO roles_to_products (product_id, role_id) VALUES ($1, $2)',
-                        [product._id, role._id])
-                );
-            });
-        }
-
-        if (product.personnal_permissions) {
-            product.personnal_permissions.forEach((the_perm) => {
-                promises.push(
-                    client.query('INSERT INTO permissions_to_products (product_id, perm_id) VALUES ($1, $2)',
-                        [product._id, the_perm._id])
-                );
-            });
-        }
-
-        if (product.favorites) {
-            product.favorites.forEach((the_prod) => {
-                promises.push(
-                    client.query('INSERT INTO favorites (product_id, product_id, index) VALUES ($1, $2, $3)',
-                        [product._id, the_prod._id, product.favorites.indexOf(the_prod)])
-                );
-            });
-        }
-
-        await Promise.all(promises);
         await client.query('COMMIT');
 
         return product;
@@ -281,7 +241,9 @@ async function addProduct(product) { // TODO: THIS ENTIRE FUCKING FUNCTION and a
 
 /**
  * Update a product. Don't take intp account the password. It will not add transactions anywhere.
- * return the product updated.
+ * Product's prices are not changed.
+ *
+ * Return the product updated.
  * @param {Product} product
  * @returns {Product}
  */
@@ -300,76 +262,30 @@ async function updateProduct(product) {
     try {
         await client.query('BEGIN');
 
-        const queryText = "UPDATE products SET first_name = $1, "
-                                            + "last_name = $2, "
-                                            + "solde = $3, "
-                                            + "points = $4, "
-                                            + "pseudo = $5, "
-                                            + "email = $6, "
-                                            + "date_of_birth = $7, "
-                                            + "image = $8, "
-                                            + "last_logged = $9, "
-                                            + "active = $10 "
-        + "WHERE id = $11;";
+        const queryText = "UPDATE products SET name = $1, "
+                                            + "image = $2, "
+                                            + "stock = $3, "
+                                            + "description = $4, "
+                                            + "threshold = $5, "
+                                            + "fixed_threshold = $6, "
+                                            + "hidden = $7, "
+                                            + "deleted = $8 "
+        + "WHERE id = $9;";
 
         const params = [
-            product.first_name,
-            product.last_name,
-            product.solde,
-            product.points,
-            product.pseudo,
-            product.email,
-            product.date_of_birth,
+            product.name,
             product.image,
-            product.last_logged,
-            product.active,
+            product.stock,
+            product.description,
+            product.threshold,
+            product.fixed_threshold,
+            product.hidden,
+            product.deleted,
             product._id
         ];
 
         await client.query(queryText, params);
 
-        const promises = []; // array of promises to know when everything is done.
-
-        client.query("DELETE FROM tags WHERE product_id = $1;", [product._id]);
-        if (product.tags) {
-            product.tags.forEach((tag) => {
-                promises.push(
-                    client.query('INSERT INTO tags (product_id, tag_id) VALUES ($1, $2)', [product._id, tag])
-                );
-            });
-        }
-
-        client.query("DELETE FROM roles_to_products WHERE product_id = $1;", [product._id]);
-        if (product.roles) {
-            product.roles.forEach((role) => {
-                promises.push(
-                    client.query('INSERT INTO roles_to_products (product_id, role_id) VALUES ($1, $2)',
-                        [product._id, role._id])
-                );
-            });
-        }
-
-        client.query("DELETE FROM permissions_to_products WHERE product_id = $1;", [product._id]);
-        if (product.personnal_permissions) {
-            product.personnal_permissions.forEach((the_perm) => {
-                promises.push(
-                    client.query('INSERT INTO permissions_to_products (product_id, perm_id) VALUES ($1, $2)',
-                        [product._id, the_perm._id])
-                );
-            });
-        }
-
-        client.query("DELETE FROM favorites WHERE product_id = $1;", [product._id]);
-        if (product.favorites) {
-            product.favorites.forEach((the_prod) => {
-                promises.push(
-                    client.query('INSERT INTO favorites (product_id, product_id, index) VALUES ($1, $2, $3)',
-                        [product._id, the_prod._id, product.favorites.indexOf(the_prod)])
-                );
-            });
-        }
-
-        await Promise.all(promises);
         await client.query('COMMIT');
 
         return product;
@@ -385,18 +301,27 @@ async function updateProduct(product) {
 
 
 /**
- * Remove a product
+ * Remove totally a product.
  * @param {Product} product
  */
 async function removeProduct(product) {
     if (!product) {
         throw new Error("Product was undefined: can't remove product from database.");
     }
+    if (!product._id) {
+        throw new Error("Product id was undefined: can't remove product from database.");
+    }
+    const counting = await pool.query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
+    if (counting.rows.count === 0) {
+        throw new Error("Product id was not found in database: can't remove product.");
+    }
 
     await pool.query("DELETE FROM products WHERE id = $1;", [product._id]);
 }
 
-// TODO: add price by rank, by menu, cost price.
+// TODO: add setter of price by rank, by menu, cost price.
+
+// TODO: add getter and setter of price by rank settings, by menu settings.
 
 module.exports.getAllProducts = getAllProducts;
 module.exports.addProduct = addProduct;

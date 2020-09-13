@@ -67,6 +67,12 @@ const logger = require("../services/logger").child({
 const userr = new User();
 userr._id = 11;
 
+// db_init.getPool().query("SELECT price FROM products_cost_prices "
+//                         + "WHERE product_id = 0 AND date <= now() "
+//                         + "ORDER BY date DESC LIMIT 1;").then((result) => {
+//     logger.debug(result);
+// });
+
 dbUser.getUser(userr).then((user) => {
     logger.debug(user);
     db_init.end();

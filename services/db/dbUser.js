@@ -400,12 +400,19 @@ async function updateUser(user) {
 
 
 /**
- * Remove a user
+ * Remove totally a user.
  * @param {User} user
  */
 async function removeUser(user) {
     if (!user) {
         throw new Error("User was undefined: can't remove user from database.");
+    }
+    if (!user._id) {
+        throw new Error("User id was undefined: can't remove user.");
+    }
+    const counting = await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
+    if (counting.rows.count === 0) {
+        throw new Error("User id was not found in database: can't remove user.");
     }
 
     await pool.query("DELETE FROM users WHERE id = $1;", [user._id]);
