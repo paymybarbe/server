@@ -425,6 +425,25 @@ async function removeUser(user) {
 }
 
 /**
+ * Check if user exist.
+ * @param {User} user
+ */
+async function userExists(user) {
+    if (!(user instanceof User)) {
+        throw new Error("Arg wasn't of User type: can't delete user from database.");
+    }
+    if (!user._id) {
+        throw new Error("User id was undefined: can't remove user.");
+    }
+    const counting = await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
+    if (Number(counting.rows[0].count) === 1) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Get all Roles from a User
  * @param User user
  * @returns {Role[]}
@@ -483,3 +502,4 @@ module.exports.removeUser = removeUser;
 module.exports.updateUser = updateUser;
 module.exports.addOrUpdateUser = addOrUpdateUser;
 module.exports.getUser = getUser;
+module.exports.userExists = userExists;

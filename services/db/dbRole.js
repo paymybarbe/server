@@ -135,43 +135,40 @@ async function getPermissionsFromRole(role) {
     if (!role._id) {
         throw new Error("Role id was undefined: can't get role permissions.");
     }
-    const queryText = "SELECT roles.*, "
+    if (!await roleExists(role)) {
+        throw new Error("Role given don't exist: can't get role permissions from database.");
+    }
+    const queryText = "SELECT "
                         + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
                         + " AS perm_array "
-                    + "FROM roles "
-                    + "LEFT JOIN permissions_to_roles ON roles.id = permissions_to_roles.role_id "
+                    + "FROM permissions_to_roles "
                     + "LEFT JOIN permissions ON permissions.id = permissions_to_roles.perm_id "
-                    + "WHERE roles.id = $1"
-                    + "GROUP BY roles.id;";
+                    + "WHERE permissions_to_roles.role_id = $1"
+                    + "GROUP BY role_id;";
     const {
         rows
     } = await pool.query(queryText, [role._id]);
-    const roles = [];
-    for (let i = 0; i < rows.length; i++) {
-        if (rows[i].id !== null) {
-            const my_role = new Role();
-            my_role._id = rows[i].id;
-            my_role.next_role = rows[i].next_role;
-            my_role.name = rows[i].name;
-            my_role.parent_role = rows[i].parent_role;
+    const perms_answ = [];
 
-            my_role.permissions = [];
-
-            rows[i].perm_array.forEach((arr) => {
-                if (arr[0] !== null) {
-                    const perm = new Permission();
-                    perm._id = parseInt(arr[0]);
-                    perm.permission = arr[1];
-                    perm.description = arr[2];
-                    my_role.permissions.push(perm);
-                }
-            });
-
-            roles.push(my_role);
-        }
+    if (rows.length > 1) {
+        throw new Error("getPermissionsFromRole returned several rows");
     }
 
-    return roles;
+    if (rows.length === 0) {
+        return perms_answ;
+    }
+
+    rows[0].perm_array.forEach((arr) => {
+        if (arr[0] !== null) {
+            const perm = new Permission();
+            perm._id = parseInt(arr[0]);
+            perm.permission = arr[1];
+            perm.description = arr[2];
+            perms_answ.push(perm);
+        }
+    });
+
+    return perms_answ;
 }
 
 /**

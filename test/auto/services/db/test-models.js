@@ -13,6 +13,8 @@ const dbUser = require("../../../../services/db/dbUser");
 const dbRole = require("../../../../services/db/dbRole");
 const dbPermission = require("../../../../services/db/dbPermission");
 const Permission = require('../../../../models/Permission');
+const Role = require('../../../../models/Role');
+const User = require('../../../../models/User');
 // eslint-disable-next-line no-unused-vars
 const logger = require('../../../../services/logger');
 
@@ -60,15 +62,17 @@ describe("Models From Database", function _test() {
 
         it("Exist", async () => {
             const my_trial = permissions[Math.floor(Math.random() * permissions.length)]; // Choose random permission
-            const isinside = await dbPermission.permissionExists(my_trial);
-            expect(isinside).to.be.true;
+            expect(await dbPermission.permissionExists(my_trial)).to.be.true;
+            my_trial._id += 1; // Change id
+            expect(await dbPermission.permissionExists(my_trial)).to.be.false;
+            my_trial._id -= 1;
 
             let is_in = false;
             const perm = new Permission();
             perm.permission = "MiamChocolat";
             perm._id = 5;
             for (let i = 0; i < permissions.length; i++) {
-                if (permissions[i].permission === perm.permission && permissions[i]._id === permissions._id) {
+                if (permissions[i].permission === perm.permission && permissions[i]._id === perm._id) {
                     is_in = true;
                 }
             }
@@ -86,6 +90,11 @@ describe("Models From Database", function _test() {
     describe("Roles", () => {
         it("Roles Insert & Select All equals", async () => {
             roles = await seeder.generateRoles(15, permissions);
+            const role1 = new Role();
+            role1.name = "EmptyRole1";
+            const role2 = new Role();
+            role2.name = "EmptyRole2";
+            roles.push(role1, role2);
 
             const select_roles = [];
             roles.forEach((element) => {
@@ -110,11 +119,52 @@ describe("Models From Database", function _test() {
             }
             roles = add_roles;
         });
+
+        it("Exist", async () => {
+            const my_trial = roles[Math.floor(Math.random() * roles.length)]; // Choose random role
+            expect(await dbRole.roleExists(my_trial)).to.be.true;
+            my_trial._id += 1; // Change id
+            expect(await dbRole.roleExists(my_trial)).to.be.false;
+            my_trial._id -= 1;
+
+            let is_in = false;
+            const rol = new Role();
+            rol.name = "MiamChocolat";
+            rol._id = 5;
+            for (let i = 0; i < roles.length; i++) {
+                if (roles[i].name === rol.name && roles[i]._id === rol._id) {
+                    is_in = true;
+                }
+            }
+            expect(await dbRole.roleExists(rol)).to.be.equal(is_in);
+        });
+
+        it("getPermissionsFromRole", async () => {
+            const my_trial = roles[Math.floor(Math.random() * roles.length)]; // Choose random role
+            expect(await dbRole.getPermissionsFromRole(my_trial)).to.be.deep.equalInAnyOrder(my_trial.permissions);
+        });
+
+        it("Remove", async () => {
+            const my_trial = roles.pop(); // Choose and remove from array last role
+
+            await dbRole.removeRole(my_trial);
+            expect(await dbRole.roleExists(my_trial)).to.be.false;
+        });
     });
 
     describe("User", () => {
         it("Users Insert & Select All equals", async () => {
             users = await seeder.generateUsers(10, permissions, roles);
+
+            const user1 = new User();
+            user1.first_name = "EmptyUser1";
+            const user2 = new User();
+            user2.first_name = "EmptyUser2";
+            user2.roles.push(roles[roles.length - 1]);
+            const user3 = new User();
+            user3.first_name = "EmptyUser3";
+            users.push(user1, user2, user3);
+
             const select_users = [];
             users.forEach((element) => {
                 select_users.push(dbUser.addUser(element));
@@ -148,6 +198,31 @@ describe("Models From Database", function _test() {
             const my_checker = await dbUser.getUser(my_trial);
             // Check if user was updated with our changes
             expect(my_trial).to.be.deep.equalInAnyOrder(my_checker);
+        });
+
+        it("Exist", async () => {
+            const my_trial = users[Math.floor(Math.random() * users.length)]; // Choose random user
+            expect(await dbUser.userExists(my_trial)).to.be.true;
+            my_trial._id += 100; // Change id
+            expect(await dbUser.userExists(my_trial)).to.be.false;
+            my_trial._id -= 100;
+
+            let is_in = false;
+            const use = new User();
+            use._id = users.length + 1;
+            for (let i = 0; i < users.length; i++) {
+                if (users[i]._id === use._id) {
+                    is_in = true;
+                }
+            }
+            expect(await dbUser.userExists(use)).to.be.equal(is_in);
+        });
+
+        it("Remove", async () => {
+            const my_trial = users.pop(); // Choose and remove from array last user
+
+            await dbUser.removeUser(my_trial);
+            expect(await dbUser.userExists(my_trial)).to.be.false;
         });
     });
 });
