@@ -209,7 +209,8 @@ CREATE TABLE favorites (
   user_id INT,
   product_id INT,
   index INT,
-  PRIMARY KEY (user_id, product_id)
+  PRIMARY KEY (user_id, index),
+  UNIQUE (user_id, product_id)
 );
 
 CREATE TABLE menus (

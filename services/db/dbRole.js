@@ -58,8 +58,11 @@ async function getAllRoles() {
  * @returns {Role}
  */
 async function addRole(role) {
-    if (!role) {
-        throw new Error("Role was undefined: can't add role to database.");
+    if (!(role instanceof Role)) {
+        throw new Error("Arg was not of Role type: can't add role to database.");
+    }
+    if (await roleNameExists(role)) {
+        throw new Error("Role given already exists: can't add role to database.");
     }
     const client = await pool.connect();
     try {
@@ -110,8 +113,11 @@ async function addRole(role) {
  * @param {Role} role
  */
 async function removeRole(role) {
-    if (!role) {
-        throw new Error("Role was undefined: can't remove role from database.");
+    if (!(role instanceof Role)) {
+        throw new Error("Arg wasn't of Permission type: can't check for permission in database.");
+    }
+    if (!await roleExists(role)) {
+        throw new Error("Role given don't exist: can't remove role from database.");
     }
 
     await pool.query("DELETE FROM roles WHERE id = $1;", [role._id]);
@@ -123,8 +129,8 @@ async function removeRole(role) {
  * @return {Permission[]}
  */
 async function getPermissionsFromRole(role) {
-    if (!role) {
-        throw new Error("Role was undefined: can't get role permissions."); // TODO: custom errors
+    if (!(role instanceof Role)) {
+        throw new Error("Arg wasn't of Role type: can't get role permissions.");
     }
     if (!role._id) {
         throw new Error("Role id was undefined: can't get role permissions.");
@@ -173,20 +179,38 @@ async function getPermissionsFromRole(role) {
  * @param {Role} role
  */
 async function roleExists(role) {
-    if (!role) {
-        throw new Error("Permission was undefined: can't remove permission from database.");
+    if (!(role instanceof Role)) {
+        throw new Error("Arg wasn't of Role type: can't check for role in database.");
     }
-    if (role._id) {
-        const {
-            rows
-        } = pool.query("SELECT COUNT(*) FROM roles WHERE id = $1;", [role._id]);
-        return rows.length;
+    if (!role.name) {
+        throw new Error("Role name was undefined: can't check for role in database.");
     }
-    if (role.name) {
-        const {
-            rows
-        } = pool.query("SELECT COUNT(*) FROM roles WHERE name = $1;", [role.name]);
-        return rows.length;
+    if (!role._id) {
+        throw new Error("Role id was undefined: can't check for role in database.");
+    }
+
+    const answ = await pool.query("SELECT COUNT(*) FROM roles WHERE name = $1 AND id = $2;", [role.name, role._id]);
+    if (Number(answ.rows[0].count) === 1) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Check if Role name already exist
+ * @param {Role} role
+ */
+async function roleNameExists(role) {
+    if (!(role instanceof Role)) {
+        throw new Error("Arg wasn't of Role type: can't check for role name in database.");
+    }
+    if (!role.name) {
+        throw new Error("Role name was undefined: can't check for role name in database.");
+    }
+
+    const answ = await pool.query("SELECT COUNT(*) FROM roles WHERE name = $1;", [role.name]);
+    if (Number(answ.rows[0].count) === 1) {
+        return true;
     }
     return false;
 }

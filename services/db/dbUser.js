@@ -103,6 +103,12 @@ async function getAllUsers() {
  * @return {User}
  */
 async function getUser(askedUser) {
+    if (!(askedUser instanceof User)) {
+        throw new Error("Arg wasn't of User type: can't get user from database.");
+    }
+    if (!askedUser._id) {
+        throw new Error("User id was undefined: can't get user from database.");
+    }
     const queryText = "SELECT u.*, array_agg(tags.tag_id) AS tags, "
                     + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
                     + " as user_perms, "
@@ -185,8 +191,8 @@ async function getUser(askedUser) {
  * @returns {User}
  */
 async function addOrUpdateUser(user) {
-    if (!user) {
-        throw new Error("User was undefined: can't add user.");
+    if (!(user instanceof User)) {
+        throw new Error("Arg wasn't of User type: can't add/update user.");
     }
     if (!user._id) {
         await addUser(user);
@@ -204,8 +210,8 @@ async function addOrUpdateUser(user) {
  * @returns {User}
  */
 async function addUser(user) {
-    if (!user) {
-        throw new Error("User was undefined: can't add user.");
+    if (!(user instanceof User)) {
+        throw new Error("Arg wasn't of User type: can't add user to database.");
     }
     const client = await pool.connect();
     try {
@@ -301,14 +307,14 @@ async function addUser(user) {
  * @returns {User}
  */
 async function updateUser(user) {
-    if (!user) {
-        throw new Error("User was undefined: can't update user.");
+    if (!(user instanceof User)) {
+        throw new Error("Arg wasn't of User type: can't update user.");
     }
     if (!user._id) {
         throw new Error("User id was undefined: can't update user.");
     }
     const counting = await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
-    if (counting.rows.count === 0) {
+    if (Number(counting.rows[0].count) === 0) {
         throw new Error("User id was not found in database: can't update user.");
     }
     const client = await pool.connect();
@@ -404,14 +410,14 @@ async function updateUser(user) {
  * @param {User} user
  */
 async function removeUser(user) {
-    if (!user) {
-        throw new Error("User was undefined: can't remove user from database.");
+    if (!(user instanceof User)) {
+        throw new Error("Arg wasn't of User type: can't delete user from database.");
     }
     if (!user._id) {
         throw new Error("User id was undefined: can't remove user.");
     }
     const counting = await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
-    if (counting.rows.count === 0) {
+    if (Number(counting.rows[0].count) === 0) {
         throw new Error("User id was not found in database: can't remove user.");
     }
 
@@ -424,8 +430,8 @@ async function removeUser(user) {
  * @returns {Role[]}
  */
 async function getRolesFromUser(user) {
-    if (!user) {
-        throw new Error("User was undefined: can't add user."); // TODO: custom errors
+    if (!(user instanceof User)) {
+        throw new Error("Arg wasn't of User type: can't get roles of user from database.");
     }
     if (!user._id) {
         throw new Error("User id was undefined: can't add user");

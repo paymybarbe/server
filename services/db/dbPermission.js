@@ -3,6 +3,8 @@ const db_init = require("./db_init");
 //     service: "server:services:db:dbPermission"
 // });
 const Permission = require("../../models/Permission");
+// eslint-disable-next-line no-unused-vars
+const logger = require("../logger");
 
 const pool = db_init.getPool();
 
@@ -37,8 +39,14 @@ async function getAllPermissions() {
  * @returns {Permission}
  */
 async function addPermission(permission) {
-    if (!permission) {
-        throw new Error("Permission was undefined: can't add permission to database.");
+    if (!(permission instanceof Permission)) {
+        throw new Error("Arg wasn't of Permission type: can't add permission to database.");
+    }
+    if (!permission.permission) {
+        throw new Error("Permission name was undefined: can't add permission to database.");
+    }
+    if (await permissionNameExists(permission)) {
+        throw new Error("Permission already exists: can't add permission to database.");
     }
 
     const queryText = "INSERT INTO permissions (permission, "
@@ -62,8 +70,15 @@ async function addPermission(permission) {
  * @param {Permission} permission
  */
 async function removePermission(permission) {
-    if (!permission) {
-        throw new Error("Permission was undefined: can't remove permission from database.");
+    if (!(permission instanceof Permission)) {
+        throw new Error("Arg wasn't of Permission type: can't remove permission from database.");
+    }
+    if (!permission.permission) {
+        throw new Error("Permission name was undefined: can't remove permission from database.");
+    }
+
+    if (!await permissionExists(permission)) {
+        throw new Error("Permission id was not found in database: can't remove permission.");
     }
     await pool.query("DELETE FROM permissions WHERE id = $1;", [permission._id]);
 }
@@ -73,18 +88,38 @@ async function removePermission(permission) {
  * @param {Permission} permission
  */
 async function permissionExists(permission) {
-    if (!permission) {
-        throw new Error("Permission was undefined: can't remove permission from database.");
+    if (!(permission instanceof Permission)) {
+        throw new Error("Arg wasn't of Permission type: can't check for permission in database.");
     }
-    if (permission._id) {
-        const {
-            rows
-        } = pool.query("SELECT COUNT(*) FROM permissions WHERE id = $1;", [permission._id]);
-        return rows.length;
+    if (!permission.permission) {
+        throw new Error("Permission name was undefined: can't check for permission in database.");
     }
-    if (permission.permission) {
-        const answ = pool.query("SELECT COUNT(*) FROM permissions WHERE permission = $1;", [permission.permission]);
-        return answ;
+    if (!permission._id) {
+        throw new Error("Permission id was undefined: can't check for permission in database.");
+    }
+
+    const answ = await pool.query("SELECT COUNT(*) FROM permissions WHERE permission = $1 AND id = $2;", [permission.permission, permission._id]);
+    if (Number(answ.rows[0].count) === 1) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Check if Permission name already exist
+ * @param {Permission} permission
+ */
+async function permissionNameExists(permission) {
+    if (!(permission instanceof Permission)) {
+        throw new Error("Arg wasn't of Permission type: can't check for permission name in database.");
+    }
+    if (!permission.permission) {
+        throw new Error("Permission name was undefined: can't check for permission name in database.");
+    }
+
+    const answ = await pool.query("SELECT COUNT(*) FROM permissions WHERE permission = $1;", [permission.permission]);
+    if (Number(answ.rows[0].count) === 1) {
+        return true;
     }
     return false;
 }

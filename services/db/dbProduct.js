@@ -56,6 +56,9 @@ async function getAllProducts() {
  * @return {Object.<number,price:number>} role_id:price
 */
 async function getRankedPrices(product, datetime) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't get roles prices for product in database.");
+    }
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
@@ -85,6 +88,9 @@ async function getRankedPrices(product, datetime) { // TODO: THIS ENTIRE FUCKING
  * @return {number}
 */
 async function getMenuPrice(product, datetime) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't get menu price for product in database.");
+    }
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
@@ -110,6 +116,9 @@ async function getMenuPrice(product, datetime) { // TODO: THIS ENTIRE FUCKING FU
  * @return {number}
 */
 async function getCostprice(product, datetime) {
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't get cost price for product in database.");
+    }
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
@@ -133,6 +142,12 @@ async function getCostprice(product, datetime) {
  * @return {Product}
  */
 async function getProduct(askedProduct) {
+    if (!(askedProduct instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't search for product in database.");
+    }
+    if (!askedProduct._id) {
+        throw new Error("Product id undefined: can't search for product in database.");
+    }
     const queryText = "SELECT * FROM products P WHERE id = $1;";
     const {
         rows
@@ -172,8 +187,8 @@ async function getProduct(askedProduct) {
  * @returns {Product}
  */
 async function addOrUpdateProduct(product) {
-    if (!product) {
-        throw new Error("Product was undefined: can't add product.");
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't add or update.");
     }
     if (!product._id) {
         await addProduct(product);
@@ -193,8 +208,8 @@ async function addOrUpdateProduct(product) {
  * @returns {Product}
  */
 async function addProduct(product) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
-    if (!product) {
-        throw new Error("Product was undefined: can't add product.");
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't add product to database.");
     }
     const client = await pool.connect();
     try {
@@ -240,7 +255,7 @@ async function addProduct(product) { // TODO: THIS ENTIRE FUCKING FUNCTION and a
 
 
 /**
- * Update a product. Don't take intp account the password. It will not add transactions anywhere.
+ * Update a product.
  * Product's prices are not changed.
  *
  * Return the product updated.
@@ -248,14 +263,14 @@ async function addProduct(product) { // TODO: THIS ENTIRE FUCKING FUNCTION and a
  * @returns {Product}
  */
 async function updateProduct(product) {
-    if (!product) {
-        throw new Error("Product was undefined: can't update product.");
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't update product in database.");
     }
     if (!product._id) {
         throw new Error("Product id was undefined: can't update product.");
     }
     const counting = await pool.query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
-    if (counting.rows.count === 0) {
+    if (Number(counting.rows[0].count) === 0) {
         throw new Error("Product id was not found in database: can't update product.");
     }
     const client = await pool.connect();
@@ -305,14 +320,14 @@ async function updateProduct(product) {
  * @param {Product} product
  */
 async function removeProduct(product) {
-    if (!product) {
-        throw new Error("Product was undefined: can't remove product from database.");
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't remove product from database.");
     }
     if (!product._id) {
         throw new Error("Product id was undefined: can't remove product from database.");
     }
     const counting = await pool.query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
-    if (counting.rows.count === 0) {
+    if (Number(counting.rows[0].count) === 0) {
         throw new Error("Product id was not found in database: can't remove product.");
     }
 

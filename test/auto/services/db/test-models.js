@@ -12,6 +12,9 @@ const seeder = require("../../../../scripts/script.seed");
 const dbUser = require("../../../../services/db/dbUser");
 const dbRole = require("../../../../services/db/dbRole");
 const dbPermission = require("../../../../services/db/dbPermission");
+const Permission = require('../../../../models/Permission');
+// eslint-disable-next-line no-unused-vars
+const logger = require('../../../../services/logger');
 
 chai.use(deepEqualInAnyOrder);
 
@@ -33,88 +36,118 @@ describe("Models From Database", function _test() {
         return a._id - b._id;
     }
 
-    it("Permissions Insert & Select All equals", async () => {
-        permissions = await seeder.generatePermissions(30);
-        const select_permissions = [];
-        permissions.forEach((element) => {
-            select_permissions.push(dbPermission.addPermission(element));
+    describe("Permission", () => {
+        it("Insert & Select All equals", async () => {
+            permissions = await seeder.generatePermissions(30);
+            const select_permissions = [];
+            permissions.forEach((element) => {
+                select_permissions.push(dbPermission.addPermission(element));
+            });
+
+            const add_perms = await Promise.all(select_permissions);
+            const sel_perms = await dbPermission.getAllPermissions();
+
+            expect(sel_perms).to.have.length(add_perms.length);
+
+            sel_perms.sort(sortId);
+            add_perms.sort(sortId);
+            for (let i = 0; i < permissions.length; i++) {
+                expect(sel_perms[i].permission).to.be.equal(add_perms[i].permission);
+                expect(sel_perms[i].description).to.be.equal(add_perms[i].description);
+            }
+            permissions = add_perms;
         });
 
-        const add_perms = await Promise.all(select_permissions);
-        const sel_perms = await dbPermission.getAllPermissions();
+        it("Exist", async () => {
+            const my_trial = permissions[Math.floor(Math.random() * permissions.length)]; // Choose random permission
+            const isinside = await dbPermission.permissionExists(my_trial);
+            expect(isinside).to.be.true;
 
-        expect(sel_perms).to.have.length(add_perms.length);
-
-        sel_perms.sort(sortId);
-        add_perms.sort(sortId);
-        for (let i = 0; i < permissions.length; i++) {
-            expect(sel_perms[i].permission).to.be.equal(add_perms[i].permission);
-            expect(sel_perms[i].description).to.be.equal(add_perms[i].description);
-        }
-        permissions = add_perms;
-    });
-
-    it("Roles Insert & Select All equals", async () => {
-        roles = await seeder.generateRoles(15, permissions);
-
-        const select_roles = [];
-        roles.forEach((element) => {
-            select_roles.push(dbRole.addRole(element));
+            let is_in = false;
+            const perm = new Permission();
+            perm.permission = "MiamChocolat";
+            perm._id = 5;
+            for (let i = 0; i < permissions.length; i++) {
+                if (permissions[i].permission === perm.permission && permissions[i]._id === permissions._id) {
+                    is_in = true;
+                }
+            }
+            expect(await dbPermission.permissionExists(perm)).to.be.equal(is_in);
         });
 
-        const add_roles = await Promise.all(select_roles);
-        const sel_rollings = await dbRole.getAllRoles();
+        it("Remove", async () => {
+            const my_trial = permissions.pop(); // Choose and remove from array last permission
 
-        expect(sel_rollings).to.have.length(add_roles.length);
-
-        add_roles.sort(sortId);
-        sel_rollings.sort(sortId);
-        for (let i = 0; i < roles.length; i++) {
-            expect(add_roles[i].name).to.be.equal(sel_rollings[i].name);
-            expect(add_roles[i].description).to.be.equal(sel_rollings[i].description);
-            add_roles[i].permissions.sort(sortId);
-            sel_rollings[i].permissions.sort(sortId);
-            expect(add_roles[i].permissions).to.be.eql(sel_rollings[i].permissions);
-            expect(add_roles[i].parent_role).to.be.equal(sel_rollings[i].parent_role);
-            expect(add_roles[i].next_role).to.be.equal(sel_rollings[i].next_role);
-        }
-        roles = add_roles;
+            await dbPermission.removePermission(my_trial);
+            expect(await dbPermission.permissionExists(my_trial)).to.be.false;
+        });
     });
 
-    it("Users Insert & Select All equals", async () => {
-        users = await seeder.generateUsers(10, permissions, roles);
-        const select_users = [];
-        users.forEach((element) => {
-            select_users.push(dbUser.addUser(element));
+    describe("Roles", () => {
+        it("Roles Insert & Select All equals", async () => {
+            roles = await seeder.generateRoles(15, permissions);
+
+            const select_roles = [];
+            roles.forEach((element) => {
+                select_roles.push(dbRole.addRole(element));
+            });
+
+            const add_roles = await Promise.all(select_roles);
+            const sel_rollings = await dbRole.getAllRoles();
+
+            expect(sel_rollings).to.have.length(add_roles.length);
+
+            add_roles.sort(sortId);
+            sel_rollings.sort(sortId);
+            for (let i = 0; i < roles.length; i++) {
+                expect(add_roles[i].name).to.be.equal(sel_rollings[i].name);
+                expect(add_roles[i].description).to.be.equal(sel_rollings[i].description);
+                add_roles[i].permissions.sort(sortId);
+                sel_rollings[i].permissions.sort(sortId);
+                expect(add_roles[i].permissions).to.be.eql(sel_rollings[i].permissions);
+                expect(add_roles[i].parent_role).to.be.equal(sel_rollings[i].parent_role);
+                expect(add_roles[i].next_role).to.be.equal(sel_rollings[i].next_role);
+            }
+            roles = add_roles;
+        });
+    });
+
+    describe("User", () => {
+        it("Users Insert & Select All equals", async () => {
+            users = await seeder.generateUsers(10, permissions, roles);
+            const select_users = [];
+            users.forEach((element) => {
+                select_users.push(dbUser.addUser(element));
+            });
+
+            const add_users = await Promise.all(select_users);
+            const sel_uss = await dbUser.getAllUsers();
+
+            expect(add_users).to.have.length(sel_uss.length);
+            add_users.sort(sortId);
+            sel_uss.sort(sortId);
+            for (let i = 0; i < add_users.length; i++) {
+                expect(add_users[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+            }
+
+            users = add_users;
         });
 
-        const add_users = await Promise.all(select_users);
-        const sel_uss = await dbUser.getAllUsers();
-
-        expect(add_users).to.have.length(sel_uss.length);
-        add_users.sort(sortId);
-        sel_uss.sort(sortId);
-        for (let i = 0; i < add_users.length; i++) {
-            expect(add_users[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
-        }
-
-        users = add_users;
-    });
-
-    it("Users Update", async () => {
-        const my_trial = users[Math.floor(Math.random() * users.length)]; // Choose random user
-        // Change several values
-        my_trial.first_name = "Miam";
-        my_trial.last_name = "Foody";
-        if (my_trial.roles.length > 1) {
-            my_trial.roles.pop();
-        }
-        if (my_trial.personnal_permissions.length > 1) {
-            my_trial.personnal_permissions.shift();
-        }
-        await dbUser.updateUser(my_trial);
-        const my_checker = await dbUser.getUser(my_trial);
-        // Check if user was updated with our changes
-        expect(my_trial).to.be.deep.equalInAnyOrder(my_checker);
+        it("Users Update", async () => {
+            const my_trial = users[Math.floor(Math.random() * users.length)]; // Choose random user
+            // Change several values
+            my_trial.first_name = "Miam";
+            my_trial.last_name = "Foody";
+            if (my_trial.roles.length > 1) {
+                my_trial.roles.pop();
+            }
+            if (my_trial.personnal_permissions.length > 1) {
+                my_trial.personnal_permissions.shift();
+            }
+            await dbUser.updateUser(my_trial);
+            const my_checker = await dbUser.getUser(my_trial);
+            // Check if user was updated with our changes
+            expect(my_trial).to.be.deep.equalInAnyOrder(my_checker);
+        });
     });
 });
