@@ -54,6 +54,13 @@ Vous pouvez quitter en faisant:
 \q
 ```
 
+Il faut maintenant modifier la configuration de postgresql pour que la connexion fonctionne correctement:
+Si votre version de postgresql est 12:
+```
+sudo sed -e "s/local.*all.*postgres.*peer/local   all             postgres                                md5/g" /etc/postgresql/12/main/pg_hba.conf 
+sudo service postgresql restart
+```
+
 Voilà !
 
 ## 
