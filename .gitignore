@@ -7,3 +7,4 @@ config/production.json
 certs/Makefile
 **/.directory
 logs/
+.vscode/

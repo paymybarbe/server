@@ -10,7 +10,6 @@
         "user": "testmybarbe",
         "password": "password",
         "host": "localhost",
-        "port": 5432,
-        "uri": "postgresql://testmybarbe:password@localhost:5432/devmybarbedb"
+        "port": 5432
     }
 }
