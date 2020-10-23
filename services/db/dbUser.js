@@ -202,7 +202,6 @@ async function addOrUpdateUser(user) {
     }
 }
 
-
 /**
  * Add a user. Don't take into account the password. It will not add transactions anywhere.
  * return the user added.
@@ -298,7 +297,6 @@ async function addUser(user) {
         client.release();
     }
 }
-
 
 /**
  * Update a user. Don't take intp account the password. It will not add transactions anywhere.
@@ -403,7 +401,6 @@ async function updateUser(user) {
         client.release();
     }
 }
-
 
 /**
  * Remove totally a user.

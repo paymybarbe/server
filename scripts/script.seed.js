@@ -4,9 +4,9 @@ const logger = require("../services/logger").child({
     service: "server:scripts:seeder"
 });
 const config = require("../config/config");
-const User = require("./../models/User");
-const Permission = require("./../models/Permission");
-const Role = require("./../models/Role");
+const User = require("../models/User");
+const Permission = require("../models/Permission");
+const Role = require("../models/Role");
 
 const db_init = require("../services/db/db_init");
 

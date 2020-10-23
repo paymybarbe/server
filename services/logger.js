@@ -64,7 +64,6 @@ const logger = winston.createLogger({
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 //
 
-
 if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console({
         handleExceptions: true,
@@ -92,7 +91,7 @@ if (process.env.NODE_ENV !== 'production') {
                     return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}\n\u001b[31m${info.stack}\u001b[39m`;
                 }
                 return `[${info.timestamp}] [${info.service}] ${info.level}: ${info.message}`;
-            }),
+            })
 
         )
     }));
