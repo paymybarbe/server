@@ -36,4 +36,4 @@ module.exports.transaction_type = Object.freeze({
     ACCOUNT_CREDITING: 'Crédit Compte'
 });
 
-// TODO: Add permmissions enum
+// TODO: Add permissions enum

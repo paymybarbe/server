@@ -2,7 +2,11 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const util = require('util');
 const faker = require("faker");
-const User = require("./../models/User");
+const assert = require('assert');
+const Application = require('spectron').Application;
+const path = require('path');
+const electronPath = require('electron'); // Require Electron from the binaries included in node_modules.
+const User = require("../models/User");
 const db_init = require("../services/db/db_init");
 const dbUser = require("../services/db/dbUser");
 const dbRole = require("../services/db/dbRole");
@@ -55,7 +59,6 @@ const logger = require("../services/logger").child({
 //         logger.debug(`Test finished in ${millis / 1000} seconds.`);
 //     });
 
-
 // async function tryIt() {
 //     const pool = db_init.getPool();
 //     console.log(config);
@@ -64,8 +67,8 @@ const logger = require("../services/logger").child({
 // }
 
 // tryIt().then();
-const userr = new User();
-userr._id = 11;
+// const userr = new User();
+// userr._id = 11;
 
 // db_init.getPool().query("SELECT price FROM products_cost_prices "
 //                         + "WHERE product_id = 0 AND date <= now() "
@@ -73,7 +76,7 @@ userr._id = 11;
 //     logger.debug(result);
 // });
 
-dbUser.getUser(userr).then((user) => {
-    logger.debug(user);
-    db_init.end();
-});
+// dbUser.getUser(userr).then((user) => {
+//     logger.debug(user);
+//     db_init.end();
+// });

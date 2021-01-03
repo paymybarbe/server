@@ -15,10 +15,19 @@ module.exports = class Dish {
      */
     hidden;
     /**
-     * Prices of a product in key/value: (role |"cost"):price
-     * @type {Object.<string,number>} (role |"cost"):price
+     * @type boolean
      */
-    prices;
+    deleted;
+    /**
+     * Prices of a dish based on rank in key/value: role_id:price.
+     * @type {Object.<number,price:number>} role_id:price
+     */
+    roles_prices;
+    /**
+     * Cost price of a dish.
+     * @type {number}
+     */
+    cost_price;
     /**
      * @type {Ingredient[]}
      */
@@ -27,9 +36,4 @@ module.exports = class Dish {
      * @type {{_id:number, name:string, price_change:number}[]}
      */
     options;
-    /**
-     * Prices of a product in key/value: (role | "default"):{multiplier, add}
-     * @type {Object.<string,{multiplier:number, add:number}>} (role | "default"):{multiplier, add}
-     */
-    settings;
 };

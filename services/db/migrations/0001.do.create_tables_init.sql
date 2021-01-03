@@ -105,10 +105,10 @@ CREATE TABLE products (
 CREATE TABLE dishes (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
-  menu_id INT NOT NULL,
   image TEXT,
   description TEXT,
-  hidden BOOLEAN NOT NULL DEFAULT false
+  hidden BOOLEAN NOT NULL DEFAULT false,
+  deleted BOOLEAN NOT NULL DEFAULT false
 );
 
 CREATE TABLE ingredients (
@@ -474,8 +474,6 @@ ALTER TABLE permissions_to_roles ADD FOREIGN KEY (perm_id) REFERENCES permission
 ALTER TABLE permissions_to_users ADD FOREIGN KEY (user_id) REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE permissions_to_users ADD FOREIGN KEY (perm_id) REFERENCES permissions (id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-ALTER TABLE dishes ADD FOREIGN KEY (menu_id) REFERENCES menus (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE ingredients_to_dishes ADD FOREIGN KEY (ingredient_id) REFERENCES ingredients (id)  ON UPDATE CASCADE ON DELETE CASCADE;
 

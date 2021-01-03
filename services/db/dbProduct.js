@@ -198,7 +198,6 @@ async function addOrUpdateProduct(product) {
     }
 }
 
-
 /**
  * Add a product. Don't take into account the password. It will not add transactions anywhere.
  * Product's prices are not changed.
@@ -252,7 +251,6 @@ async function addProduct(product) {
         client.release();
     }
 }
-
 
 /**
  * Update a product.
@@ -313,7 +311,6 @@ async function updateProduct(product) {
         client.release();
     }
 }
-
 
 /**
  * Remove totally a product.

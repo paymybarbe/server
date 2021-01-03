@@ -3,7 +3,7 @@ const path = require("path");
 const chai = require("chai");
 const tls = require("tls");
 const debug = require("debug")("server:test:certs");
-const config = require("./../../../config/config");
+const config = require("../../../config/config");
 
 chai.should();
 
