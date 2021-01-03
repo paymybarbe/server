@@ -123,20 +123,9 @@ describe("Models From Database", function _test() {
         it("Exist", async () => {
             const my_trial = roles[Math.floor(Math.random() * roles.length)]; // Choose random role
             expect(await dbRole.roleExists(my_trial)).to.be.true;
-            my_trial._id += 1; // Change id
+            my_trial._id += roles.length; // Change id
             expect(await dbRole.roleExists(my_trial)).to.be.false;
-            my_trial._id -= 1;
-
-            let is_in = false;
-            const rol = new Role();
-            rol.name = "MiamChocolat";
-            rol._id = 5;
-            for (let i = 0; i < roles.length; i++) {
-                if (roles[i].name === rol.name && roles[i]._id === rol._id) {
-                    is_in = true;
-                }
-            }
-            expect(await dbRole.roleExists(rol)).to.be.equal(is_in);
+            my_trial._id -= roles.length; // Change back id
         });
 
         it("getPermissionsFromRole", async () => {

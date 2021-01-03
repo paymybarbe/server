@@ -135,7 +135,7 @@ CREATE TABLE dishes_options (
 CREATE TABLE products_ranked_prices (
   id SERIAL PRIMARY KEY,
   product_id INT NOT NULL,
-  rank INT NOT NULL,
+  rank_id INT NOT NULL,
   price FLOAT NOT NULL,
   date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -157,7 +157,7 @@ CREATE TABLE products_cost_prices (
 CREATE TABLE dishes_ranked_prices (
   id SERIAL PRIMARY KEY,
   dish_id INT NOT NULL,
-  rank INT NOT NULL,
+  rank_id INT NOT NULL,
   price FLOAT NOT NULL,
   date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -483,7 +483,7 @@ ALTER TABLE dishes_options ADD FOREIGN KEY (dish_id) REFERENCES dishes (id) ON U
 
 ALTER TABLE products_ranked_prices ADD FOREIGN KEY (product_id) REFERENCES products (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE products_ranked_prices ADD FOREIGN KEY (rank) REFERENCES roles (id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE products_ranked_prices ADD FOREIGN KEY (rank_id) REFERENCES roles (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE products_menu_prices ADD FOREIGN KEY (product_id) REFERENCES products (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
@@ -491,7 +491,7 @@ ALTER TABLE products_cost_prices ADD FOREIGN KEY (product_id) REFERENCES product
 
 ALTER TABLE dishes_ranked_prices ADD FOREIGN KEY (dish_id) REFERENCES dishes (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
-ALTER TABLE dishes_ranked_prices ADD FOREIGN KEY (rank) REFERENCES roles (id) ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE dishes_ranked_prices ADD FOREIGN KEY (rank_id) REFERENCES roles (id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 ALTER TABLE dishes_cost_prices ADD FOREIGN KEY (dish_id) REFERENCES dishes (id) ON UPDATE CASCADE ON DELETE CASCADE;
 

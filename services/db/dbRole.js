@@ -108,6 +108,61 @@ async function addRole(role) {
 }
 
 /**
+ * Update a role, return the role updated.
+ * @param {Role} role
+ * @returns {Role}
+ */
+async function updateRole(role) { // TODO: Add test for updating roles.
+    if (!(role instanceof Role)) {
+        throw new Error("Arg was not of Role type: can't update role in database.");
+    }
+    if (!await roleExists(role)) {
+        throw new Error("Role given doesn't exist: can't update role in database.");
+    }
+    const client = await db_init.getPool().connect();
+    try {
+        await client.query('BEGIN');
+
+        const queryText = "UPDATE roles SET name = $1, "
+                                            + "parent_role = $2, "
+                                            + "next_role = $3 "
+                        + "WHERE id = $4;";
+
+        const params = [
+            role.name,
+            role.parent_role,
+            role.next_role,
+            role._id
+        ];
+
+        await client.query(queryText, params);
+
+        const promises = []; // array of promises to know when everything is done.
+        await client.query("DELETE FROM permissions_to_roles WHERE role_id = $1;", [role._id]);
+        if (role.permissions) {
+            role.permissions.forEach((permission) => {
+                promises.push(
+                    client.query('INSERT INTO permissions_to_roles (role_id, perm_id) VALUES ($1, $2)',
+                        [role._id, permission._id])
+                );
+            });
+        }
+
+        await Promise.all(promises);
+        await client.query('COMMIT');
+
+        return role;
+    }
+    catch (e) {
+        await client.query('ROLLBACK');
+        throw e;
+    }
+    finally {
+        client.release();
+    }
+}
+
+/**
  * Remove a role
  * @param {Role} role
  */
@@ -171,21 +226,18 @@ async function getPermissionsFromRole(role) {
 }
 
 /**
- * Check if Role exists
+ * Check if Role exists using the id
  * @param {Role} role
  */
 async function roleExists(role) {
     if (!(role instanceof Role)) {
         throw new Error("Arg wasn't of Role type: can't check for role in database.");
     }
-    if (!role.name) {
-        throw new Error("Role name was undefined: can't check for role in database.");
-    }
     if (!role._id) {
         throw new Error("Role id was undefined: can't check for role in database.");
     }
 
-    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM roles WHERE name = $1 AND id = $2;", [role.name, role._id]);
+    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM roles WHERE id = $1;", [role._id]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }
@@ -213,6 +265,7 @@ async function roleNameExists(role) {
 
 module.exports.getAllRoles = getAllRoles;
 module.exports.addRole = addRole;
+module.exports.updateRole = updateRole;
 module.exports.removeRole = removeRole;
 module.exports.getPermissionsFromRole = getPermissionsFromRole;
 module.exports.roleExists = roleExists;

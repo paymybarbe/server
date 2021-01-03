@@ -299,7 +299,7 @@ async function addUser(user) {
 }
 
 /**
- * Update a user. Don't take intp account the password. It will not add transactions anywhere.
+ * Update a user. Don't take into account the password. It will not add transactions anywhere.
  * return the user updated.
  * @param {User} user
  * @returns {User}
@@ -349,7 +349,7 @@ async function updateUser(user) {
 
         const promises = []; // array of promises to know when everything is done.
 
-        client.query("DELETE FROM tags WHERE user_id = $1;", [user._id]);
+        await client.query("DELETE FROM tags WHERE user_id = $1;", [user._id]);
         if (user.tags) {
             user.tags.forEach((tag) => {
                 promises.push(
@@ -358,7 +358,7 @@ async function updateUser(user) {
             });
         }
 
-        client.query("DELETE FROM roles_to_users WHERE user_id = $1;", [user._id]);
+        await client.query("DELETE FROM roles_to_users WHERE user_id = $1;", [user._id]);
         if (user.roles) {
             user.roles.forEach((role) => {
                 promises.push(
@@ -368,7 +368,7 @@ async function updateUser(user) {
             });
         }
 
-        client.query("DELETE FROM permissions_to_users WHERE user_id = $1;", [user._id]);
+        await client.query("DELETE FROM permissions_to_users WHERE user_id = $1;", [user._id]);
         if (user.personnal_permissions) {
             user.personnal_permissions.forEach((the_perm) => {
                 promises.push(
@@ -378,7 +378,7 @@ async function updateUser(user) {
             });
         }
 
-        client.query("DELETE FROM favorites WHERE user_id = $1;", [user._id]);
+        await client.query("DELETE FROM favorites WHERE user_id = $1;", [user._id]);
         if (user.favorites) {
             user.favorites.forEach((the_prod) => {
                 promises.push(
