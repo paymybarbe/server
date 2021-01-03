@@ -61,6 +61,12 @@ async function migrate(vers = '') {
 }
 
 let pool = new pg.Pool(dbConfig);
+
+/**
+ * Initialize a new pool for the database with the actual configuration or give the existing one.
+ * This pool should only be ended with db_init.end().
+ * @returns pg.Pool
+ */
 module.exports.getPool = () => {
     if (!pool) {
         pool = new pg.Pool(dbConfig);
@@ -68,6 +74,9 @@ module.exports.getPool = () => {
     return pool;
 };
 
+/**
+ * End the current pool. This should be used instead of ending the pool directly.
+ */
 module.exports.end = async function end() {
     if (pool) {
         await pool.end();

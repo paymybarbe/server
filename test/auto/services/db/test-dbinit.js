@@ -5,12 +5,10 @@ describe("Database initialize", function _test() {
     this.timeout(5000);
     let pool;
 
-    it("Pool working", (done) => {
+    it("Pool working", async () => {
         pool = dbinit.getPool();
-        pool.query('SELECT NOW();', (err, res) => {
-            expect(err).to.not.exist;
-            expect(res).to.exist;
-            done();
-        });
+        const result = await pool.query('SELECT NOW();');
+        expect(result).to.exist;
+        await dbinit.end();
     });
 });

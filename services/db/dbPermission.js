@@ -6,8 +6,6 @@ const Permission = require("../../models/Permission");
 // eslint-disable-next-line no-unused-vars
 const logger = require("../logger");
 
-const pool = db_init.getPool();
-
 /**
  * Get all permissions from the database.
  * @return {Permission[]}
@@ -16,7 +14,7 @@ async function getAllPermissions() {
     const queryText = "SELECT * FROM permissions;";
     const {
         rows
-    } = await pool.query(queryText);
+    } = await db_init.getPool().query(queryText);
 
     const permissions = [];
 
@@ -58,7 +56,7 @@ async function addPermission(permission) {
         permission.description
     ];
 
-    const res = await pool.query(queryText, params);
+    const res = await db_init.getPool().query(queryText, params);
     // eslint-disable-next-line no-param-reassign
     permission._id = res.rows[0].id;
 
@@ -80,7 +78,7 @@ async function removePermission(permission) {
     if (!await permissionExists(permission)) {
         throw new Error("Permission id was not found in database: can't remove permission.");
     }
-    await pool.query("DELETE FROM permissions WHERE id = $1;", [permission._id]);
+    await db_init.getPool().query("DELETE FROM permissions WHERE id = $1;", [permission._id]);
 }
 
 /**
@@ -98,7 +96,7 @@ async function permissionExists(permission) {
         throw new Error("Permission id was undefined: can't check for permission in database.");
     }
 
-    const answ = await pool.query("SELECT COUNT(*) FROM permissions WHERE permission = $1 AND id = $2;", [permission.permission, permission._id]);
+    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM permissions WHERE permission = $1 AND id = $2;", [permission.permission, permission._id]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }
@@ -117,7 +115,7 @@ async function permissionNameExists(permission) {
         throw new Error("Permission name was undefined: can't check for permission name in database.");
     }
 
-    const answ = await pool.query("SELECT COUNT(*) FROM permissions WHERE permission = $1;", [permission.permission]);
+    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM permissions WHERE permission = $1;", [permission.permission]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }

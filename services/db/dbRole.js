@@ -6,7 +6,6 @@ const db_init = require("./db_init");
 const Role = require("../../models/Role");
 const Permission = require("../../models/Permission");
 
-const pool = db_init.getPool();
 
 /**
  * Get all roles from the database.
@@ -22,7 +21,7 @@ async function getAllRoles() {
                     + "GROUP BY roles.id;";
     const {
         rows
-    } = await pool.query(queryText);
+    } = await db_init.getPool().query(queryText);
 
     const roles = [];
     for (let i = 0; i < rows.length; i++) {
@@ -64,7 +63,7 @@ async function addRole(role) {
     if (await roleNameExists(role)) {
         throw new Error("Role given already exists: can't add role to database.");
     }
-    const client = await pool.connect();
+    const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
 
@@ -120,7 +119,7 @@ async function removeRole(role) {
         throw new Error("Role given don't exist: can't remove role from database.");
     }
 
-    await pool.query("DELETE FROM roles WHERE id = $1;", [role._id]);
+    await db_init.getPool().query("DELETE FROM roles WHERE id = $1;", [role._id]);
 }
 
 /**
@@ -147,7 +146,7 @@ async function getPermissionsFromRole(role) {
                     + "GROUP BY role_id;";
     const {
         rows
-    } = await pool.query(queryText, [role._id]);
+    } = await db_init.getPool().query(queryText, [role._id]);
     const perms_answ = [];
 
     if (rows.length > 1) {
@@ -186,7 +185,7 @@ async function roleExists(role) {
         throw new Error("Role id was undefined: can't check for role in database.");
     }
 
-    const answ = await pool.query("SELECT COUNT(*) FROM roles WHERE name = $1 AND id = $2;", [role.name, role._id]);
+    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM roles WHERE name = $1 AND id = $2;", [role.name, role._id]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }
@@ -205,7 +204,7 @@ async function roleNameExists(role) {
         throw new Error("Role name was undefined: can't check for role name in database.");
     }
 
-    const answ = await pool.query("SELECT COUNT(*) FROM roles WHERE name = $1;", [role.name]);
+    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM roles WHERE name = $1;", [role.name]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }

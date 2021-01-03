@@ -5,7 +5,7 @@ const db_init = require("./db_init");
 const User = require("../../models/User");
 const Role = require("../../models/Role");
 const Permission = require("../../models/Permission");
-const pool = db_init.getPool();
+
 
 /**
  * Get all users from the database.
@@ -36,7 +36,7 @@ async function getAllUsers() {
                     + "GROUP BY u.id;";
     const {
         rows
-    } = await pool.query(queryText);
+    } = await db_init.getPool().query(queryText);
     // logger.debug(rows)
     const users = [];
 
@@ -122,7 +122,7 @@ async function getUser(askedUser) {
                     + "GROUP BY u.id;";
     const {
         rows
-    } = await pool.query(queryText, [askedUser._id]);
+    } = await db_init.getPool().query(queryText, [askedUser._id]);
     // logger.debug(rows)
     const users = [];
 
@@ -212,7 +212,7 @@ async function addUser(user) {
     if (!(user instanceof User)) {
         throw new Error("Arg wasn't of User type: can't add user to database.");
     }
-    const client = await pool.connect();
+    const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
 
@@ -311,11 +311,11 @@ async function updateUser(user) {
     if (!user._id) {
         throw new Error("User id was undefined: can't update user.");
     }
-    const counting = await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
     if (Number(counting.rows[0].count) === 0) {
         throw new Error("User id was not found in database: can't update user.");
     }
-    const client = await pool.connect();
+    const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
 
@@ -413,12 +413,12 @@ async function removeUser(user) {
     if (!user._id) {
         throw new Error("User id was undefined: can't remove user.");
     }
-    const counting = await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
     if (Number(counting.rows[0].count) === 0) {
         throw new Error("User id was not found in database: can't remove user.");
     }
 
-    await pool.query("DELETE FROM users WHERE id = $1;", [user._id]);
+    await db_init.getPool().query("DELETE FROM users WHERE id = $1;", [user._id]);
 }
 
 /**
@@ -432,7 +432,7 @@ async function userExists(user) {
     if (!user._id) {
         throw new Error("User id was undefined: can't remove user.");
     }
-    const counting = await pool.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
     if (Number(counting.rows[0].count) === 1) {
         return true;
     }
@@ -462,7 +462,7 @@ async function getRolesFromUser(user) {
                     + "GROUP BY roles.id;";
     const {
         rows
-    } = await pool.query(queryText, [user._id]);
+    } = await db_init.getPool().query(queryText, [user._id]);
 
     const roles = [];
     rows.forEach((row) => {

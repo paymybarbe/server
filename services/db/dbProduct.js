@@ -3,7 +3,6 @@ const db_init = require("./db_init");
 //     service: "server:services:db:dbProduct"
 // });
 const Product = require("../../models/Product");
-const pool = db_init.getPool();
 
 /**
  * Get all products from the database.
@@ -13,7 +12,7 @@ async function getAllProducts() {
     const queryText = "SELECT * FROM products P;";
     const {
         rows
-    } = await pool.query(queryText);
+    } = await db_init.getPool().query(queryText);
     // logger.debug(rows)
     const products = [];
 
@@ -68,7 +67,7 @@ async function getRankedPrices(product, datetime) {
                     + "ORDER BY date DESC;";
     const {
         rows
-    } = await pool.query(queryText, [product._id, checkdate]);
+    } = await db_init.getPool().query(queryText, [product._id, checkdate]);
     // logger.debug(rows)
     const roles_prices = {};
 
@@ -100,7 +99,7 @@ async function getMenuPrice(product, datetime) {
                     + "ORDER BY date DESC LIMIT 1;";
     const {
         rows
-    } = await pool.query(queryText, [product._id, checkdate]);
+    } = await db_init.getPool().query(queryText, [product._id, checkdate]);
     // logger.debug(rows)
 
     if (rows[0].price !== null) {
@@ -128,7 +127,7 @@ async function getCostprice(product, datetime) {
                     + "ORDER BY date DESC LIMIT 1;";
     const {
         rows
-    } = await pool.query(queryText, [product._id, checkdate]);
+    } = await db_init.getPool().query(queryText, [product._id, checkdate]);
     // logger.debug(rows)
     if (rows[0].price !== null) {
         return rows[0].price;
@@ -151,7 +150,7 @@ async function getProduct(askedProduct) {
     const queryText = "SELECT * FROM products P WHERE id = $1;";
     const {
         rows
-    } = await pool.query(queryText, [askedProduct._id]);
+    } = await db_init.getPool().query(queryText, [askedProduct._id]);
     // logger.debug(rows)
 
     if (rows[0].id !== null) {
@@ -210,7 +209,7 @@ async function addProduct(product) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't add product to database.");
     }
-    const client = await pool.connect();
+    const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
 
@@ -267,11 +266,11 @@ async function updateProduct(product) {
     if (!product._id) {
         throw new Error("Product id was undefined: can't update product.");
     }
-    const counting = await pool.query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
     if (Number(counting.rows[0].count) === 0) {
         throw new Error("Product id was not found in database: can't update product.");
     }
-    const client = await pool.connect();
+    const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
 
@@ -323,12 +322,12 @@ async function removeProduct(product) {
     if (!product._id) {
         throw new Error("Product id was undefined: can't remove product from database.");
     }
-    const counting = await pool.query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
     if (Number(counting.rows[0].count) === 0) {
         throw new Error("Product id was not found in database: can't remove product.");
     }
 
-    await pool.query("DELETE FROM products WHERE id = $1;", [product._id]);
+    await db_init.getPool().query("DELETE FROM products WHERE id = $1;", [product._id]);
 }
 
 // TODO: add setter of price by rank, by menu, cost price.

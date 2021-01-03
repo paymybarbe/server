@@ -3,7 +3,6 @@ const db_init = require("./db_init");
 //     service: "server:services:db:dbDish"
 // });
 const Dish = require("../../models/Dish");
-const pool = db_init.getPool();
 
 /**
  * Get all dishes from the database.
@@ -13,7 +12,7 @@ async function getAllDishes() {
     const queryText = "SELECT * FROM dishes;";
     const {
         rows
-    } = await pool.query(queryText);
+    } = await db_init.getPool().query(queryText);
     // logger.debug(rows)
     const dishes = [];
 
@@ -67,7 +66,7 @@ async function getRankedPrices(dish, datetime) { // FIXME: THIS ENTIRE FUCKING F
                     + "ORDER BY date DESC;";
     const {
         rows
-    } = await pool.query(queryText, [dish._id, checkdate]);
+    } = await db_init.getPool().query(queryText, [dish._id, checkdate]);
     // logger.debug(rows)
     const roles_prices = {};
 
@@ -99,7 +98,7 @@ async function getMenuPrice(dish, datetime) { // FIXME: THIS ENTIRE FUCKING FUNC
                     + "ORDER BY date DESC LIMIT 1;";
     const {
         rows
-    } = await pool.query(queryText, [dish._id, checkdate]);
+    } = await db_init.getPool().query(queryText, [dish._id, checkdate]);
     // logger.debug(rows)
 
     if (rows[0].price !== null) {
@@ -127,7 +126,7 @@ async function getCostprice(dish, datetime) { // FIXME
                     + "ORDER BY date DESC LIMIT 1;";
     const {
         rows
-    } = await pool.query(queryText, [dish._id, checkdate]);
+    } = await db_init.getPool().query(queryText, [dish._id, checkdate]);
     // logger.debug(rows)
     if (rows[0].price !== null) {
         return rows[0].price;
@@ -150,7 +149,7 @@ async function getDish(askedDish) { // FIXME
     const queryText = "SELECT * FROM dishes P WHERE id = $1;";
     const {
         rows
-    } = await pool.query(queryText, [askedDish._id]);
+    } = await db_init.getPool().query(queryText, [askedDish._id]);
     // logger.debug(rows)
 
     if (rows[0].id !== null) {
@@ -209,7 +208,7 @@ async function addDish(dish) { // FIXME
     if (!(dish instanceof Dish)) {
         throw new Error("Arg wasn't of Dish type: can't add dish to database.");
     }
-    const client = await pool.connect();
+    const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
 
@@ -262,11 +261,11 @@ async function updateDish(dish) { // FIXME: THIS ENTIRE FUCKING FUNCTION and all
     if (!dish._id) {
         throw new Error("Dish id was undefined: can't update dish.");
     }
-    const counting = await pool.query("SELECT COUNT(id) FROM dishes WHERE id = $1;", [dish._id]);
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM dishes WHERE id = $1;", [dish._id]);
     if (Number(counting.rows[0].count) === 0) {
         throw new Error("Dish id was not found in database: can't update dish.");
     }
-    const client = await pool.connect();
+    const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
 
@@ -318,12 +317,12 @@ async function removeDish(dish) { // FIXME: THIS ENTIRE FUCKING FUNCTION and all
     if (!dish._id) {
         throw new Error("Dish id was undefined: can't remove dish from database.");
     }
-    const counting = await pool.query("SELECT COUNT(id) FROM dishes WHERE id = $1;", [dish._id]);
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM dishes WHERE id = $1;", [dish._id]);
     if (Number(counting.rows[0].count) === 0) {
         throw new Error("Dish id was not found in database: can't remove dish.");
     }
 
-    await pool.query("DELETE FROM dishes WHERE id = $1;", [dish._id]);
+    await db_init.getPool().query("DELETE FROM dishes WHERE id = $1;", [dish._id]);
 }
 
 // TODO: add setter of price by rank, cost price.
