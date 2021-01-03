@@ -55,7 +55,7 @@ async function getAllProducts() {
  * @param {Date} datetime
  * @return {Object.<number,price:number>} role_id:price
 */
-async function getRankedPrices(product, datetime) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
+async function getRankedPrices(product, datetime) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't get roles prices for product in database.");
     }
@@ -87,7 +87,7 @@ async function getRankedPrices(product, datetime) { // TODO: THIS ENTIRE FUCKING
  * @param {Date} datetime
  * @return {number}
 */
-async function getMenuPrice(product, datetime) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
+async function getMenuPrice(product, datetime) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't get menu price for product in database.");
     }
@@ -207,7 +207,7 @@ async function addOrUpdateProduct(product) {
  * @param {Product} product
  * @returns {Product}
  */
-async function addProduct(product) { // TODO: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
+async function addProduct(product) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't add product to database.");
     }

@@ -46,6 +46,7 @@ async function migrate(vers = '') {
         }
     }
     catch (error) {
+        error.database = dbConfig.database;
         logger.error(error);
         // Because migrations prior to the migration with error would have run
         // error object is decorated with appliedMigrations

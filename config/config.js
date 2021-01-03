@@ -14,9 +14,11 @@ if (process.env.ENV === undefined || process.env.ENV === "null" || process.env.E
 }
 else if (process.env.ENV === "production" || process.env.ENV === "prod") {
     process.env.NODE_ENV = "production";
+    process.env.ENV = "production";
 }
 else {
     process.env.NODE_ENV = "development";
+    process.env.ENV = "development";
 }
 
 let env_conf = {};

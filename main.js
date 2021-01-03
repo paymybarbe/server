@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require("electron");
 // const debug = require("debug")("server:server");
 const path = require("path");
 const init = require("./scripts/init");
+const quit = require("./scripts/quit");
 const logger = require("./services/logger").child({
     service: "server:main"
 });
@@ -49,12 +50,19 @@ async function main() {
     }
 
     // Quit when all windows are closed.
-    app.on("window-all-closed", () => {
+    app.on("window-all-closed", async () => {
         // On macOS it is common for applications and their menu bar
         // to stay active until the user quits explicitly with Cmd + Q
         if (process.platform !== "darwin") {
-            logger.info("App closed normally.");
-            app.quit();
+            try {
+                await quit();
+                logger.info("App closed normally.");
+                app.quit();
+            }
+            catch (ex) {
+                logger.error("App closed with errors !\n", ex);
+                app.quit();
+            }
         }
     });
 
