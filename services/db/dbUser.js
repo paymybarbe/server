@@ -9,7 +9,7 @@ const Permission = require("../../models/Permission");
 
 /**
  * Get all users from the database.
- * @return {User[]}
+ * @returns {Promise<User[]>}
  */
 async function getAllUsers() {
     /* const queryText = "SELECT * FROM users LEFT JOIN "
@@ -100,7 +100,7 @@ async function getAllUsers() {
 /**
  * Get a user from the database. You just need to set his _id.
  * @param {User} askedUser
- * @return {User}
+ * @returns {Promise<User>}
  */
 async function getUser(askedUser) {
     if (!(askedUser instanceof User)) {
@@ -109,6 +109,11 @@ async function getUser(askedUser) {
     if (!askedUser._id) {
         throw new Error("User id was undefined: can't get user from database.");
     }
+    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM users WHERE id = $1;", [askedUser._id]);
+    if (Number(counting.rows[0].count) === 0) {
+        throw new Error("User id was not found in database: can't update user.");
+    }
+
     const queryText = "SELECT u.*, array_agg(tags.tag_id) AS tags, "
                     + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
                     + " as user_perms, "
@@ -188,7 +193,7 @@ async function getUser(askedUser) {
  * Add a user. Don't take into account the password. It will not add transactions anywhere.
  * return the user added.
  * @param {User} user
- * @returns {User}
+ * @returns {Promise<User>}
  */
 async function addOrUpdateUser(user) {
     if (!(user instanceof User)) {
@@ -206,7 +211,7 @@ async function addOrUpdateUser(user) {
  * Add a user. Don't take into account the password. It will not add transactions anywhere.
  * return the user added.
  * @param {User} user
- * @returns {User}
+ * @returns {Promise<User>}
  */
 async function addUser(user) {
     if (!(user instanceof User)) {
@@ -302,7 +307,7 @@ async function addUser(user) {
  * Update a user. Don't take into account the password. It will not add transactions anywhere.
  * return the user updated.
  * @param {User} user
- * @returns {User}
+ * @returns {Promise<User>}
  */
 async function updateUser(user) {
     if (!(user instanceof User)) {
@@ -311,13 +316,15 @@ async function updateUser(user) {
     if (!user._id) {
         throw new Error("User id was undefined: can't update user.");
     }
-    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
-    if (Number(counting.rows[0].count) === 0) {
-        throw new Error("User id was not found in database: can't update user.");
-    }
+
     const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
+
+        const counting = await client.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
+        if (Number(counting.rows[0].count) === 0) {
+            throw new Error("User id was not found in database: can't update user.");
+        }
 
         const queryText = "UPDATE users SET first_name = $1, "
                                             + "last_name = $2, "
@@ -443,7 +450,7 @@ async function userExists(user) {
 /**
  * Get all Roles from a User
  * @param User user
- * @returns {Role[]}
+ * @returns {Promise<Role[]>}
  */
 async function getRolesFromUser(user) {
     if (!(user instanceof User)) {

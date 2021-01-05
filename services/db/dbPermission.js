@@ -8,7 +8,7 @@ const logger = require("../logger");
 
 /**
  * Get all permissions from the database.
- * @return {Permission[]}
+ * @returns {Promise<Permission[]>}
  */
 async function getAllPermissions() {
     const queryText = "SELECT * FROM permissions;";
@@ -34,7 +34,7 @@ async function getAllPermissions() {
 /**
  * Add a Permission, return the Permission added
  * @param {Permission} permission
- * @returns {Permission}
+ * @returns {Promise<Permission>}
  */
 async function addPermission(permission) {
     if (!(permission instanceof Permission)) {

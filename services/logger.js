@@ -64,7 +64,7 @@ const logger = winston.createLogger({
 // `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
 //
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.ENV !== 'production' && process.env.ENV !== 'prod') {
     logger.add(new winston.transports.Console({
         handleExceptions: true,
         level: 'debug',
@@ -105,7 +105,7 @@ if (process.env.NODE_ENV !== 'production') {
     }));
 }
 
-if (process.env.env !== "test") {
+if (process.env.ENV !== "test") {
     logger.add(new winston.transports.File({
         filename: path.resolve(log_folder, 'error.log'),
         level: 'error'

@@ -5,11 +5,12 @@ const db_init = require("./db_init");
 
 const Role = require("../../models/Role");
 const Permission = require("../../models/Permission");
+const logger = require("../logger");
 
 
 /**
  * Get all roles from the database.
- * @return {roles[]}
+ * @returns {Promise<Role[]>}
  */
 async function getAllRoles() {
     const queryText = "SELECT roles.*, "
@@ -52,9 +53,61 @@ async function getAllRoles() {
 }
 
 /**
+ * Get a role from the database from it's ID.
+ * @param {Role} role
+ * @returns {Promise<Role>}
+ */
+async function getRole(role) {
+    if (!(role instanceof Role)) {
+        throw new Error("Arg wasn't of Role type: can't get role from database.");
+    }
+    if (!await roleExists(role)) {
+        throw new Error("Role given doesn't exist: can't get role from database.");
+    }
+    const queryText = "SELECT roles.*, "
+                    + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"
+                    + " AS perm_array "
+                    + "FROM roles "
+                    + "LEFT JOIN permissions_to_roles ON roles.id = permissions_to_roles.role_id "
+                    + "LEFT JOIN permissions ON permissions.id = permissions_to_roles.perm_id "
+                    + "WHERE roles.id = $1 "
+                    + "GROUP BY roles.id;";
+    const {
+        rows
+    } = await db_init.getPool().query(queryText, [role._id]);
+
+    const roles = [];
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].id !== null) {
+            const role_got = new Role();
+            role_got._id = rows[i].id;
+            role_got.next_role = rows[i].next_role;
+            role_got.name = rows[i].name;
+            role_got.parent_role = rows[i].parent_role;
+
+            role_got.permissions = [];
+
+            rows[i].perm_array.forEach((arr) => {
+                if (arr[0] !== null) {
+                    const perm = new Permission();
+                    perm._id = parseInt(arr[0]);
+                    perm.permission = arr[1];
+                    perm.description = arr[2];
+                    role_got.permissions.push(perm);
+                }
+            });
+
+            roles.push(role_got);
+        }
+    }
+
+    return roles[0];
+}
+
+/**
  * Add a role, return the role added
  * @param {Role} role
- * @returns {Role}
+ * @returns {Promise<Role>}
  */
 async function addRole(role) {
     if (!(role instanceof Role)) {
@@ -110,9 +163,9 @@ async function addRole(role) {
 /**
  * Update a role, return the role updated.
  * @param {Role} role
- * @returns {Role}
+ * @returns {Promise<Role>}
  */
-async function updateRole(role) { // TODO: Add test for updating roles.
+async function updateRole(role) {
     if (!(role instanceof Role)) {
         throw new Error("Arg was not of Role type: can't update role in database.");
     }
@@ -124,9 +177,9 @@ async function updateRole(role) { // TODO: Add test for updating roles.
         await client.query('BEGIN');
 
         const queryText = "UPDATE roles SET name = $1, "
-                                            + "parent_role = $2, "
-                                            + "next_role = $3 "
-                        + "WHERE id = $4;";
+        + "parent_role = $2, "
+        + "next_role = $3 "
+        + "WHERE id = $4;";
 
         const params = [
             role.name,
@@ -155,6 +208,7 @@ async function updateRole(role) { // TODO: Add test for updating roles.
     }
     catch (e) {
         await client.query('ROLLBACK');
+        logger.error(e);
         throw e;
     }
     finally {
@@ -180,7 +234,7 @@ async function removeRole(role) {
 /**
  * Get all permissions from a role.
  * @param {Role} role
- * @return {Permission[]}
+ * @returns {Promise<Permission[]>}
  */
 async function getPermissionsFromRole(role) {
     if (!(role instanceof Role)) {
@@ -264,6 +318,7 @@ async function roleNameExists(role) {
 }
 
 module.exports.getAllRoles = getAllRoles;
+module.exports.getRole = getRole;
 module.exports.addRole = addRole;
 module.exports.updateRole = updateRole;
 module.exports.removeRole = removeRole;

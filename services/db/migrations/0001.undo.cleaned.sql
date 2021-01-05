@@ -1,0 +1,113 @@
+DROP TABLE IF EXISTS users CASCADE;
+
+DROP TABLE IF EXISTS tags CASCADE;
+
+DROP TABLE IF EXISTS roles CASCADE;
+
+DROP TABLE IF EXISTS roles_to_users CASCADE;
+
+DROP TABLE IF EXISTS permissions CASCADE;
+
+DROP TABLE IF EXISTS permissions_to_roles CASCADE;
+
+DROP TABLE IF EXISTS permissions_to_users CASCADE;
+
+DROP TABLE IF EXISTS products CASCADE;
+
+DROP TABLE IF EXISTS dishes CASCADE;
+
+DROP TABLE IF EXISTS ingredients CASCADE;
+
+DROP TABLE IF EXISTS ingredients_to_dishes CASCADE;
+
+DROP TABLE IF EXISTS dishes_options CASCADE;
+
+DROP TABLE IF EXISTS products_ranked_prices CASCADE;
+
+DROP TABLE IF EXISTS products_menu_prices CASCADE;
+
+DROP TABLE IF EXISTS products_cost_prices CASCADE;
+
+DROP TABLE IF EXISTS dishes_ranked_prices CASCADE;
+
+DROP TABLE IF EXISTS dishes_cost_prices CASCADE;
+
+DROP TABLE IF EXISTS ingredients_cost_prices CASCADE;
+
+DROP TABLE IF EXISTS settings_products_prices CASCADE;
+
+DROP TABLE IF EXISTS settings_dishes_prices CASCADE;
+
+DROP TABLE IF EXISTS categories CASCADE;
+
+DROP TABLE IF EXISTS products_to_categories CASCADE;
+
+DROP TABLE IF EXISTS favorites CASCADE;
+
+DROP TABLE IF EXISTS menus CASCADE;
+
+DROP TABLE IF EXISTS products_inside_menus CASCADE;
+
+DROP TABLE IF EXISTS dishes_inside_menus CASCADE;
+
+DROP TABLE IF EXISTS categories_inside_menus CASCADE;
+
+DROP TABLE IF EXISTS orders CASCADE;
+
+DROP TABLE IF EXISTS products_inside_orders CASCADE;
+
+DROP TABLE IF EXISTS menus_inside_orders CASCADE;
+
+DROP TABLE IF EXISTS products_inside_menus_orders CASCADE;
+
+DROP TABLE IF EXISTS dishes_inside_menus_orders CASCADE;
+
+DROP TABLE IF EXISTS services CASCADE;
+
+DROP TABLE IF EXISTS menus_inside_services CASCADE;
+
+DROP TABLE IF EXISTS users_inside_services CASCADE;
+
+DROP TABLE IF EXISTS inventories CASCADE;
+
+DROP TABLE IF EXISTS products_inside_inventory CASCADE;
+
+DROP TABLE IF EXISTS ingredients_inside_inventory CASCADE;
+
+DROP TABLE IF EXISTS restocking CASCADE;
+
+DROP TABLE IF EXISTS restocking_places CASCADE;
+
+DROP TABLE IF EXISTS products_inside_restocking CASCADE;
+
+DROP TABLE IF EXISTS ingredients_inside_restocking CASCADE;
+
+DROP TABLE IF EXISTS funds_stats CASCADE;
+
+DROP TABLE IF EXISTS cash_funds CASCADE;
+
+DROP TABLE IF EXISTS cash_funds_operations CASCADE;
+
+DROP TABLE IF EXISTS connections_history CASCADE;
+
+DROP TABLE IF EXISTS transactions CASCADE;
+
+DROP TABLE IF EXISTS settings CASCADE;
+
+DROP TABLE IF EXISTS expiring CASCADE;
+
+DROP TABLE IF EXISTS products_inside_expiring CASCADE;
+
+DROP TABLE IF EXISTS ingredients_inside_expiring CASCADE;
+
+DROP TABLE IF EXISTS dishes_options_inside_menus_orders CASCADE;
+
+DROP TYPE IF EXISTS ORDER_STATUS CASCADE;
+
+DROP TYPE IF EXISTS PLANNING_STATUS CASCADE;
+
+DROP TYPE IF EXISTS CASH_FUNDS_OPERATIONS_TYPE CASCADE;
+
+DROP TYPE IF EXISTS TRANSACTION_MEANS CASCADE;
+
+DROP TYPE IF EXISTS TRANSACTION_TYPE CASCADE;

@@ -2,7 +2,7 @@ const chai = require('chai');
 const { expect } = chai;
 const deepEqualInAnyOrder = require('deep-equal-in-any-order');
 
-const dbinit = require("../../../../services/db/db_init");
+// const dbinit = require("../../../../services/db/db_init");
 
 const seeder = require("../../../../scripts/script.seed");
 /* const logger = require("../../../../services/logger").child({
@@ -21,17 +21,16 @@ const logger = require('../../../../services/logger');
 chai.use(deepEqualInAnyOrder);
 
 describe("Models From Database", function _test() {
-    this.timeout(5000);
+    this.timeout(1000);
     let permissions;
     let roles;
     let users;
+    let trial_id;
 
-    this.beforeAll((done) => {
-        seeder.cleanDB().then(() => done());
-    });
-
-    this.afterAll((done) => {
-        seeder.cleanDB().then(() => dbinit.end().then(() => done()));
+    this.beforeAll(async () => {
+        permissions = await dbPermission.getAllPermissions();
+        roles = await dbRole.getAllRoles();
+        users = await dbUser.getAllUsers();
     });
 
     function sortId(a, b) {
@@ -40,20 +39,22 @@ describe("Models From Database", function _test() {
 
     describe("Permission", () => {
         it("Insert & Select All equals", async () => {
-            permissions = await seeder.generatePermissions(30);
+            const new_permissions = await seeder.generatePermissions(30);
             const select_permissions = [];
-            permissions.forEach((element) => {
+            new_permissions.forEach((element) => {
                 select_permissions.push(dbPermission.addPermission(element));
             });
 
             const add_perms = await Promise.all(select_permissions);
             const sel_perms = await dbPermission.getAllPermissions();
 
+            add_perms.push(...permissions);
+
             expect(sel_perms).to.have.length(add_perms.length);
 
             sel_perms.sort(sortId);
             add_perms.sort(sortId);
-            for (let i = 0; i < permissions.length; i++) {
+            for (let i = 0; i < add_perms.length; i++) {
                 expect(sel_perms[i].permission).to.be.equal(add_perms[i].permission);
                 expect(sel_perms[i].description).to.be.equal(add_perms[i].description);
             }
@@ -89,26 +90,28 @@ describe("Models From Database", function _test() {
 
     describe("Roles", () => {
         it("Roles Insert & Select All equals", async () => {
-            roles = await seeder.generateRoles(15, permissions);
+            const new_roles = await seeder.generateRoles(15, permissions);
             const role1 = new Role();
             role1.name = "EmptyRole1";
             const role2 = new Role();
             role2.name = "EmptyRole2";
-            roles.push(role1, role2);
+            new_roles.push(role1, role2);
 
             const select_roles = [];
-            roles.forEach((element) => {
+            new_roles.forEach((element) => {
                 select_roles.push(dbRole.addRole(element));
             });
 
             const add_roles = await Promise.all(select_roles);
             const sel_rollings = await dbRole.getAllRoles();
 
+            add_roles.push(...roles);
+
             expect(sel_rollings).to.have.length(add_roles.length);
 
             add_roles.sort(sortId);
             sel_rollings.sort(sortId);
-            for (let i = 0; i < roles.length; i++) {
+            for (let i = 0; i < add_roles.length; i++) {
                 expect(add_roles[i].name).to.be.equal(sel_rollings[i].name);
                 expect(add_roles[i].description).to.be.equal(sel_rollings[i].description);
                 add_roles[i].permissions.sort(sortId);
@@ -128,6 +131,36 @@ describe("Models From Database", function _test() {
             my_trial._id -= roles.length; // Change back id
         });
 
+        it("Update", async () => {
+            trial_id = Math.floor(Math.random() * roles.length);
+            const my_trial = roles[trial_id]; // Choose random role
+            my_trial.name = "UpdatedRole";
+            my_trial.next_role = roles[Math.floor(Math.random() * roles.length)]._id; // Choose random role
+            // Prevent it from being the last one as we will delete it just after
+            my_trial.next_role = my_trial.next_role === roles[roles.length - 1]._id ? null : my_trial.next_role;
+            my_trial.parent_role = null;
+
+            for (let d = 0; d < Math.floor(Math.random() * 5); d++) {
+                const the_perm = permissions[Math.floor(Math.random() * permissions.length)];
+                if (my_trial.permissions.filter(
+                    (perm) => perm.permission === the_perm.permission
+                ).length === 0) {
+                    my_trial.permissions.push(the_perm);
+                }
+            }
+
+            await dbRole.updateRole(my_trial);
+            const trial_in = await dbRole.getRole(my_trial);
+
+            expect(my_trial.name).to.be.equal(trial_in.name);
+            expect(my_trial.description).to.be.equal(trial_in.description);
+            my_trial.permissions.sort(sortId);
+            trial_in.permissions.sort(sortId);
+            expect(my_trial.permissions).to.be.eql(trial_in.permissions);
+            expect(my_trial.parent_role).to.be.equal(trial_in.parent_role);
+            expect(my_trial.next_role).to.be.equal(trial_in.next_role);
+        });
+
         it("getPermissionsFromRole", async () => {
             const my_trial = roles[Math.floor(Math.random() * roles.length)]; // Choose random role
             expect(await dbRole.getPermissionsFromRole(my_trial)).to.be.deep.equalInAnyOrder(my_trial.permissions);
@@ -143,7 +176,7 @@ describe("Models From Database", function _test() {
 
     describe("User", () => {
         it("Users Insert & Select All equals", async () => {
-            users = await seeder.generateUsers(10, permissions, roles);
+            const new_users = await seeder.generateUsers(10, permissions, roles);
 
             const user1 = new User();
             user1.first_name = "EmptyUser1";
@@ -152,27 +185,44 @@ describe("Models From Database", function _test() {
             user2.roles.push(roles[roles.length - 1]);
             const user3 = new User();
             user3.first_name = "EmptyUser3";
-            users.push(user1, user2, user3);
+            if (trial_id < roles.length) {
+                user3.roles.push(roles[trial_id]); // Updated role
+            }
+            new_users.push(user1, user2, user3);
 
             const select_users = [];
-            users.forEach((element) => {
+            new_users.forEach((element) => {
                 select_users.push(dbUser.addUser(element));
             });
 
             const add_users = await Promise.all(select_users);
             const sel_uss = await dbUser.getAllUsers();
 
+            add_users.push(...users);
+
             expect(add_users).to.have.length(sel_uss.length);
             add_users.sort(sortId);
             sel_uss.sort(sortId);
             for (let i = 0; i < add_users.length; i++) {
-                expect(add_users[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+                try {
+                    expect(add_users[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+                }
+                catch (e) {
+                    logger.debug(add_users[i]);
+                    logger.debug(sel_uss[i]);
+                    logger.debug(roles[trial_id]);
+                    if (trial_id < roles.length) {
+                        // eslint-disable-next-line no-await-in-loop
+                        logger.debug(await dbRole.getRole(roles[trial_id]));
+                    }
+                    throw e;
+                }
             }
 
             users = add_users;
         });
 
-        it("Users Update", async () => {
+        it("Update", async () => {
             const my_trial = users[Math.floor(Math.random() * users.length)]; // Choose random user
             // Change several values
             my_trial.first_name = "Miam";
@@ -209,7 +259,7 @@ describe("Models From Database", function _test() {
 
         it("Remove", async () => {
             const my_trial = users.pop(); // Choose and remove from array last user
-
+            expect(await dbUser.userExists(my_trial)).to.be.true;
             await dbUser.removeUser(my_trial);
             expect(await dbUser.userExists(my_trial)).to.be.false;
         });

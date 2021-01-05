@@ -6,7 +6,7 @@ const Dish = require("../../models/Dish");
 
 /**
  * Get all dishes from the database.
- * @return {Dish[]}
+ * @returns {Promise<Dish[]>}
  */
 async function getAllDishes() {
     const queryText = "SELECT * FROM dishes;";
@@ -51,7 +51,7 @@ async function getAllDishes() {
  * Return prices of a dish based on rank at a choosen time in key/value: role_id:price.
  * @param {Dish} dish
  * @param {Date} datetime
- * @return {Object.<number,price:number>} role_id:price
+ * @returns {Promise<Object.<number,price:number>>} role_id:price
 */
 async function getRankedPrices(dish, datetime) { // FIXME: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
     if (!(dish instanceof Dish)) {
@@ -83,7 +83,7 @@ async function getRankedPrices(dish, datetime) { // FIXME: THIS ENTIRE FUCKING F
  * Return price of a dish in a menu at a choosen time. Return -1 if no price.
  * @param {Dish} dish
  * @param {Date} datetime
- * @return {number}
+ * @returns {Promise<number>}
 */
 async function getMenuPrice(dish, datetime) { // FIXME: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
     if (!(dish instanceof Dish)) {
@@ -111,7 +111,7 @@ async function getMenuPrice(dish, datetime) { // FIXME: THIS ENTIRE FUCKING FUNC
  * Return cost price of a dish at a choosen time. Return -1 if no price.
  * @param {Dish} dish
  * @param {Date} datetime
- * @return {number}
+ * @returns {Promise<number>}
 */
 async function getCostprice(dish, datetime) { // FIXME
     if (!(dish instanceof Dish)) {
@@ -137,7 +137,7 @@ async function getCostprice(dish, datetime) { // FIXME
 /**
  * Get a dish from the database. You just need to set his _id in the parameter.
  * @param {Dish} askedDish
- * @return {Dish}
+ * @returns {Promise<Dish>}
  */
 async function getDish(askedDish) { // FIXME
     if (!(askedDish instanceof Dish)) {
@@ -182,7 +182,7 @@ async function getDish(askedDish) { // FIXME
  *
  * return the dish added.
  * @param {Dish} dish
- * @returns {Dish}
+ * @returns {Promise<Dish>}
  */
 async function addOrUpdateDish(dish) { // FIXME
     if (!(dish instanceof Dish)) {
@@ -202,7 +202,7 @@ async function addOrUpdateDish(dish) { // FIXME
  *
  * Return the dish added.
  * @param {Dish} dish
- * @returns {Dish}
+ * @returns {Promise<Dish>}
  */
 async function addDish(dish) { // FIXME
     if (!(dish instanceof Dish)) {
@@ -252,7 +252,7 @@ async function addDish(dish) { // FIXME
  *
  * Return the dish updated.
  * @param {Dish} dish
- * @returns {Dish}
+ * @returns {Promise<Dish>}
  */
 async function updateDish(dish) { // FIXME: THIS ENTIRE FUCKING FUNCTION and all the functions of the file
     if (!(dish instanceof Dish)) {

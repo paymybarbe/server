@@ -8,7 +8,7 @@ const Role = require("../../models/Role");
 /**
  * Get all products from the database, prices at the given datetime.
  * @param {Date} [datetime]
- * @return {Product[]}
+ * @returns {Promise<Product[]>}
  */
 async function getAllProducts(datetime) {
     if (datetime && !(datetime instanceof Date)) {
@@ -63,7 +63,7 @@ async function getAllProducts(datetime) {
  * Prices at the given datetime.
  * @param {Product} askedProduct
  * @param {Date} [datetime]
- * @return {Product}
+ * @returns {Promise<Product>}
  */
 async function getProduct(askedProduct, datetime) {
     if (!(askedProduct instanceof Product)) {
@@ -116,7 +116,7 @@ async function getProduct(askedProduct, datetime) {
  *
  * return the product added.
  * @param {Product} product
- * @returns {Product}
+ * @returns {Promise<Product>}
  */
 async function addOrUpdateProduct(product) {
     if (!(product instanceof Product)) {
@@ -136,7 +136,7 @@ async function addOrUpdateProduct(product) {
  *
  * Return the product added.
  * @param {Product} product
- * @returns {Product}
+ * @returns {Promise<Product>}
  */
 async function addProduct(product) {
     if (!(product instanceof Product)) {
@@ -216,7 +216,7 @@ async function addProduct(product) {
  *
  * Return the product updated.
  * @param {Product} product
- * @returns {Product}
+ * @returns {Promise<Product>}
  */
 async function updateProduct(product) {
     if (!(product instanceof Product)) {
@@ -301,7 +301,7 @@ async function updateProduct(product) {
  * Return prices of a product based on role at a choosen time in key/value: role_id:price.
  * @param {Product} product
  * @param {Date} [datetime]
- * @return {Object.<number,price:number>} role_id:price
+ * @returns {Promise<Object.<number,price:number>>} role_id:price
 */
 async function getRankedPrices(product, datetime) {
     if (!(product instanceof Product)) {
@@ -336,7 +336,7 @@ async function getRankedPrices(product, datetime) {
  * Return price of a product in a menu at a choosen time. Return -1 if no price.
  * @param {Product} product
  * @param {Date} [datetime]
- * @return {number}
+ * @returns {Promise<number>}
 */
 async function getMenuPrice(product, datetime) {
     if (!(product instanceof Product)) {
@@ -367,7 +367,7 @@ async function getMenuPrice(product, datetime) {
  * Return cost price of a product at a choosen time. Return -1 if no price.
  * @param {Product} product
  * @param {Date} [datetime]
- * @return {number}
+ * @returns {Promise<number>}
 */
 async function getCostprice(product, datetime) {
     if (!(product instanceof Product)) {
