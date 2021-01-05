@@ -118,6 +118,8 @@ async function addRoles(amount, permissions, roles) {
     return role_added;
 }
 
+// TODO: Add products
+
 async function generateUsers(amount, permissions, roles) {
     const user_adding = [];
 

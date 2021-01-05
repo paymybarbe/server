@@ -546,9 +546,7 @@ async function removeProduct(product) {
 
 // TODO: Test products functions.
 
-// TODO: add getter and setter of price by rank settings, by menu settings.
-
-// TODO: Change functions to use prices changing settings.
+// TODO: add getter and setter of price by rank settings, by menu settings and change functions to use them.
 
 module.exports.getAllProducts = getAllProducts;
 module.exports.addProduct = addProduct;
