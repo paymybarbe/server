@@ -7,7 +7,6 @@ const Role = require("../../models/Role");
 const Permission = require("../../models/Permission");
 const logger = require("../logger");
 
-
 /**
  * Get all roles from the database.
  * @returns {Promise<Role[]>}

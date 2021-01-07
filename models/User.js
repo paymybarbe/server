@@ -49,7 +49,11 @@ module.exports = class User {
         all_perms = [];
         if (this.roles) {
             this.roles.forEach((role) => {
-                all_perms.concat(role.permissions);
+                role.permissions.forEach((perm) => {
+                    if (all_perms.filter((p) => p.permission === perm.permission).length === 0) {
+                        all_perms.push(perm);
+                    }
+                });
             });
         }
 

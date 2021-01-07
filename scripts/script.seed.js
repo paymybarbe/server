@@ -7,12 +7,14 @@ const config = require("../config/config");
 const User = require("../models/User");
 const Permission = require("../models/Permission");
 const Role = require("../models/Role");
+const Product = require("../models/Product").default;
 
 const db_init = require("../services/db/db_init");
 
 const dbUser = require("../services/db/dbUser");
 const dbRole = require("../services/db/dbRole");
 const dbPermission = require("../services/db/dbPermission");
+const dbProduct = require("../services/db/dbProduct");
 
 async function cleanDB() {
     await db_init.migrate('0');
@@ -71,14 +73,13 @@ async function generateRoles(amount, permissions, roles) {
     for (let i = 0; i < amount; i++) {
         const role = new Role();
         role.name = faker.name.jobTitle();
-
         let j = 0;
         while (roles_used.includes(role.name) && j < 20) {
             role.name = faker.name.jobTitle();
             j++;
         }
         if (j >= 20) {
-            break;
+            continue;
         }
         if (roles && roles.length > 0) {
             role.parent_role = Math.random() > 0.3
@@ -119,6 +120,49 @@ async function addRoles(amount, permissions, roles) {
 }
 
 // TODO: Add products
+
+async function generateProducts(amount, roles) {
+    const product_adding = [];
+
+    for (let i = 0; i < amount; i++) {
+        const the_product = new Product();
+        the_product.name = faker.commerce.productName();
+        the_product.stock = Math.round(Math.random() * 1000);
+        the_product.description = faker.commerce.productDescription();
+        the_product.threshold = Math.floor(Math.random() * 101);
+        the_product.fixed_threshold = Math.random() > 0.3;
+        the_product.hidden = Math.random() > 0.3;
+        the_product.deleted = Math.random() > 0.3;
+
+        the_product.cost_price = Math.round(Math.random() * 10100) / 100;
+        the_product.menu_price = Math.round(Math.random() * 10100) / 100;
+
+        if (roles.length > 0) {
+            for (let d = 0; d < Math.floor(Math.random() * 5); d++) {
+                const the_role = roles[Math.floor(Math.random() * roles.length)];
+                the_product.setRolePrice(the_role, Math.round(Math.random() * 10100) / 100);
+            }
+        }
+
+        product_adding.push(the_product);
+    }
+    return product_adding;
+}
+
+async function addProducts(amount, roles) {
+    const product_added = [];
+    const productings = await generateProducts(amount, roles);
+    logger.debug(productings);
+    productings.forEach((product) => product_added.push(dbProduct.addProduct(product)));
+
+    for (let i = 0; i < product_added.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        product_added[i] = await product_added[i];
+    }
+    logger.debug(product_added);
+
+    return product_added;
+}
 
 async function generateUsers(amount, permissions, roles) {
     const user_adding = [];
@@ -274,6 +318,8 @@ module.exports.generatePermissions = generatePermissions;
 module.exports.addPermissions = addPermissions;
 module.exports.generateRoles = generateRoles;
 module.exports.addRoles = addRoles;
+module.exports.generateProducts = generateProducts;
+module.exports.addProducts = addProducts;
 module.exports.generateUsers = generateUsers;
 module.exports.addUsers = addUsers;
 module.exports.cleanDB = cleanDB;

@@ -270,14 +270,14 @@ async function updateDish(dish) { // FIXME: THIS ENTIRE FUCKING FUNCTION and all
         await client.query('BEGIN');
 
         const queryText = "UPDATE dishes SET name = $1, "
-                                            + "image = $2, "
-                                            + "stock = $3, "
-                                            + "description = $4, "
-                                            + "threshold = $5, "
-                                            + "fixed_threshold = $6, "
-                                            + "hidden = $7, "
-                                            + "deleted = $8 "
-        + "WHERE id = $9;";
+                        + "image = $2, "
+                        + "stock = $3, "
+                        + "description = $4, "
+                        + "threshold = $5, "
+                        + "fixed_threshold = $6, "
+                        + "hidden = $7, "
+                        + "deleted = $8 "
+                        + "WHERE id = $9;";
 
         const params = [
             dish.name,
