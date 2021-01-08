@@ -10,10 +10,12 @@ const seeder = require("../../../../scripts/script.seed");
     inspect_depth: 5
 }); */
 const dbUser = require("../../../../services/db/dbUser");
+const dbProduct = require("../../../../services/db/dbProduct");
 const dbRole = require("../../../../services/db/dbRole");
 const dbPermission = require("../../../../services/db/dbPermission");
 const Permission = require('../../../../models/Permission');
 const Role = require('../../../../models/Role');
+const Product = require('../../../../models/Product');
 const User = require('../../../../models/User');
 // eslint-disable-next-line no-unused-vars
 const logger = require('../../../../services/logger');
@@ -24,6 +26,7 @@ describe("Models From Database", function _test() {
     this.timeout(1000);
     let permissions;
     let roles;
+    let products;
     let users;
     let trial_id;
 
@@ -31,6 +34,7 @@ describe("Models From Database", function _test() {
         permissions = await dbPermission.getAllPermissions();
         roles = await dbRole.getAllRoles();
         users = await dbUser.getAllUsers();
+        products = await dbProduct.getAllProducts();
     });
 
     this.afterAll(async () => {
@@ -178,9 +182,82 @@ describe("Models From Database", function _test() {
         });
     });
 
+    describe("Products", () => {
+        it("Insert & Select All equals", async () => {
+            const new_products = await seeder.generateProducts(50, roles);
+
+            const product1 = new Product();
+            product1.name = "EmptyProduct1";
+            new_products.push(product1);
+
+            const select_products = [];
+            new_products.forEach((element) => {
+                select_products.push(dbProduct.addProduct(element));
+            });
+
+            const add_products = await Promise.all(select_products);
+            const sel_uss = await dbProduct.getAllProducts();
+
+            add_products.push(...products);
+
+            expect(add_products).to.have.length(sel_uss.length);
+            add_products.sort(sortId);
+            sel_uss.sort(sortId);
+            for (let i = 0; i < add_products.length; i++) {
+                expect(add_products[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+            }
+
+            products = add_products;
+        });
+
+        it("Update", async () => {
+            const my_trial = products[Math.floor(Math.random() * products.length)]; // Choose random product
+            // Change several values
+            my_trial.name = "Miam";
+            my_trial.cost_price = 12345;
+
+            let my_role = null;
+
+            if (roles.length > 2) {
+                my_role = roles[Math.floor(Math.random() * roles.length)]; // Choose random product
+                my_trial.setRolePrice(my_role, 54321.01);
+            }
+
+            await dbProduct.updateProduct(my_trial);
+            const my_checker = await dbProduct.getProduct(my_trial);
+            // Check if product was updated with our changes
+            expect(my_trial).to.be.deep.equalInAnyOrder(my_checker);
+        });
+
+        it("Exist", async () => {
+            const my_trial = products[Math.floor(Math.random() * products.length)]; // Choose random product
+            expect(await dbProduct.productExists(my_trial)).to.be.true;
+            my_trial._id += 100; // Change id
+            expect(await dbProduct.productExists(my_trial)).to.be.false;
+            my_trial._id -= 100;
+
+            let is_in = false;
+            const use = new Product();
+            use._id = products.length + 1;
+            for (let i = 0; i < products.length; i++) {
+                if (products[i]._id === use._id) {
+                    is_in = true;
+                }
+            }
+            expect(await dbProduct.productExists(use)).to.be.equal(is_in);
+        });
+
+        it("Remove", async () => {
+            const my_trial = products.pop(); // Choose and remove from array last product
+            expect(await dbProduct.productExists(my_trial)).to.be.true;
+            await dbProduct.removeProduct(my_trial);
+            expect(await dbProduct.productExists(my_trial)).to.be.false;
+        });
+    });
+
     describe("User", () => {
         it("Users Insert & Select All equals", async () => {
-            const new_users = await seeder.generateUsers(10, permissions, roles);
+            const new_users = await seeder.generateUsers(10, permissions, roles, products);
 
             const user1 = new User();
             user1.first_name = "EmptyUser1";

@@ -7,6 +7,7 @@ const Application = require('spectron').Application;
 const path = require('path');
 const electronPath = require('electron'); // Require Electron from the binaries included in node_modules.
 const User = require("../models/User");
+const Product = require("../models/Product");
 const db_init = require("../services/db/db_init");
 const dbUser = require("../services/db/dbUser");
 const dbRole = require("../services/db/dbRole");

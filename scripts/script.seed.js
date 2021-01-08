@@ -7,7 +7,7 @@ const config = require("../config/config");
 const User = require("../models/User");
 const Permission = require("../models/Permission");
 const Role = require("../models/Role");
-const Product = require("../models/Product").default;
+const Product = require("../models/Product");
 
 const db_init = require("../services/db/db_init");
 
@@ -164,7 +164,7 @@ async function addProducts(amount, roles) {
     return product_added;
 }
 
-async function generateUsers(amount, permissions, roles) {
+async function generateUsers(amount, permissions, roles, products) {
     const user_adding = [];
 
     for (let i = 0; i < amount; i++) {
@@ -209,16 +209,24 @@ async function generateUsers(amount, permissions, roles) {
             }
         }
 
-        // TODO: Add favorites
+        the_user.favorites = [];
+        if (products && products.length !== 0) {
+            for (let j = 0; j < Math.floor(Math.random() * 6); j++) {
+                const that_product = permissions[Math.floor(Math.random() * products.length)];
+                if (!the_user.favorites.includes(that_product)) {
+                    the_user.favorites.push();
+                }
+            }
+        }
 
         user_adding.push(the_user);
     }
     return user_adding;
 }
 
-async function addUsers(amount, permissions, roles) {
+async function addUsers(amount, permissions, roles, products) {
     const user_added = [];
-    const userings = await generateUsers(amount, permissions, roles);
+    const userings = await generateUsers(amount, permissions, roles, products);
     logger.debug(userings);
     userings.forEach((user) => user_added.push(dbUser.addUser(user)));
 

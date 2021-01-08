@@ -314,9 +314,9 @@ async function getRankedPrices(product, datetime) {
     if (!datetime) {
         checkdate = new Date();
     }
-    const queryText = "SELECT DISTINCT ON (rank) rank, price FROM products_ranked_prices "
+    const queryText = "SELECT DISTINCT ON (rank_id) rank_id, price, date FROM products_ranked_prices "
                     + "WHERE product_id = $1 AND date <= $2 "
-                    + "ORDER BY date DESC;";
+                    + "ORDER BY rank_id, date DESC;";
     const {
         rows
     } = await db_init.getPool().query(queryText, [product._id, checkdate]);
@@ -324,8 +324,8 @@ async function getRankedPrices(product, datetime) {
     const roles_prices = {};
 
     rows.forEach((row) => {
-        if (row.rank !== null) {
-            roles_prices[row.rank.toString()] = row.price;
+        if (row.rank_id !== null) {
+            roles_prices[row.rank_id.toString()] = row.price;
         }
     });
 
@@ -357,10 +357,10 @@ async function getMenuPrice(product, datetime) {
     } = await db_init.getPool().query(queryText, [product._id, checkdate]);
     // logger.debug(rows)
 
-    if (rows[0].price !== null) {
+    if (rows[0] && rows[0].price !== null) {
         return rows[0].price;
     }
-    return -1;
+    return 0;
 }
 
 /**
@@ -373,7 +373,7 @@ async function getCostprice(product, datetime) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't get cost price for product in database.");
     }
-    if (datetime && !(datetime instanceof Product)) {
+    if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't get cost price for product in database.");
     }
     let checkdate = datetime;
@@ -387,10 +387,10 @@ async function getCostprice(product, datetime) {
         rows
     } = await db_init.getPool().query(queryText, [product._id, checkdate]);
     // logger.debug(rows)
-    if (rows[0].price !== null) {
+    if (rows[0] && rows[0].price !== null) {
         return rows[0].price;
     }
-    return -1;
+    return 0;
 }
 
 /**
@@ -526,6 +526,25 @@ async function setCostPrice(product, cost, datetime, client) {
 }
 
 /**
+ * Check if Product exists using the id
+ * @param {Product} product
+ */
+async function productExists(product) {
+    if (!(product instanceof Product)) {
+        throw new Error("Arg wasn't of Product type: can't check for product in database.");
+    }
+    if (!product._id) {
+        throw new Error("Product id was undefined: can't check for product in database.");
+    }
+
+    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM products WHERE id = $1;", [product._id]);
+    if (Number(answ.rows[0].count) === 1) {
+        return true;
+    }
+    return false;
+}
+
+/**
  * Remove totally a product.
  * @param {Product} product
  */
@@ -551,6 +570,7 @@ async function removeProduct(product) {
 module.exports.getAllProducts = getAllProducts;
 module.exports.addProduct = addProduct;
 module.exports.removeProduct = removeProduct;
+module.exports.productExists = productExists;
 module.exports.updateProduct = updateProduct;
 module.exports.addOrUpdateProduct = addOrUpdateProduct;
 module.exports.getProduct = getProduct;

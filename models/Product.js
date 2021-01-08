@@ -13,7 +13,7 @@ module.exports = class Product {
     image = null;
     stock = null;
     description = null;
-    threshold = null;
+    threshold = 0;
     /**
      * @type boolean
      */
@@ -80,12 +80,12 @@ module.exports = class Product {
      * Price of a product in menu.
      * @type {number}
      */
-    menu_price = null;
+    menu_price = 0;
     /**
      * Cost price of a product.
      * @type {number}
      */
-    cost_price = null;
+    cost_price = 0;
     // /**
     //  * Prices modifier of the product in key/value: role:{multiplier, add}
     //  * @type {Object.<role:Role,{multiplier:number, add:number}>} role:{multiplier, add}
