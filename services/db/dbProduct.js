@@ -185,8 +185,8 @@ async function addProduct(product) {
                 const role_temp = new Role();
                 role_temp._id = parseInt(role_id);
                 promises.push(
-                    setRankedPrice(product, product.roles_prices[role_id],
-                        role_temp, new Date(), client)
+                    setRankedPrice(product, role_temp,
+                        product.roles_prices[role_id], new Date(), client)
                 );
             });
         }
@@ -274,8 +274,8 @@ async function updateProduct(product) {
                 const role_temp = new Role();
                 role_temp._id = parseInt(role_id);
                 promises.push(
-                    setRankedPrice(product, product.roles_prices[role_id],
-                        role_temp, new Date(), client)
+                    setRankedPrice(product, role_temp,
+                        product.roles_prices[role_id], new Date(), client)
                 );
             });
         }
@@ -415,12 +415,12 @@ async function getCostPrice(product, datetime) {
 /**
  * Set the price of a product for a role at a choosen time.
  * @param {Product} product
- * @param {number} cost
  * @param {Rank} role
+ * @param {number} cost
  * @param {Date} [datetime]
  * @param {PoolClient} [client]
 */
-async function setRankedPrice(product, cost, role, datetime, client) {
+async function setRankedPrice(product, role, cost, datetime, client) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't change role price of product in database.");
     }
@@ -610,6 +610,6 @@ module.exports.getProduct = getProduct;
 module.exports.getRankedPrices = getRankedPrices;
 module.exports.getMenuPrice = getMenuPrice;
 module.exports.getCostPrice = getCostPrice;
-module.exports.setRankedPrices = setRankedPrice;
+module.exports.setRankedPrice = setRankedPrice;
 module.exports.setMenuPrice = setMenuPrice;
 module.exports.setCostPrice = setCostPrice;
