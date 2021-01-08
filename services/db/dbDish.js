@@ -30,7 +30,7 @@ async function getAllDishes() {
 
             dish.roles_prices = getRankedPrices(dish);
             dish.menu_price = getMenuPrice(dish);
-            dish.cost_price = getCostprice(dish);
+            dish.cost_price = getCostPrice(dish);
 
             dishes.push(dish);
         }
@@ -113,7 +113,7 @@ async function getMenuPrice(dish, datetime) { // FIXME: THIS ENTIRE FUCKING FUNC
  * @param {Date} datetime
  * @returns {Promise<number>}
 */
-async function getCostprice(dish, datetime) { // FIXME
+async function getCostPrice(dish, datetime) { // FIXME
     if (!(dish instanceof Dish)) {
         throw new Error("Arg wasn't of Dish type: can't get cost price for dish in database.");
     }
@@ -166,7 +166,7 @@ async function getDish(askedDish) { // FIXME
 
         dish.roles_prices = getRankedPrices(dish);
         dish.menu_price = getMenuPrice(dish);
-        dish.cost_price = getCostprice(dish);
+        dish.cost_price = getCostPrice(dish);
         dish.roles_prices = await dish.roles_prices;
         dish.menu_price = await dish.menu_price;
         dish.cost_price = await dish.cost_price;
@@ -337,4 +337,4 @@ module.exports.addOrUpdateDish = addOrUpdateDish;
 module.exports.getDish = getDish;
 module.exports.getRankedPrices = getRankedPrices;
 module.exports.getMenuPrice = getMenuPrice;
-module.exports.getCostprice = getCostprice;
+module.exports.getCostPrice = getCostPrice;

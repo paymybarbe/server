@@ -1,11 +1,10 @@
 const db_init = require("./db_init");
-// const logger = require("../logger").child({
-//     service: "server:services:db:dbRole"
-// });
+const logger = require("../logger").child({
+    service: "server:services:db:dbRole"
+});
 
 const Role = require("../../models/Role");
 const Permission = require("../../models/Permission");
-const logger = require("../logger");
 
 /**
  * Get all roles from the database.
@@ -114,6 +113,9 @@ async function addRole(role) {
     }
     if (await roleNameExists(role)) {
         throw new Error("Role given already exists: can't add role to database.");
+    }
+    if (role._id && await roleExists(role)) {
+        logger.warn("You are adding a role with a valid id to the database:", role);
     }
     const client = await db_init.getPool().connect();
     try {
@@ -282,7 +284,7 @@ async function getPermissionsFromRole(role) {
  * Check if Role exists using the id
  * @param {Role} role
  */
-async function roleExists(role) {
+async function roleExists(role, client) {
     if (!(role instanceof Role)) {
         throw new Error("Arg wasn't of Role type: can't check for role in database.");
     }
@@ -290,7 +292,9 @@ async function roleExists(role) {
         throw new Error("Role id was undefined: can't check for role in database.");
     }
 
-    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM roles WHERE id = $1;", [role._id]);
+    const client_u = client || db_init.getPool();
+
+    const answ = await client_u.query("SELECT COUNT(*) FROM roles WHERE id = $1;", [role._id]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }
@@ -301,15 +305,16 @@ async function roleExists(role) {
  * Check if Role name already exist
  * @param {Role} role
  */
-async function roleNameExists(role) {
+async function roleNameExists(role, client) {
     if (!(role instanceof Role)) {
         throw new Error("Arg wasn't of Role type: can't check for role name in database.");
     }
     if (!role.name) {
         throw new Error("Role name was undefined: can't check for role name in database.");
     }
+    const client_u = client || db_init.getPool();
 
-    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM roles WHERE name = $1;", [role.name]);
+    const answ = await client_u.query("SELECT COUNT(*) FROM roles WHERE name = $1;", [role.name]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }

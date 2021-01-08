@@ -6,10 +6,12 @@ const assert = require('assert');
 const Application = require('spectron').Application;
 const path = require('path');
 const electronPath = require('electron'); // Require Electron from the binaries included in node_modules.
+const { debugPort } = require('process');
 const User = require("../models/User");
 const Product = require("../models/Product");
 const db_init = require("../services/db/db_init");
 const dbUser = require("../services/db/dbUser");
+const dbProduct = require("../services/db/dbProduct");
 const dbRole = require("../services/db/dbRole");
 const dbPermission = require("../services/db/dbPermission");
 const config = require("../config/config");
@@ -81,3 +83,8 @@ const logger = require("../services/logger").child({
 //     logger.debug(user);
 //     db_init.end();
 // });
+
+async function trythat() {
+    await dbProduct.getCostPrice();
+}
+trythat().then().catch((e) => logger.error(e));

@@ -46,6 +46,9 @@ async function addPermission(permission) {
     if (await permissionNameExists(permission)) {
         throw new Error("Permission already exists: can't add permission to database.");
     }
+    if (permission._id && await permissionExists(permission)) {
+        logger.warn("You are adding a permission with a valid id to the database:", permission);
+    }
 
     const queryText = "INSERT INTO permissions (permission, "
                                             + "description) "
@@ -74,7 +77,6 @@ async function removePermission(permission) {
     if (!permission.permission) {
         throw new Error("Permission name was undefined: can't remove permission from database.");
     }
-
     if (!await permissionExists(permission)) {
         throw new Error("Permission id was not found in database: can't remove permission.");
     }
@@ -85,7 +87,7 @@ async function removePermission(permission) {
  * Check if Permission exists
  * @param {Permission} permission
  */
-async function permissionExists(permission) {
+async function permissionExists(permission, client) {
     if (!(permission instanceof Permission)) {
         throw new Error("Arg wasn't of Permission type: can't check for permission in database.");
     }
@@ -96,7 +98,9 @@ async function permissionExists(permission) {
         throw new Error("Permission id was undefined: can't check for permission in database.");
     }
 
-    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM permissions WHERE permission = $1 AND id = $2;", [permission.permission, permission._id]);
+    const client_u = client || db_init.getPool();
+
+    const answ = await client_u.query("SELECT COUNT(*) FROM permissions WHERE permission = $1 AND id = $2;", [permission.permission, permission._id]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }
@@ -107,7 +111,7 @@ async function permissionExists(permission) {
  * Check if Permission name already exist
  * @param {Permission} permission
  */
-async function permissionNameExists(permission) {
+async function permissionNameExists(permission, client) {
     if (!(permission instanceof Permission)) {
         throw new Error("Arg wasn't of Permission type: can't check for permission name in database.");
     }
@@ -115,7 +119,9 @@ async function permissionNameExists(permission) {
         throw new Error("Permission name was undefined: can't check for permission name in database.");
     }
 
-    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM permissions WHERE permission = $1;", [permission.permission]);
+    const client_u = client || db_init.getPool();
+
+    const answ = await client_u.query("SELECT COUNT(*) FROM permissions WHERE permission = $1;", [permission.permission]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }

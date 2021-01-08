@@ -5,6 +5,7 @@ const db_init = require("./db_init");
 const User = require("../../models/User");
 const Role = require("../../models/Role");
 const Permission = require("../../models/Permission");
+const logger = require("../logger");
 
 /**
  * Get all users from the database.
@@ -216,6 +217,9 @@ async function addUser(user) {
     if (!(user instanceof User)) {
         throw new Error("Arg wasn't of User type: can't add user to database.");
     }
+    if (user._id && await userExists(user)) {
+        logger.warn("You are adding a user with a valid id to the database:", user);
+    }
     const client = await db_init.getPool().connect();
     try {
         await client.query('BEGIN');
@@ -314,6 +318,9 @@ async function updateUser(user) {
     }
     if (!user._id) {
         throw new Error("User id was undefined: can't update user.");
+    }
+    if (!await userExists(user)) {
+        throw new Error("User doesn't exist: can't update user.");
     }
 
     const client = await db_init.getPool().connect();
@@ -419,6 +426,9 @@ async function removeUser(user) {
     if (!user._id) {
         throw new Error("User id was undefined: can't remove user.");
     }
+    if (!await userExists(user)) {
+        throw new Error("User doesn't exist: can't remove user.");
+    }
     const counting = await db_init.getPool().query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
     if (Number(counting.rows[0].count) === 0) {
         throw new Error("User id was not found in database: can't remove user.");
@@ -431,15 +441,17 @@ async function removeUser(user) {
  * Check if user exist.
  * @param {User} user
  */
-async function userExists(user) {
+async function userExists(user, client) {
     if (!(user instanceof User)) {
         throw new Error("Arg wasn't of User type: can't delete user from database.");
     }
     if (!user._id) {
         throw new Error("User id was undefined: can't remove user.");
     }
-    const counting = await db_init.getPool().query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
-    if (Number(counting.rows[0].count) === 1) {
+    const client_u = client || db_init.getPool();
+
+    const answ = await client_u.query("SELECT COUNT(id) FROM users WHERE id = $1;", [user._id]);
+    if (Number(answ.rows[0].count) === 1) {
         return true;
     }
 
@@ -456,7 +468,10 @@ async function getRolesFromUser(user) {
         throw new Error("Arg wasn't of User type: can't get roles of user from database.");
     }
     if (!user._id) {
-        throw new Error("User id was undefined: can't add user");
+        throw new Error("User id was undefined: can't get user's permissions");
+    }
+    if (!await userExists(user)) {
+        throw new Error("User doesn't exist: can't get user's permissions.");
     }
     const queryText = "SELECT roles.*, "
                         + "array_agg(ARRAY[permissions.id::TEXT, permissions.permission, permissions.description])"

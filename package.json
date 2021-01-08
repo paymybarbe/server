@@ -37,6 +37,7 @@
         "spectron": "^12.0.0"
     },
     "dependencies": {
+        "chai-as-promised": "^7.1.1",
         "debug": "^4.2.0",
         "electron": "^10.0.0",
         "pg": "^8.4.1",

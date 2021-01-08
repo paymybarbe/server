@@ -4,6 +4,10 @@ const db_init = require("./db_init");
 // });
 const Product = require("../../models/Product");
 const Role = require("../../models/Role");
+const dbRole = require("./dbRole");
+const logger = require("../logger").child({
+    service: "server:services:db:dbProduct"
+});
 
 /**
  * Get all products from the database, prices at the given datetime.
@@ -41,7 +45,7 @@ async function getAllProducts(datetime) {
 
             product.roles_prices = getRankedPrices(product, checkdate);
             product.menu_price = getMenuPrice(product, checkdate);
-            product.cost_price = getCostprice(product, checkdate);
+            product.cost_price = getCostPrice(product, checkdate);
 
             products.push(product);
         }
@@ -100,7 +104,7 @@ async function getProduct(askedProduct, datetime) {
 
         product.roles_prices = getRankedPrices(product, checkdate);
         product.menu_price = getMenuPrice(product, checkdate);
-        product.cost_price = getCostprice(product, checkdate);
+        product.cost_price = getCostPrice(product, checkdate);
         product.roles_prices = await product.roles_prices;
         product.menu_price = await product.menu_price;
         product.cost_price = await product.cost_price;
@@ -141,6 +145,9 @@ async function addOrUpdateProduct(product) {
 async function addProduct(product) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't add product to database.");
+    }
+    if (product._id && await productExists(product)) {
+        logger.warn("You are adding a product with a valid id to the database:", product);
     }
     const client = await db_init.getPool().connect();
     try {
@@ -224,6 +231,9 @@ async function updateProduct(product) {
     }
     if (!product._id) {
         throw new Error("Product id was undefined: can't update product.");
+    }
+    if (!await productExists(product)) {
+        throw new Error("Product doesn't exist in the database: can't update it.");
     }
     const counting = await db_init.getPool().query("SELECT COUNT(id) FROM products WHERE id = $1;", [product._id]);
     if (Number(counting.rows[0].count) === 0) {
@@ -310,6 +320,9 @@ async function getRankedPrices(product, datetime) {
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't get roles prices for product in database.");
     }
+    if (!await productExists(product)) {
+        throw new Error("Product doesn't exist in the database: can't get its ranked price.");
+    }
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
@@ -345,6 +358,9 @@ async function getMenuPrice(product, datetime) {
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of datetime type: can't get menu price for product in database.");
     }
+    if (!await productExists(product)) {
+        throw new Error("Product doesn't exist in the database: can't get its menu price.");
+    }
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
@@ -369,12 +385,15 @@ async function getMenuPrice(product, datetime) {
  * @param {Date} [datetime]
  * @returns {Promise<number>}
 */
-async function getCostprice(product, datetime) {
+async function getCostPrice(product, datetime) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't get cost price for product in database.");
     }
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't get cost price for product in database.");
+    }
+    if (!await productExists(product)) {
+        throw new Error("Product doesn't exist in the database: can't get its cost price.");
     }
     let checkdate = datetime;
     if (!datetime) {
@@ -413,6 +432,12 @@ async function setRankedPrice(product, cost, role, datetime, client) {
     }
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't change role price of product in database.");
+    }
+    if (!await productExists(product, client)) {
+        throw new Error("Product doesn't exist in the database: can't change its ranked price.");
+    }
+    if (!await dbRole.roleExists(role, client)) {
+        throw new Error("Role doesn't exist in database: can't change the related price of the product.");
     }
     let checkdate = datetime;
     if (!datetime) {
@@ -458,6 +483,9 @@ async function setMenuPrice(product, cost, datetime, client) {
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't change menu price of product in database.");
     }
+    if (!await productExists(product, client)) {
+        throw new Error("Product doesn't exist in the database: can't change its menu price.");
+    }
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
@@ -500,6 +528,9 @@ async function setCostPrice(product, cost, datetime, client) {
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't change cost price of product in database.");
     }
+    if (!await productExists(product, client)) {
+        throw new Error("Product doesn't exist in the database: can't change its cost price.");
+    }
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
@@ -529,7 +560,7 @@ async function setCostPrice(product, cost, datetime, client) {
  * Check if Product exists using the id
  * @param {Product} product
  */
-async function productExists(product) {
+async function productExists(product, client) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't check for product in database.");
     }
@@ -537,7 +568,9 @@ async function productExists(product) {
         throw new Error("Product id was undefined: can't check for product in database.");
     }
 
-    const answ = await db_init.getPool().query("SELECT COUNT(*) FROM products WHERE id = $1;", [product._id]);
+    const client_u = client || db_init.getPool();
+
+    const answ = await client_u.query("SELECT COUNT(*) FROM products WHERE id = $1;", [product._id]);
     if (Number(answ.rows[0].count) === 1) {
         return true;
     }
@@ -576,4 +609,7 @@ module.exports.addOrUpdateProduct = addOrUpdateProduct;
 module.exports.getProduct = getProduct;
 module.exports.getRankedPrices = getRankedPrices;
 module.exports.getMenuPrice = getMenuPrice;
-module.exports.getCostprice = getCostprice;
+module.exports.getCostPrice = getCostPrice;
+module.exports.setRankedPrices = setRankedPrice;
+module.exports.setMenuPrice = setMenuPrice;
+module.exports.setCostPrice = setCostPrice;

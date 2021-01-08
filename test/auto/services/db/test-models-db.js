@@ -21,6 +21,7 @@ const User = require('../../../../models/User');
 const logger = require('../../../../services/logger');
 
 chai.use(deepEqualInAnyOrder);
+chai.use(require('chai-as-promised'));
 
 describe("Models From Database", function _test() {
     this.timeout(1000);
@@ -253,6 +254,44 @@ describe("Models From Database", function _test() {
             await dbProduct.removeProduct(my_trial);
             expect(await dbProduct.productExists(my_trial)).to.be.false;
         });
+
+        it("setCostPrice() & getCostPrice()", async () => {
+            const my_trial = new Product();
+            my_trial.name = "CostPriceTest";
+
+            await expect(dbProduct.getCostPrice()).to.be.rejectedWith(Error);
+            await expect(dbProduct.getCostPrice(my_trial)).to.be.rejectedWith(Error);
+
+            await dbProduct.addProduct(my_trial);
+            const right_now = new Date();
+            expect(await dbProduct.getCostPrice(my_trial)).to.equal(0);
+            expect(await dbProduct.getCostPrice(my_trial, right_now)).to.equal(0);
+
+            await dbProduct.setCostPrice(my_trial, 1);
+            expect(await dbProduct.getCostPrice(my_trial)).to.equal(1);
+            expect(await dbProduct.getCostPrice(my_trial, right_now)).to.equal(0);
+            expect(await dbProduct.getCostPrice(my_trial, new Date())).to.equal(1);
+
+            const before_now2 = new Date();
+            before_now2.setDate(right_now.getDate() - 2);
+            const before_now3 = new Date();
+            before_now3.setDate(right_now.getDate() - 1);
+
+            await dbProduct.setCostPrice(my_trial, 3, before_now2);
+            await dbProduct.setCostPrice(my_trial, 4, before_now3);
+            expect(await dbProduct.getCostPrice(my_trial)).to.equal(1);
+            expect(await dbProduct.getCostPrice(my_trial, right_now)).to.equal(4);
+            expect(await dbProduct.getCostPrice(my_trial, new Date())).to.equal(1);
+            expect(await dbProduct.getCostPrice(my_trial, before_now2)).to.equal(3);
+            expect(await dbProduct.getCostPrice(my_trial, before_now3)).to.equal(4);
+
+            before_now2.setTime(before_now2.getTime() + 60 * 60 * 1000);
+            before_now3.setTime(before_now3.getTime() + 60 * 60 * 1000);
+            expect(await dbProduct.getCostPrice(my_trial, before_now2)).to.equal(3);
+            expect(await dbProduct.getCostPrice(my_trial, before_now3)).to.equal(4);
+        });
+
+        // TODO: Add other tests for getter and setter of price.
     });
 
     describe("User", () => {
