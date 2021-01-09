@@ -27,7 +27,7 @@ module.exports = class Product {
      */
     deleted = false;
     /**
-     * Prices of a product based on rank in key/value: role_id:price.
+     * Prices of a product based on role in key/value: role_id:price.
      * Use `setRolePrice()` and `getRolePrice()` to use.
      * @type {Object.<string,price:number>} role_id:price
      */

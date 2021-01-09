@@ -126,10 +126,10 @@ CREATE TABLE ingredients_to_dishes (
 );
 
 CREATE TABLE dishes_options (
-  id SERIAL PRIMARY KEY,
   dish_id INT NOT NULL,
   name TEXT NOT NULL,
-  price_change FLOAT NOT NULL DEFAULT 0
+  price_change FLOAT NOT NULL DEFAULT 0,
+  PRIMARY KEY (dish_id, name)
 );
 
 CREATE TABLE products_ranked_prices (
@@ -289,6 +289,8 @@ CREATE TABLE dishes_options_inside_menus_orders (
   menu_order_id INT,
   dish_id INT,
   dish_option_id INT,
+  name TEXT NOT NULL,
+  price_change FLOAT NOT NULL DEFAULT 0,
   PRIMARY KEY (menu_order_id, dish_id, dish_option_id)
 );
 
@@ -598,8 +600,6 @@ ALTER TABLE ingredients_inside_expiring ADD FOREIGN KEY (ingredient_id) REFERENC
 ALTER TABLE dishes_options_inside_menus_orders ADD FOREIGN KEY (menu_order_id) REFERENCES menus_inside_orders (id);
 
 ALTER TABLE dishes_options_inside_menus_orders ADD FOREIGN KEY (dish_id) REFERENCES dishes (id);
-
-ALTER TABLE dishes_options_inside_menus_orders ADD FOREIGN KEY (dish_option_id) REFERENCES dishes_options (id);
 
 COMMENT ON COLUMN permissions.permission IS 'prix coutant est une perm';
 

@@ -5,6 +5,7 @@ const Permission = require('../../../../models/Permission');
 const Role = require('../../../../models/Role');
 const User = require('../../../../models/User');
 const Product = require('../../../../models/Product');
+const Dish = require('../../../../models/Dish');
 // eslint-disable-next-line no-unused-vars
 const logger = require('../../../../services/logger');
 
@@ -45,6 +46,41 @@ describe("Models", function _test() {
             expect(product.getRolePrice(role2)).to.equal(380);
 
             expect(product.deleteRolePrice.bind(product, role1)).to.not.throw();
+        });
+    });
+
+    describe("Dish", () => {
+        it("setRolePrice(), getRolePrice(), deleteRolePrice()", () => {
+            const role1 = new Role();
+            role1.name = "EmptyRole1";
+            const role2 = new Role();
+            role2.name = "EmptyRole2";
+            role2._id = 2;
+
+            const dish = new Dish();
+
+            expect(dish.getRolePrice.bind(dish, role1)).to.throw();
+            expect(dish.setRolePrice.bind(dish, role1, 100.05)).to.throw();
+            expect(dish.deleteRolePrice.bind(dish, role1)).to.throw();
+
+            role1._id = 1;
+            dish.setRolePrice(role1, 100.05);
+            expect(dish.getRolePrice(role1)).to.equal(100.05);
+            expect(dish.getRolePrice(role2)).to.equal(null);
+
+            dish.setRolePrice(role2, 380);
+            expect(dish.getRolePrice(role1)).to.equal(100.05);
+            expect(dish.getRolePrice(role2)).to.equal(380);
+
+            dish.setRolePrice(role1, 101.05);
+            expect(dish.getRolePrice(role1)).to.equal(101.05);
+            expect(dish.getRolePrice(role2)).to.equal(380);
+
+            dish.deleteRolePrice(role1);
+            expect(dish.getRolePrice(role1)).to.equal(null);
+            expect(dish.getRolePrice(role2)).to.equal(380);
+
+            expect(dish.deleteRolePrice.bind(dish, role1)).to.not.throw();
         });
     });
 

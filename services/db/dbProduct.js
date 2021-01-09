@@ -126,7 +126,7 @@ async function addOrUpdateProduct(product) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't add or update.");
     }
-    if (!product._id) {
+    if (!product._id || !await productExists(product)) {
         await addProduct(product);
     }
     else {
@@ -346,7 +346,7 @@ async function getRankedPrices(product, datetime) {
 }
 
 /**
- * Return price of a product in a menu at a choosen time. Return -1 if no price.
+ * Return price of a product in a menu at a choosen time. Return 0 if no price.
  * @param {Product} product
  * @param {Date} [datetime]
  * @returns {Promise<number>}
@@ -380,7 +380,7 @@ async function getMenuPrice(product, datetime) {
 }
 
 /**
- * Return cost price of a product at a choosen time. Return -1 if no price.
+ * Return cost price of a product at a choosen time. Return 0 if no price.
  * @param {Product} product
  * @param {Date} [datetime]
  * @returns {Promise<number>}
@@ -512,7 +512,7 @@ async function setMenuPrice(product, cost, datetime, client) {
 }
 
 /**
- * Set the price of a product for menus at a choosen time.
+ * Set the cost price of a product at a choosen time.
  * @param {Product} product
  * @param {number} cost
  * @param {Date} [datetime]
@@ -595,8 +595,6 @@ async function removeProduct(product) {
 
     await db_init.getPool().query("DELETE FROM products WHERE id = $1;", [product._id]);
 }
-
-// TODO: Test products functions.
 
 // TODO: add getter and setter of price by rank settings, by menu settings and change functions to use them.
 

@@ -8,6 +8,7 @@ const User = require("../models/User");
 const Permission = require("../models/Permission");
 const Role = require("../models/Role");
 const Product = require("../models/Product");
+const Dish = require("../models/Dish");
 
 const db_init = require("../services/db/db_init");
 
@@ -15,6 +16,7 @@ const dbUser = require("../services/db/dbUser");
 const dbRole = require("../services/db/dbRole");
 const dbPermission = require("../services/db/dbPermission");
 const dbProduct = require("../services/db/dbProduct");
+const dbDish = require("../services/db/dbDish");
 
 async function cleanDB() {
     await db_init.migrate('0');
@@ -119,8 +121,6 @@ async function addRoles(amount, permissions, roles) {
     return role_added;
 }
 
-// TODO: Add products
-
 async function generateProducts(amount, roles) {
     const product_adding = [];
 
@@ -162,6 +162,56 @@ async function addProducts(amount, roles) {
     logger.debug(product_added);
 
     return product_added;
+}
+
+async function generateDishes(amount, roles) {
+    const dish_adding = [];
+
+    for (let i = 0; i < amount; i++) {
+        const the_dish = new Dish();
+        the_dish.name = faker.commerce.productName();
+        the_dish.description = faker.commerce.productDescription();
+        the_dish.hidden = Math.random() > 0.3;
+        the_dish.deleted = Math.random() > 0.3;
+
+        the_dish.cost_price = Math.round(Math.random() * 10100) / 100;
+
+        if (roles.length > 0) {
+            for (let d = 0; d < Math.floor(Math.random() * 5); d++) {
+                const the_role = roles[Math.floor(Math.random() * roles.length)];
+                the_dish.setRolePrice(the_role, Math.round(Math.random() * 10100) / 100);
+            }
+        }
+
+        const opt_used = [];
+
+        for (let j = 0; j < 6; j++) {
+            const opt = {};
+            opt.name = faker.commerce.productAdjective();
+            if (!opt_used.includes(opt.name)) {
+                opt.price_change = Math.round(Math.random() * 1000) / 100 - Math.round(Math.random() * 1000) / 100;
+                the_dish.options.push(opt);
+                opt_used.push(opt.name);
+            }
+        }
+        dish_adding.push(the_dish);
+    }
+    return dish_adding;
+}
+
+async function addDishes(amount, roles) {
+    const dish_added = [];
+    const dishings = await generateDishes(amount, roles);
+    logger.debug(dishings);
+    dishings.forEach((dish) => dish_added.push(dbDish.addDish(dish)));
+
+    for (let i = 0; i < dish_added.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        dish_added[i] = await dish_added[i];
+    }
+    logger.debug(dish_added);
+
+    return dish_added;
 }
 
 async function generateUsers(amount, permissions, roles, products) {
@@ -328,6 +378,8 @@ module.exports.generateRoles = generateRoles;
 module.exports.addRoles = addRoles;
 module.exports.generateProducts = generateProducts;
 module.exports.addProducts = addProducts;
+module.exports.generateDishes = generateDishes;
+module.exports.addDishes = addDishes;
 module.exports.generateUsers = generateUsers;
 module.exports.addUsers = addUsers;
 module.exports.cleanDB = cleanDB;

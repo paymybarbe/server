@@ -11,11 +11,13 @@ const seeder = require("../../../../scripts/script.seed");
 }); */
 const dbUser = require("../../../../services/db/dbUser");
 const dbProduct = require("../../../../services/db/dbProduct");
+const dbDish = require("../../../../services/db/dbDish");
 const dbRole = require("../../../../services/db/dbRole");
 const dbPermission = require("../../../../services/db/dbPermission");
 const Permission = require('../../../../models/Permission');
 const Role = require('../../../../models/Role');
 const Product = require('../../../../models/Product');
+const Dish = require('../../../../models/Dish');
 const User = require('../../../../models/User');
 // eslint-disable-next-line no-unused-vars
 const logger = require('../../../../services/logger');
@@ -28,6 +30,7 @@ describe("Models From Database", function _test() {
     let permissions;
     let roles;
     let products;
+    let dishes;
     let users;
     let trial_id;
 
@@ -36,6 +39,7 @@ describe("Models From Database", function _test() {
         roles = await dbRole.getAllRoles();
         users = await dbUser.getAllUsers();
         products = await dbProduct.getAllProducts();
+        dishes = await dbDish.getAllDishes();
     });
 
     this.afterAll(async () => {
@@ -330,9 +334,9 @@ describe("Models From Database", function _test() {
         it("setRankedPrice() & getRankedPrices()", async () => {
             const my_trial = new Product();
             const role1 = new Role();
-            role1.name = "getPrice1";
+            role1.name = "getProductPrice1";
             const role2 = new Role();
-            role2.name = "getPrice2";
+            role2.name = "getProductPrice2";
 
             my_trial.name = "RankedPriceTest";
 
@@ -394,6 +398,184 @@ describe("Models From Database", function _test() {
             expect((await dbProduct.getRankedPrices(my_trial, before_now3))[role1._id.toString()]).to.equal(1.4);
             expect((await dbProduct.getRankedPrices(my_trial, before_now2))[role2._id.toString()]).to.equal(2.3);
             expect((await dbProduct.getRankedPrices(my_trial, before_now3))[role2._id.toString()]).to.equal(2.4);
+        });
+    });
+
+    describe("Dishes", () => {
+        it("Insert & Select All equals", async () => {
+            const new_dishes = await seeder.generateDishes(50, roles);
+
+            const dish1 = new Dish();
+            dish1.name = "EmptyDish1";
+            new_dishes.push(dish1);
+
+            const select_dishes = [];
+            new_dishes.forEach((element) => {
+                select_dishes.push(dbDish.addDish(element));
+            });
+
+            const add_dishes = await Promise.all(select_dishes);
+            const sel_uss = await dbDish.getAllDishes();
+
+            add_dishes.push(...dishes);
+
+            expect(add_dishes).to.have.length(sel_uss.length);
+            add_dishes.sort(sortId);
+            sel_uss.sort(sortId);
+            for (let i = 0; i < add_dishes.length; i++) {
+                expect(add_dishes[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+            }
+
+            dishes = add_dishes;
+        });
+
+        it("Update", async () => {
+            const my_trial = dishes[Math.floor(Math.random() * dishes.length)]; // Choose random dish
+            // Change several values
+            my_trial.name = "Miam";
+            my_trial.cost_price = 12345;
+
+            let my_role = null;
+
+            if (roles.length > 2) {
+                my_role = roles[Math.floor(Math.random() * roles.length)]; // Choose random dish
+                my_trial.setRolePrice(my_role, 54321.01);
+            }
+
+            await dbDish.updateDish(my_trial);
+            const my_checker = await dbDish.getDish(my_trial);
+            // Check if dish was updated with our changes
+            expect(my_trial).to.be.deep.equalInAnyOrder(my_checker);
+        });
+
+        it("Exist", async () => {
+            const my_trial = dishes[Math.floor(Math.random() * dishes.length)]; // Choose random dish
+            expect(await dbDish.dishExists(my_trial)).to.be.true;
+            my_trial._id += 100; // Change id
+            expect(await dbDish.dishExists(my_trial)).to.be.false;
+            my_trial._id -= 100;
+
+            let is_in = false;
+            const use = new Dish();
+            use._id = dishes.length + 1;
+            for (let i = 0; i < dishes.length; i++) {
+                if (dishes[i]._id === use._id) {
+                    is_in = true;
+                }
+            }
+            expect(await dbDish.dishExists(use)).to.be.equal(is_in);
+        });
+
+        it("Remove", async () => {
+            const my_trial = dishes.pop(); // Choose and remove from array last dish
+            expect(await dbDish.dishExists(my_trial)).to.be.true;
+            await dbDish.removeDish(my_trial);
+            expect(await dbDish.dishExists(my_trial)).to.be.false;
+        });
+
+        it("setCostPrice() & getCostPrice()", async () => {
+            const my_trial = new Dish();
+            my_trial.name = "CostPriceTest";
+
+            await expect(dbDish.getCostPrice()).to.be.rejectedWith(Error);
+            await expect(dbDish.getCostPrice(my_trial)).to.be.rejectedWith(Error);
+
+            await dbDish.addDish(my_trial);
+            const right_now = new Date();
+            expect(await dbDish.getCostPrice(my_trial)).to.equal(0);
+            expect(await dbDish.getCostPrice(my_trial, right_now)).to.equal(0);
+
+            await dbDish.setCostPrice(my_trial, 1);
+            expect(await dbDish.getCostPrice(my_trial)).to.equal(1);
+            expect(await dbDish.getCostPrice(my_trial, right_now)).to.equal(0);
+            expect(await dbDish.getCostPrice(my_trial, new Date())).to.equal(1);
+
+            const before_now2 = new Date();
+            before_now2.setDate(right_now.getDate() - 2);
+            const before_now3 = new Date();
+            before_now3.setDate(right_now.getDate() - 1);
+
+            await dbDish.setCostPrice(my_trial, 3, before_now2);
+            await dbDish.setCostPrice(my_trial, 4, before_now3);
+            expect(await dbDish.getCostPrice(my_trial)).to.equal(1);
+            expect(await dbDish.getCostPrice(my_trial, right_now)).to.equal(4);
+            expect(await dbDish.getCostPrice(my_trial, new Date())).to.equal(1);
+            expect(await dbDish.getCostPrice(my_trial, before_now2)).to.equal(3);
+            expect(await dbDish.getCostPrice(my_trial, before_now3)).to.equal(4);
+
+            before_now2.setTime(before_now2.getTime() + 60 * 60 * 1000);
+            before_now3.setTime(before_now3.getTime() + 60 * 60 * 1000);
+            expect(await dbDish.getCostPrice(my_trial, before_now2)).to.equal(3);
+            expect(await dbDish.getCostPrice(my_trial, before_now3)).to.equal(4);
+        });
+
+        it("setRankedPrice() & getRankedPrices()", async () => {
+            const my_trial = new Dish();
+            const role1 = new Role();
+            role1.name = "getDishPrice1";
+            const role2 = new Role();
+            role2.name = "getDishPrice2";
+
+            my_trial.name = "RankedPriceTest";
+
+            await expect(dbDish.getRankedPrices()).to.be.rejectedWith(Error);
+            await expect(dbDish.getRankedPrices(my_trial)).to.be.rejectedWith(Error);
+            await expect(dbDish.getRankedPrices(my_trial, 100)).to.be.rejectedWith(Error);
+            await expect(dbDish.getRankedPrices(my_trial, 100, role1)).to.be.rejectedWith(Error);
+
+            await dbDish.addDish(my_trial);
+            const right_now = new Date();
+            expect(await dbDish.getRankedPrices(my_trial)).to.be.empty;
+            expect(await dbDish.getRankedPrices(my_trial, right_now)).to.be.empty;
+
+            await dbRole.addRole(role1);
+            await dbDish.setRankedPrice(my_trial, role1, 1.1);
+
+            expect((await dbDish.getRankedPrices(my_trial))[role1._id.toString()]).to.equal(1.1);
+            expect(await dbDish.getRankedPrices(my_trial, right_now)).to.be.empty;
+            expect((await dbDish.getRankedPrices(my_trial, new Date()))[role1._id.toString()]).to.equal(1.1);
+
+            await dbRole.addRole(role2);
+            await dbDish.setRankedPrice(my_trial, role2, 2.1);
+            expect((await dbDish.getRankedPrices(my_trial))[role1._id.toString()]).to.equal(1.1);
+            expect(await dbDish.getRankedPrices(my_trial, right_now)).to.be.empty;
+            expect((await dbDish.getRankedPrices(my_trial, new Date()))[role1._id.toString()]).to.equal(1.1);
+            expect((await dbDish.getRankedPrices(my_trial))[role2._id.toString()]).to.equal(2.1);
+            expect(await dbDish.getRankedPrices(my_trial, right_now)).to.be.empty;
+            expect((await dbDish.getRankedPrices(my_trial, new Date()))[role2._id.toString()]).to.equal(2.1);
+
+            const before_now2 = new Date();
+            before_now2.setDate(right_now.getDate() - 2);
+            const before_now3 = new Date();
+            before_now3.setDate(right_now.getDate() - 1);
+
+            await dbDish.setRankedPrice(my_trial, role1, 1.3, before_now2);
+            await dbDish.setRankedPrice(my_trial, role1, 1.4, before_now3);
+            expect((await dbDish.getRankedPrices(my_trial))[role1._id.toString()]).to.equal(1.1);
+            expect((await dbDish.getRankedPrices(my_trial, right_now))[role1._id.toString()]).to.equal(1.4);
+            expect((await dbDish.getRankedPrices(my_trial, new Date()))[role1._id.toString()]).to.equal(1.1);
+            expect((await dbDish.getRankedPrices(my_trial, before_now2))[role1._id.toString()]).to.equal(1.3);
+            expect((await dbDish.getRankedPrices(my_trial, before_now3))[role1._id.toString()]).to.equal(1.4);
+
+            await dbDish.setRankedPrice(my_trial, role2, 2.3, before_now2);
+            await dbDish.setRankedPrice(my_trial, role2, 2.4, before_now3);
+            expect((await dbDish.getRankedPrices(my_trial))[role2._id.toString()]).to.equal(2.1);
+            expect((await dbDish.getRankedPrices(my_trial, right_now))[role2._id.toString()]).to.equal(2.4);
+            expect((await dbDish.getRankedPrices(my_trial, new Date()))[role2._id.toString()]).to.equal(2.1);
+            expect((await dbDish.getRankedPrices(my_trial, before_now2))[role2._id.toString()]).to.equal(2.3);
+            expect((await dbDish.getRankedPrices(my_trial, before_now3))[role2._id.toString()]).to.equal(2.4);
+            expect((await dbDish.getRankedPrices(my_trial))[role1._id.toString()]).to.equal(1.1);
+            expect((await dbDish.getRankedPrices(my_trial, right_now))[role1._id.toString()]).to.equal(1.4);
+            expect((await dbDish.getRankedPrices(my_trial, new Date()))[role1._id.toString()]).to.equal(1.1);
+            expect((await dbDish.getRankedPrices(my_trial, before_now2))[role1._id.toString()]).to.equal(1.3);
+            expect((await dbDish.getRankedPrices(my_trial, before_now3))[role1._id.toString()]).to.equal(1.4);
+
+            before_now2.setTime(before_now2.getTime() + 60 * 60 * 1000);
+            before_now3.setTime(before_now3.getTime() + 60 * 60 * 1000);
+            expect((await dbDish.getRankedPrices(my_trial, before_now2))[role1._id.toString()]).to.equal(1.3);
+            expect((await dbDish.getRankedPrices(my_trial, before_now3))[role1._id.toString()]).to.equal(1.4);
+            expect((await dbDish.getRankedPrices(my_trial, before_now2))[role2._id.toString()]).to.equal(2.3);
+            expect((await dbDish.getRankedPrices(my_trial, before_now3))[role2._id.toString()]).to.equal(2.4);
         });
     });
 
