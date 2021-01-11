@@ -14,6 +14,8 @@ const dbProduct = require("../../../../services/db/dbProduct");
 const dbDish = require("../../../../services/db/dbDish");
 const dbRole = require("../../../../services/db/dbRole");
 const dbPermission = require("../../../../services/db/dbPermission");
+const dbCategory = require("../../../../services/db/dbCategory");
+const Category = require('../../../../models/Category');
 const Permission = require('../../../../models/Permission');
 const Role = require('../../../../models/Role');
 const Product = require('../../../../models/Product');
@@ -32,6 +34,7 @@ describe("Models From Database", function _test() {
     let products;
     let dishes;
     let users;
+    let categories;
     let trial_id;
 
     this.beforeAll(async () => {
@@ -40,6 +43,7 @@ describe("Models From Database", function _test() {
         users = await dbUser.getAllUsers();
         products = await dbProduct.getAllProducts();
         dishes = await dbDish.getAllDishes();
+        categories = await dbCategory.getAllCategories();
     });
 
     this.afterAll(async () => {
@@ -576,6 +580,82 @@ describe("Models From Database", function _test() {
             expect((await dbDish.getRankedPrices(my_trial, before_now3))[role1._id.toString()]).to.equal(1.4);
             expect((await dbDish.getRankedPrices(my_trial, before_now2))[role2._id.toString()]).to.equal(2.3);
             expect((await dbDish.getRankedPrices(my_trial, before_now3))[role2._id.toString()]).to.equal(2.4);
+        });
+    });
+
+    describe("Categories", () => {
+        it("Using updating to add categories", async () => {
+            const new_categories = await seeder.generateCategories(12, categories, products);
+
+            const category1 = new Category();
+            category1.name = "EmptyCat1";
+            category1.index = 12;
+            new_categories.push(category1);
+
+            const add_categories = await dbCategory.updateCategories(new_categories);
+            const sel_uss = await dbCategory.getAllCategories();
+
+            expect(add_categories).to.have.length(sel_uss.length);
+            add_categories.sort(sortId);
+            sel_uss.sort(sortId);
+            for (let i = 0; i < add_categories.length; i++) {
+                expect(add_categories[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+            }
+
+            categories = add_categories;
+        });
+
+        it("Update", async () => {
+            const my_trial1 = categories[Math.floor(Math.random() * categories.length)]; // Choose random category
+            let my_trial2 = categories[Math.floor(Math.random() * categories.length)]; // Choose random category
+            if (categories.length > 1) {
+                while (my_trial1._id === my_trial2._id) {
+                    my_trial2 = categories[Math.floor(Math.random() * categories.length)]; // Choose random category
+                }
+            }
+            // Change several values
+            my_trial1.name = "Miam";
+            my_trial2.name = "Miam the Return";
+            const temp = my_trial1.index;
+            my_trial1.index = my_trial2.index;
+            my_trial2.index = temp;
+
+            const add_categories = await dbCategory.updateCategories(categories);
+            const sel_uss = await dbCategory.getAllCategories();
+
+            expect(add_categories).to.have.length(sel_uss.length);
+            add_categories.sort(sortId);
+            sel_uss.sort(sortId);
+            for (let i = 0; i < add_categories.length; i++) {
+                expect(add_categories[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+            }
+
+            categories = add_categories;
+        });
+
+        it("Exist", async () => {
+            const my_trial = categories[Math.floor(Math.random() * categories.length)]; // Choose random category
+            expect(await dbCategory.categoryExists(my_trial)).to.be.true;
+            my_trial._id += 100; // Change id
+            expect(await dbCategory.categoryExists(my_trial)).to.be.false;
+            my_trial._id -= 100;
+
+            let is_in = false;
+            const use = new Category();
+            use._id = categories.length + 1;
+            for (let i = 0; i < categories.length; i++) {
+                if (categories[i]._id === use._id) {
+                    is_in = true;
+                }
+            }
+            expect(await dbCategory.categoryExists(use)).to.be.equal(is_in);
+        });
+
+        it("Remove", async () => {
+            const my_trial = categories.pop(); // Choose and remove from array last category
+            expect(await dbCategory.categoryExists(my_trial)).to.be.true;
+            await dbCategory.removeCategory(my_trial);
+            expect(await dbCategory.categoryExists(my_trial)).to.be.false;
         });
     });
 

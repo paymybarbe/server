@@ -116,7 +116,6 @@ async function getProduct(askedProduct, datetime) {
 
 /**
  * Add or Update a product. Don't take into account the password. It will not add transactions anywhere.
- * Product's prices are not changed.
  *
  * return the product added.
  * @param {Product} product
@@ -142,16 +141,18 @@ async function addOrUpdateProduct(product) {
  * @param {Product} product
  * @returns {Promise<Product>}
  */
-async function addProduct(product) {
+async function addProduct(product, client) {
     if (!(product instanceof Product)) {
         throw new Error("Arg wasn't of Product type: can't add product to database.");
     }
     if (product._id && await productExists(product)) {
         logger.warn("You are adding a product with a valid id to the database:", product);
     }
-    const client = await db_init.getPool().connect();
+    const client_u = await db_init.getPool().connect();
     try {
-        await client.query('BEGIN');
+        if (!client) {
+            await client_u.query('BEGIN');
+        }
 
         const queryText = "INSERT INTO products (name, "
                                             + "image, "
@@ -174,7 +175,7 @@ async function addProduct(product) {
             product.deleted
         ];
 
-        const res = await client.query(queryText, params);
+        const res = await client_u.query(queryText, params);
         // eslint-disable-next-line no-param-reassign
         product._id = res.rows[0].id;
 
@@ -186,34 +187,40 @@ async function addProduct(product) {
                 role_temp._id = parseInt(role_id);
                 promises.push(
                     setRankedPrice(product, role_temp,
-                        product.roles_prices[role_id], new Date(), client)
+                        product.roles_prices[role_id], new Date(), client_u)
                 );
             });
         }
 
         if (product.cost_price) {
             promises.push(
-                setCostPrice(product, product.cost_price, new Date(), client)
+                setCostPrice(product, product.cost_price, new Date(), client_u)
             );
         }
 
         if (product.menu_price) {
             promises.push(
-                setMenuPrice(product, product.menu_price, new Date(), client)
+                setMenuPrice(product, product.menu_price, new Date(), client_u)
             );
         }
 
         await Promise.all(promises);
-        await client.query('COMMIT');
+        if (!client) {
+            await client_u.query('COMMIT');
+        }
 
         return product;
     }
     catch (e) {
-        await client.query('ROLLBACK');
+        if (!client) {
+            await client_u.query('ROLLBACK');
+        }
         throw e;
     }
     finally {
-        client.release();
+        if (!client) {
+            client_u.release();
+        }
     }
 }
 

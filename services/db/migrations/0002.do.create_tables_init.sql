@@ -196,7 +196,7 @@ CREATE TABLE categories (
   image TEXT,
   description TEXT,
   hidden BOOLEAN NOT NULL DEFAULT false,
-  index INT NOT NULL
+  index INT UNIQUE NOT NULL
 );
 
 CREATE TABLE products_to_categories (

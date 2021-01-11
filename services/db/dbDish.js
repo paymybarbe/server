@@ -114,7 +114,6 @@ async function getDish(askedDish, datetime) {
 
 /**
  * Add or Update a dish. Don't take into account the password. It will not add transactions anywhere.
- * Dish's prices are not changed.
  *
  * return the dish added.
  * @param {Dish} dish

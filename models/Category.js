@@ -7,21 +7,21 @@ module.exports = class Category {
      * @type number
      */
     _id;
-    name;
-    image;
-    description;
+    name = null;
+    image = null;
+    description = null;
     /**
      * @type boolean
      */
-    hidden;
+    hidden = false;
     /**
      * Give the display order of the categories. First is 0, then 1...
      * @type number
      */
-    index;
+    index = 0;
     /**
      * Array of the products of the category
      * @type {Product[]}
      */
-    products;
+    products = [];
 };

@@ -9,6 +9,7 @@ const Permission = require("../models/Permission");
 const Role = require("../models/Role");
 const Product = require("../models/Product");
 const Dish = require("../models/Dish");
+const Category = require("../models/Category");
 
 const db_init = require("../services/db/db_init");
 
@@ -17,6 +18,7 @@ const dbRole = require("../services/db/dbRole");
 const dbPermission = require("../services/db/dbPermission");
 const dbProduct = require("../services/db/dbProduct");
 const dbDish = require("../services/db/dbDish");
+const dbCategory = require("../services/db/dbCategory");
 
 async function cleanDB() {
     await db_init.migrate('0');
@@ -194,6 +196,8 @@ async function generateDishes(amount, roles) {
                 opt_used.push(opt.name);
             }
         }
+
+        // FIXME: Add ingredients
         dish_adding.push(the_dish);
     }
     return dish_adding;
@@ -212,6 +216,35 @@ async function addDishes(amount, roles) {
     logger.debug(dish_added);
 
     return dish_added;
+}
+
+async function generateCategories(amount, categories, products) {
+    const category_adding = [];
+
+    for (let i = 0; i < amount; i++) {
+        const the_category = new Category();
+        the_category.name = faker.name.jobType();
+        the_category.description = faker.commerce.productDescription();
+        the_category.hidden = Math.random() > 0.3;
+        the_category.index = i + categories.length;
+
+        if (products.length > 0) {
+            for (let d = 0; d < Math.floor(Math.random() * 15); d++) {
+                const the_product = products[Math.floor(Math.random() * products.length)];
+                if (the_category.products.filter(
+                    (prod) => prod._id === the_product._id
+                ).length === 0) {
+                    the_category.products.push(the_product);
+                }
+            }
+        }
+        category_adding.push(the_category);
+    }
+    return category_adding;
+}
+
+async function addCategories(amount, categories, products) {
+    return dbCategory.updateCategories(await generateCategories(amount, categories, products));
 }
 
 async function generateUsers(amount, permissions, roles, products) {
@@ -378,6 +411,8 @@ module.exports.generateRoles = generateRoles;
 module.exports.addRoles = addRoles;
 module.exports.generateProducts = generateProducts;
 module.exports.addProducts = addProducts;
+module.exports.generateCategories = generateCategories;
+module.exports.addCategories = addCategories;
 module.exports.generateDishes = generateDishes;
 module.exports.addDishes = addDishes;
 module.exports.generateUsers = generateUsers;
