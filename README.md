@@ -1,5 +1,7 @@
 # payMyBarbe - Server
 
+# THIS README MAY NOT BE UP TO DATE !!!
+
 ## Installation
 - [Installez PostgreSQL](doc/setup_dev_DB.md)
 - Clonez le repo dans un dossier vide.
