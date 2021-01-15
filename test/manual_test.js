@@ -15,9 +15,10 @@ const dbProduct = require("../services/db/dbProduct");
 const dbRole = require("../services/db/dbRole");
 const dbPermission = require("../services/db/dbPermission");
 const config = require("../config/config");
+const seeder = require('../scripts/script.seed');
 const logger = require("../services/logger").child({
     service: "server:manualtest:db",
-    inspect_depth: 5
+    inspect_depth: 3
 });
 
 // async function looping() {
@@ -85,6 +86,19 @@ const logger = require("../services/logger").child({
 // });
 
 async function trythat() {
-    await dbProduct.getCostPrice();
+    await seeder.cleanDB();
+    const permissions = await seeder.addPermissions(15);
+    logger.debug("Permissions: ", permissions.length);
+    const roles = await seeder.addRoles(10, permissions);
+    logger.debug("Roles: ", roles.length);
+    const products = await seeder.addProducts(45, roles);
+    logger.debug("Products: ", products.length);
+    const dishes = await seeder.addDishes(35, roles);
+    logger.debug("Dishes: ", dishes.length);
+    const categories = await seeder.addCategories(15, products);
+    logger.debug("Categories: ", categories.length);
+    const menus = await seeder.generateMenus(10, products, dishes, categories);
+    logger.debug(menus[5]);
+    await db_init.end();
 }
 trythat().then().catch((e) => logger.error(e));

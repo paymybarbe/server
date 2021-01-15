@@ -172,7 +172,7 @@ async function getUser(askedUser) {
             if (row.favorites[0] === null || row.favorites[0][0] === null) {
                 user.favorites = [];
             }
-            else {
+            else { // FIXME: Add Product to favorites ?
                 for (let ind = 0; ind < row.favorites.length; ind++) {
                     user.favorites[row.favorites[ind][0]] = row.favorites[ind][1];
                 }
@@ -200,11 +200,9 @@ async function addOrUpdateUser(user) {
         throw new Error("Arg wasn't of User type: can't add/update user.");
     }
     if (!user._id || !await userExists(user)) {
-        await addUser(user);
+        return addUser(user);
     }
-    else {
-        await updateUser(user);
-    }
+    return updateUser(user);
 }
 
 /**

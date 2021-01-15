@@ -10,6 +10,7 @@ const Role = require("../models/Role");
 const Product = require("../models/Product");
 const Dish = require("../models/Dish");
 const Category = require("../models/Category");
+const Menu = require("../models/Menu");
 
 const db_init = require("../services/db/db_init");
 
@@ -19,6 +20,7 @@ const dbPermission = require("../services/db/dbPermission");
 const dbProduct = require("../services/db/dbProduct");
 const dbDish = require("../services/db/dbDish");
 const dbCategory = require("../services/db/dbCategory");
+const dbMenu = require("../services/db/dbMenu");
 
 async function cleanDB() {
     await db_init.migrate('0');
@@ -154,14 +156,14 @@ async function generateProducts(amount, roles) {
 async function addProducts(amount, roles) {
     const product_added = [];
     const productings = await generateProducts(amount, roles);
-    logger.debug(productings);
+    // logger.debug(productings);
     productings.forEach((product) => product_added.push(dbProduct.addProduct(product)));
 
     for (let i = 0; i < product_added.length; i++) {
         // eslint-disable-next-line no-await-in-loop
         product_added[i] = await product_added[i];
     }
-    logger.debug(product_added);
+    // logger.debug(product_added);
 
     return product_added;
 }
@@ -206,29 +208,30 @@ async function generateDishes(amount, roles) {
 async function addDishes(amount, roles) {
     const dish_added = [];
     const dishings = await generateDishes(amount, roles);
-    logger.debug(dishings);
+    // logger.debug(dishings);
     dishings.forEach((dish) => dish_added.push(dbDish.addDish(dish)));
 
     for (let i = 0; i < dish_added.length; i++) {
         // eslint-disable-next-line no-await-in-loop
         dish_added[i] = await dish_added[i];
     }
-    logger.debug(dish_added);
+    // logger.debug(dish_added);
 
     return dish_added;
 }
 
-async function generateCategories(amount, categories, products) {
+async function generateCategories(amount, products, categories) {
     const category_adding = [];
+    const origin_len = categories ? categories.length : 0;
 
     for (let i = 0; i < amount; i++) {
         const the_category = new Category();
         the_category.name = faker.name.jobType();
         the_category.description = faker.commerce.productDescription();
         the_category.hidden = Math.random() > 0.3;
-        the_category.index = i + categories.length;
+        the_category.index = i + origin_len;
 
-        if (products.length > 0) {
+        if (products && products.length > 0) {
             for (let d = 0; d < Math.floor(Math.random() * 15); d++) {
                 const the_product = products[Math.floor(Math.random() * products.length)];
                 if (the_category.products.filter(
@@ -243,8 +246,64 @@ async function generateCategories(amount, categories, products) {
     return category_adding;
 }
 
-async function addCategories(amount, categories, products) {
-    return dbCategory.updateCategories(await generateCategories(amount, categories, products));
+async function addCategories(amount, products, categories) {
+    return dbCategory.updateCategories(await generateCategories(amount, products, categories));
+}
+
+async function generateMenus(amount, products, dishes, categories) {
+    const menu_adding = [];
+
+    for (let i = 0; i < amount; i++) {
+        const the_menu = new Menu();
+        the_menu.name = faker.commerce.productName();
+        the_menu.description = faker.commerce.productDescription();
+        the_menu.deleted = Math.random() > 0.3;
+
+        for (let d = 0; d < Math.floor(Math.random() * 15); d++) {
+            if (products && products.length > 0) {
+                const the_product = products[Math.floor(Math.random() * products.length)];
+                if (the_menu.content.filter(
+                    (cont) => cont.product && the_product._id === cont.product._id
+                ).length === 0) {
+                    the_menu.addContent(the_product, Math.random() > 0.5);
+                }
+            }
+            if (dishes && dishes.length > 0) {
+                const the_dish = dishes[Math.floor(Math.random() * dishes.length)];
+                if (the_menu.content.filter(
+                    (cont) => cont.dish && the_dish._id === cont.dish._id
+                ).length === 0) {
+                    the_menu.addContent(the_dish, Math.random() > 0.5);
+                }
+            }
+            if (categories && categories.length > 0) {
+                const the_category = categories[Math.floor(Math.random() * categories.length)];
+                if (the_menu.content.filter(
+                    (cont) => cont.category && the_category._id === cont.category._id
+                ).length === 0) {
+                    the_menu.addContent(the_category, Math.random() > 0.5);
+                }
+            }
+        }
+
+        menu_adding.push(the_menu);
+    }
+    return menu_adding;
+}
+
+async function addMenus(amount, products, dishes, categories) {
+    const menu_added = [];
+    const menuings = await generateMenus(amount, products, dishes, categories);
+    // logger.debug(menuings);
+    menuings.forEach((menu) => menu_added.push(dbMenu.addMenu(menu)));
+
+    for (let i = 0; i < menu_added.length; i++) {
+        // eslint-disable-next-line no-await-in-loop
+        menu_added[i] = await menu_added[i];
+    }
+    // logger.debug(menu_added);
+
+    return menu_added;
 }
 
 async function generateUsers(amount, permissions, roles, products) {
@@ -310,14 +369,14 @@ async function generateUsers(amount, permissions, roles, products) {
 async function addUsers(amount, permissions, roles, products) {
     const user_added = [];
     const userings = await generateUsers(amount, permissions, roles, products);
-    logger.debug(userings);
+    // logger.debug(userings);
     userings.forEach((user) => user_added.push(dbUser.addUser(user)));
 
     for (let i = 0; i < user_added.length; i++) {
         // eslint-disable-next-line no-await-in-loop
         user_added[i] = await user_added[i];
     }
-    logger.debug(user_added);
+    // logger.debug(user_added);
 
     return user_added;
 }
@@ -413,6 +472,8 @@ module.exports.generateProducts = generateProducts;
 module.exports.addProducts = addProducts;
 module.exports.generateCategories = generateCategories;
 module.exports.addCategories = addCategories;
+module.exports.generateMenus = generateMenus;
+module.exports.addMenus = addMenus;
 module.exports.generateDishes = generateDishes;
 module.exports.addDishes = addDishes;
 module.exports.generateUsers = generateUsers;

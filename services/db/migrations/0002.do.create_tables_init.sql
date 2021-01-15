@@ -222,24 +222,27 @@ CREATE TABLE menus (
 );
 
 CREATE TABLE products_inside_menus (
-  menu_id INT PRIMARY KEY,
+  menu_id INT,
   index INT NOT NULL,
   product_id INT NOT NULL,
-  forced BOOLEAN NOT NULL DEFAULT false
+  forced BOOLEAN NOT NULL DEFAULT false,
+  PRIMARY KEY (menu_id, product_id)
 );
 
 CREATE TABLE dishes_inside_menus (
-  menu_id INT PRIMARY KEY,
+  menu_id INT,
   index INT NOT NULL,
   dish_id INT NOT NULL,
-  forced BOOLEAN NOT NULL DEFAULT false
+  forced BOOLEAN NOT NULL DEFAULT false,
+  PRIMARY KEY (menu_id, dish_id)
 );
 
 CREATE TABLE categories_inside_menus (
-  menu_id INT PRIMARY KEY,
+  menu_id INT,
   index INT NOT NULL,
   category_id INT NOT NULL,
-  forced BOOLEAN NOT NULL DEFAULT false
+  forced BOOLEAN NOT NULL DEFAULT false,
+  PRIMARY KEY (menu_id, category_id)
 );
 
 CREATE TABLE orders (

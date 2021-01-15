@@ -78,6 +78,7 @@ async function getDish(askedDish, datetime) {
     if (!askedDish._id) {
         throw new Error("Dish id undefined: can't search for dish in database.");
     }
+
     const queryText = "SELECT * FROM dishes P WHERE id = $1;";
     const {
         rows
@@ -104,7 +105,6 @@ async function getDish(askedDish, datetime) {
         dish.roles_prices = await dish.roles_prices;
         dish.cost_price = await dish.cost_price;
         dish.options = await dish.options;
-
         // FIXME: Add ingredients
 
         return dish;
@@ -124,11 +124,9 @@ async function addOrUpdateDish(dish) {
         throw new Error("Arg wasn't of Dish type: can't add or update.");
     }
     if (!dish._id || !await dishExists(dish)) {
-        await addDish(dish);
+        return addDish(dish);
     }
-    else {
-        await updateDish(dish);
-    }
+    return updateDish(dish);
 }
 
 /**

@@ -10,15 +10,21 @@ const logger = require("../logger").child({
 });
 
 /**
- * Get all categories from the database.
+ * Get all categories from the database, products will have the price from the datetime given.
+ * @param {Date} [datetime]
  * @returns {Promise<Category[]>}
  */
-async function getAllCategories() {
+async function getAllCategories(datetime) {
     const queryText = "SELECT * FROM categories P;";
     const {
         rows
     } = await db_init.getPool().query(queryText);
-    //
+
+    let checkdate = datetime;
+    if (!datetime) {
+        checkdate = new Date();
+    }
+
     const categories = [];
     let promises = [];
 
@@ -31,7 +37,7 @@ async function getAllCategories() {
             category.description = row.description;
             category.hidden = row.hidden;
             category.index = row.index;
-            promises.push(getProductsFromCategory(category));
+            promises.push(getProductsFromCategory(category, checkdate));
 
             categories.push(category);
         }
@@ -48,9 +54,10 @@ async function getAllCategories() {
 /**
  * Get a category from the database. You just need to set his _id in the parameter.
  * @param {Category} askedCategory
+ * @param {Date} [datetime]
  * @returns {Promise<Category>}
  */
-async function getCategory(askedCategory) {
+async function getCategory(askedCategory, datetime) {
     if (!(askedCategory instanceof Category)) {
         throw new Error("Arg wasn't of Category type: can't search for category in database.");
     }
@@ -61,7 +68,11 @@ async function getCategory(askedCategory) {
     const {
         rows
     } = await db_init.getPool().query(queryText, [askedCategory._id]);
-    //
+
+    let checkdate = datetime;
+    if (!datetime) {
+        checkdate = new Date();
+    }
 
     if (rows[0].id !== null) {
         const category = new Category();
@@ -72,8 +83,7 @@ async function getCategory(askedCategory) {
         category.hidden = rows[0].hidden;
         category.index = rows[0].index;
 
-        category.products = await getProductsFromCategory(category);
-
+        category.products = await getProductsFromCategory(category, checkdate);
         return category;
     }
     return undefined;
@@ -82,14 +92,20 @@ async function getCategory(askedCategory) {
 /**
  * Get the products of a category from the database. You just need to set his _id in the parameter.
  * @param {Category} askedCategory
+ * @param {Date} [datetime]
  * @returns {Promise<Products[]>}
  */
-async function getProductsFromCategory(askedCategory, client) {
+async function getProductsFromCategory(askedCategory, datetime, client) {
     if (!(askedCategory instanceof Category)) {
         throw new Error("Arg wasn't of Category type: can't search for category in database.");
     }
     if (!askedCategory._id) {
         throw new Error("Category id undefined: can't search for category in database.");
+    }
+
+    let checkdate = datetime;
+    if (!datetime) {
+        checkdate = new Date();
     }
 
     const client_u = client || await db_init.getPool();
@@ -107,7 +123,7 @@ async function getProductsFromCategory(askedCategory, client) {
         if (row.product_id !== null) {
             const product = new Product();
             product._id = row.product_id;
-            answ.push(dbProduct.getProduct(product, client));
+            answ.push(dbProduct.getProduct(product, checkdate, client));
         }
     });
 

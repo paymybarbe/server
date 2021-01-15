@@ -79,6 +79,7 @@ async function getProduct(askedProduct, datetime) {
     if (!askedProduct._id) {
         throw new Error("Product id undefined: can't search for product in database.");
     }
+    // logger.debug("Getting Product ", askedProduct._id);
     const queryText = "SELECT * FROM products P WHERE id = $1;";
     const {
         rows
@@ -108,6 +109,7 @@ async function getProduct(askedProduct, datetime) {
         product.roles_prices = await product.roles_prices;
         product.menu_price = await product.menu_price;
         product.cost_price = await product.cost_price;
+        // logger.debug("Finished Product ", askedProduct._id);
 
         return product;
     }
@@ -126,11 +128,9 @@ async function addOrUpdateProduct(product) {
         throw new Error("Arg wasn't of Product type: can't add or update.");
     }
     if (!product._id || !await productExists(product)) {
-        await addProduct(product);
+        return addProduct(product);
     }
-    else {
-        await updateProduct(product);
-    }
+    return updateProduct(product);
 }
 
 /**

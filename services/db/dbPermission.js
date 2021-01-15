@@ -128,6 +128,8 @@ async function permissionNameExists(permission, client) {
     return false;
 }
 
+// TODO: Add updatePermission.
+
 module.exports.getAllPermissions = getAllPermissions;
 module.exports.addPermission = addPermission;
 module.exports.removePermission = removePermission;

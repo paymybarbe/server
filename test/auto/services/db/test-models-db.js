@@ -5,16 +5,14 @@ const deepEqualInAnyOrder = require('deep-equal-in-any-order');
 const dbinit = require("../../../../services/db/db_init");
 
 const seeder = require("../../../../scripts/script.seed");
-/* const logger = require("../../../../services/logger").child({
-    service: "test:auto:models",
-    inspect_depth: 5
-}); */
 const dbUser = require("../../../../services/db/dbUser");
 const dbProduct = require("../../../../services/db/dbProduct");
 const dbDish = require("../../../../services/db/dbDish");
 const dbRole = require("../../../../services/db/dbRole");
 const dbPermission = require("../../../../services/db/dbPermission");
 const dbCategory = require("../../../../services/db/dbCategory");
+const dbMenu = require("../../../../services/db/dbMenu");
+const Menu = require('../../../../models/Menu');
 const Category = require('../../../../models/Category');
 const Permission = require('../../../../models/Permission');
 const Role = require('../../../../models/Role');
@@ -22,7 +20,10 @@ const Product = require('../../../../models/Product');
 const Dish = require('../../../../models/Dish');
 const User = require('../../../../models/User');
 // eslint-disable-next-line no-unused-vars
-const logger = require('../../../../services/logger');
+const logger = require("../../../../services/logger").child({
+    service: "test:auto:models",
+    inspect_depth: 5
+});
 
 chai.use(deepEqualInAnyOrder);
 chai.use(require('chai-as-promised'));
@@ -35,6 +36,7 @@ describe("Models From Database", function _test() {
     let dishes;
     let users;
     let categories;
+    let menus;
     let trial_id;
 
     this.beforeAll(async () => {
@@ -44,6 +46,7 @@ describe("Models From Database", function _test() {
         products = await dbProduct.getAllProducts();
         dishes = await dbDish.getAllDishes();
         categories = await dbCategory.getAllCategories();
+        menus = await dbMenu.getAllMenus();
     });
 
     this.afterAll(async () => {
@@ -148,7 +151,7 @@ describe("Models From Database", function _test() {
             my_trial._id -= roles.length; // Change back id
         });
 
-        it("Update", async () => {
+        it("Update & getRole", async () => {
             trial_id = Math.floor(Math.random() * roles.length);
             const my_trial = roles[trial_id]; // Choose random role
             my_trial.name = "UpdatedRole";
@@ -219,7 +222,7 @@ describe("Models From Database", function _test() {
             products = add_products;
         });
 
-        it("Update", async () => {
+        it("Update & getProduct", async () => {
             const my_trial = products[Math.floor(Math.random() * products.length)]; // Choose random product
             // Change several values
             my_trial.name = "Miam";
@@ -407,7 +410,7 @@ describe("Models From Database", function _test() {
 
     describe("Dishes", () => {
         it("Insert & Select All equals", async () => {
-            const new_dishes = await seeder.generateDishes(50, roles);
+            const new_dishes = await seeder.generateDishes(500, roles);
 
             const dish1 = new Dish();
             dish1.name = "EmptyDish1";
@@ -433,7 +436,7 @@ describe("Models From Database", function _test() {
             dishes = add_dishes;
         });
 
-        it("Update", async () => {
+        it("Update & getDish", async () => {
             const my_trial = dishes[Math.floor(Math.random() * dishes.length)]; // Choose random dish
             // Change several values
             my_trial.name = "Miam";
@@ -585,7 +588,7 @@ describe("Models From Database", function _test() {
 
     describe("Categories", () => {
         it("Using updating to add categories", async () => {
-            const new_categories = await seeder.generateCategories(12, categories, products);
+            const new_categories = await seeder.generateCategories(12, products, categories);
 
             const category1 = new Category();
             category1.name = "EmptyCat1";
@@ -605,7 +608,7 @@ describe("Models From Database", function _test() {
             categories = add_categories;
         });
 
-        it("Update", async () => {
+        it("Update & getCategory", async () => {
             const my_trial1 = categories[Math.floor(Math.random() * categories.length)]; // Choose random category
             let my_trial2 = categories[Math.floor(Math.random() * categories.length)]; // Choose random category
             if (categories.length > 1) {
@@ -656,6 +659,94 @@ describe("Models From Database", function _test() {
             expect(await dbCategory.categoryExists(my_trial)).to.be.true;
             await dbCategory.removeCategory(my_trial);
             expect(await dbCategory.categoryExists(my_trial)).to.be.false;
+        });
+    });
+
+    describe("Menus", () => {
+        it("Insert & Select All equals", async () => {
+            const new_menus = await seeder.generateMenus(75, products, dishes, categories);
+
+            const menu1 = new Menu();
+            menu1.name = "EmptyMenu1";
+            new_menus.push(menu1);
+
+            const select_menus = [];
+            new_menus.forEach((element) => {
+                select_menus.push(dbMenu.addMenu(element));
+            });
+
+            const add_menus = await Promise.all(select_menus);
+            const sel_uss = await dbMenu.getAllMenus();
+
+            add_menus.push(...menus);
+
+            expect(add_menus).to.have.length(sel_uss.length);
+            add_menus.sort(sortId);
+            sel_uss.sort(sortId);
+            for (let i = 0; i < add_menus.length; i++) {
+                expect(add_menus[i]).to.be.deep.equalInAnyOrder(sel_uss[i]);
+                for (let j = 0; j < add_menus[i].content.length; j++) {
+                    if (add_menus[i].content[j].product) {
+                        expect(add_menus[i].content[j].product._id).to.be.equal(sel_uss[i].content[j].product._id);
+                    }
+                    else if (add_menus[i].content[j].dish) {
+                        expect(add_menus[i].content[j].dish._id).to.be.equal(sel_uss[i].content[j].dish._id);
+                    }
+                    else if (add_menus[i].content[j].category) {
+                        expect(add_menus[i].content[j].category._id).to.be.equal(sel_uss[i].content[j].category._id);
+                    }
+                    else {
+                        throw new Error("No content for this menu.");
+                    }
+                }
+            }
+
+            menus = add_menus;
+        });
+
+        it("Update & getMenu", async () => {
+            const my_trial = menus[Math.floor(Math.random() * menus.length)]; // Choose random menu
+            // Change several values
+            my_trial.name = "Miam";
+
+            const the_prod = products[Math.floor(Math.random() * products.length)]; // Choose random product
+            const the_dish = dishes[Math.floor(Math.random() * dishes.length)]; // Choose random dish
+            const the_cat = categories[Math.floor(Math.random() * categories.length)]; // Choose random product
+
+            my_trial.removeAllContent();
+            my_trial.addContent(the_prod, true);
+            my_trial.addContent(the_dish, true);
+            my_trial.addContent(the_cat, false);
+
+            await dbMenu.updateMenu(my_trial);
+            const my_checker = await dbMenu.getMenu(my_trial);
+            // Check if menu was updated with our changes
+            expect(my_trial).to.be.deep.equalInAnyOrder(my_checker);
+        });
+
+        it("Exist", async () => {
+            const my_trial = menus[Math.floor(Math.random() * menus.length)]; // Choose random menu
+            expect(await dbMenu.menuExists(my_trial)).to.be.true;
+            my_trial._id += 100; // Change id
+            expect(await dbMenu.menuExists(my_trial)).to.be.false;
+            my_trial._id -= 100;
+
+            let is_in = false;
+            const use = new Menu();
+            use._id = menus.length + 1;
+            for (let i = 0; i < menus.length; i++) {
+                if (menus[i]._id === use._id) {
+                    is_in = true;
+                }
+            }
+            expect(await dbMenu.menuExists(use)).to.be.equal(is_in);
+        });
+
+        it("Remove", async () => {
+            const my_trial = menus.pop(); // Choose and remove from array last menu
+            expect(await dbMenu.menuExists(my_trial)).to.be.true;
+            await dbMenu.removeMenu(my_trial);
+            expect(await dbMenu.menuExists(my_trial)).to.be.false;
         });
     });
 
