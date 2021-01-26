@@ -18,17 +18,40 @@ async function getAllProducts(datetime) {
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't search for product in database.");
     }
-    const queryText = "SELECT * FROM products P;";
-    const {
-        rows
-    } = await db_init.getPool().query(queryText);
-    // logger.debug(rows)
-    const products = [];
 
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
     }
+
+    const queryText = `SELECT PCP2.*,
+        COALESCE(json_object_agg(PRP.rank_id, PRP.price) 
+                    FILTER (WHERE PRP.rank_id IS NOT NULL), '{}')::jsonb as roles_prices
+        
+        FROM (SELECT P.*, COALESCE(PCP.price, 0) as cost_price, COALESCE(PMP.price, 0) as menu_price 
+                FROM products P
+                LEFT JOIN (SELECT DISTINCT ON (product_id) product_id, price 
+                        FROM products_cost_prices WHERE date <= $1
+                        ORDER BY product_id, date DESC
+                        ) PCP on PCP.product_id = P.id
+                LEFT JOIN (SELECT DISTINCT ON (product_id) product_id, price 
+                        FROM products_menu_prices WHERE date <= $1
+                        ORDER BY product_id, date DESC
+                        ) PMP on PMP.product_id = P.id
+            ) AS PCP2
+        LEFT JOIN (SELECT DISTINCT ON (rank_id, product_id) rank_id, product_id, price
+                    FROM products_ranked_prices WHERE date <= $1
+                    ORDER BY rank_id, product_id, date DESC
+                    ) AS PRP on PRP.product_id = PCP2.id
+        GROUP BY PCP2.id, PCP2.name, PCP2.image, PCP2.description,
+                 PCP2.hidden, PCP2.deleted, PCP2.cost_price, PCP2.stock,
+                 PCP2.threshold, PCP2.fixed_threshold, PCP2.menu_price
+        ORDER BY PCP2.id;`;
+    const {
+        rows
+    } = await db_init.getPool().query(queryText, [checkdate]);
+    // logger.debug(rows)
+    const products = [];
 
     rows.forEach((row) => {
         if (row.id !== null) {
@@ -43,22 +66,14 @@ async function getAllProducts(datetime) {
             product.hidden = row.hidden;
             product.deleted = row.deleted;
 
-            product.roles_prices = getRankedPrices(product, checkdate);
-            product.menu_price = getMenuPrice(product, checkdate);
-            product.cost_price = getCostPrice(product, checkdate);
+            product.roles_prices = row.roles_prices;
+            product.menu_price = row.menu_price;
+            product.cost_price = row.cost_price;
 
             products.push(product);
         }
     });
 
-    for (let i = 0; i < products.length; i++) {
-        // eslint-disable-next-line no-await-in-loop
-        products[i].roles_prices = await products[i].roles_prices;
-        // eslint-disable-next-line no-await-in-loop
-        products[i].menu_price = await products[i].menu_price;
-        // eslint-disable-next-line no-await-in-loop
-        products[i].cost_price = await products[i].cost_price;
-    }
     return products;
 }
 
@@ -79,17 +94,41 @@ async function getProduct(askedProduct, datetime) {
     if (!askedProduct._id) {
         throw new Error("Product id undefined: can't search for product in database.");
     }
-    // logger.debug("Getting Product ", askedProduct._id);
-    const queryText = "SELECT * FROM products P WHERE id = $1;";
-    const {
-        rows
-    } = await db_init.getPool().query(queryText, [askedProduct._id]);
-    // logger.debug(rows)
 
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
     }
+
+    const queryText = `SELECT PCP2.*,
+        COALESCE(json_object_agg(PRP.rank_id, PRP.price) 
+                    FILTER (WHERE PRP.rank_id IS NOT NULL), '{}')::jsonb as roles_prices
+        
+        FROM (SELECT P.*, COALESCE(PCP.price, 0) as cost_price, COALESCE(PMP.price, 0) as menu_price 
+                FROM products P
+                LEFT JOIN (SELECT DISTINCT ON (product_id) product_id, price 
+                        FROM products_cost_prices WHERE date <= $1
+                        ORDER BY product_id, date DESC
+                        ) PCP on PCP.product_id = P.id
+                LEFT JOIN (SELECT DISTINCT ON (product_id) product_id, price 
+                        FROM products_menu_prices WHERE date <= $1
+                        ORDER BY product_id, date DESC
+                        ) PMP on PMP.product_id = P.id
+                WHERE P.id = $2
+            ) AS PCP2
+        LEFT JOIN (SELECT DISTINCT ON (rank_id, product_id) rank_id, product_id, price
+                    FROM products_ranked_prices WHERE date <= $1
+                    ORDER BY rank_id, product_id, date DESC
+                    ) AS PRP on PRP.product_id = PCP2.id
+        GROUP BY PCP2.id, PCP2.name, PCP2.image, PCP2.description,
+                 PCP2.hidden, PCP2.deleted, PCP2.cost_price, PCP2.stock,
+                 PCP2.threshold, PCP2.fixed_threshold, PCP2.menu_price
+        ORDER BY PCP2.id;`;
+
+    const {
+        rows
+    } = await db_init.getPool().query(queryText, [checkdate, askedProduct._id]);
+    // logger.debug(rows)
 
     if (rows[0].id !== null) {
         const product = new Product();
@@ -103,12 +142,9 @@ async function getProduct(askedProduct, datetime) {
         product.hidden = rows[0].hidden;
         product.deleted = rows[0].deleted;
 
-        product.roles_prices = getRankedPrices(product, checkdate);
-        product.menu_price = getMenuPrice(product, checkdate);
-        product.cost_price = getCostPrice(product, checkdate);
-        product.roles_prices = await product.roles_prices;
-        product.menu_price = await product.menu_price;
-        product.cost_price = await product.cost_price;
+        product.roles_prices = rows[0].roles_prices;
+        product.menu_price = rows[0].menu_price;
+        product.cost_price = rows[0].cost_price;
         // logger.debug("Finished Product ", askedProduct._id);
 
         return product;

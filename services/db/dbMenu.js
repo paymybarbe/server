@@ -116,7 +116,7 @@ async function getAllMenus(datetime) {
             menus.push(menu);
         }
     });
-    logger.debug("waiting for array of array.");
+    // logger.debug("waiting for array of array.");
     const all_content = await Promise.all(promises);
 
     for (let i = 0; i < all_content.length; i++) {
@@ -135,7 +135,7 @@ async function getAllMenus(datetime) {
             }
         }
     }
-    logger.debug("Finished getting everything.");
+    // logger.debug("Finished getting everything.");
     return menus;
 }
 

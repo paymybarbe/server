@@ -29,7 +29,7 @@ chai.use(deepEqualInAnyOrder);
 chai.use(require('chai-as-promised'));
 
 describe("Models From Database", function _test() {
-    this.timeout(1000);
+    this.timeout(2000);
     let permissions;
     let roles;
     let products;
@@ -410,7 +410,7 @@ describe("Models From Database", function _test() {
 
     describe("Dishes", () => {
         it("Insert & Select All equals", async () => {
-            const new_dishes = await seeder.generateDishes(500, roles);
+            const new_dishes = await seeder.generateDishes(50, roles);
 
             const dish1 = new Dish();
             dish1.name = "EmptyDish1";
@@ -458,9 +458,9 @@ describe("Models From Database", function _test() {
         it("Exist", async () => {
             const my_trial = dishes[Math.floor(Math.random() * dishes.length)]; // Choose random dish
             expect(await dbDish.dishExists(my_trial)).to.be.true;
-            my_trial._id += 100; // Change id
+            my_trial._id += dishes.length; // Change id
             expect(await dbDish.dishExists(my_trial)).to.be.false;
-            my_trial._id -= 100;
+            my_trial._id -= dishes.length;
 
             let is_in = false;
             const use = new Dish();

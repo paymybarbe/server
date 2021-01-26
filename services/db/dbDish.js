@@ -18,17 +18,42 @@ async function getAllDishes(datetime) {
     if (datetime && !(datetime instanceof Date)) {
         throw new Error("Arg wasn't of Date type: can't search for dish in database.");
     }
-    const queryText = "SELECT * FROM dishes P;";
-    const {
-        rows
-    } = await db_init.getPool().query(queryText);
-    // logger.debug(rows)
-    const dishes = [];
 
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
     }
+
+    const queryText = `SELECT DCP3.*,
+                        COALESCE(json_agg(json_build_object('name', D_O.name, 'price_change', D_O.price_change)) 
+                                 FILTER (WHERE D_O.name IS NOT NULL), '[]')::json as options
+                    FROM (SELECT DCP2.*, 
+                        COALESCE(json_object_agg(DRP.rank_id, DRP.price) 
+                                 FILTER (WHERE DRP.rank_id IS NOT NULL), '{}')::jsonb as roles_prices
+
+                        FROM (SELECT D.*, COALESCE(DCP.price, 0) as cost_price 
+                                FROM dishes D
+                                LEFT JOIN (SELECT DISTINCT ON (dish_id) dish_id, price 
+                                        FROM dishes_cost_prices date WHERE date <= $1
+                                        ORDER BY dish_id, date DESC
+                                        ) DCP on DCP.dish_id = D.id
+                            ) AS DCP2
+                        LEFT JOIN (SELECT DISTINCT ON (rank_id, dish_id) rank_id, dish_id, price
+                                    FROM dishes_ranked_prices WHERE date <= $1
+                                    ORDER BY rank_id, dish_id, date DESC
+                                    ) AS DRP on DRP.dish_id = DCP2.id
+                        GROUP BY DCP2.id, DCP2.name, DCP2.image, DCP2.description,
+                                 DCP2.hidden, DCP2.deleted, DCP2.cost_price
+                        ) AS DCP3
+                    LEFT JOIN dishes_options D_O ON D_O.dish_id = DCP3.id
+                    GROUP BY DCP3.id, DCP3.name, DCP3.image, DCP3.description, DCP3.hidden, 
+                                      DCP3.deleted, DCP3.cost_price, DCP3.roles_prices
+                    ORDER BY DCP3.id;`;
+    const {
+        rows
+    } = await db_init.getPool().query(queryText, [checkdate]);
+    // logger.debug(rows)
+    const dishes = [];
 
     rows.forEach((row) => {
         if (row.id !== null) {
@@ -40,24 +65,15 @@ async function getAllDishes(datetime) {
             dish.hidden = row.hidden;
             dish.deleted = row.deleted;
 
-            dish.roles_prices = getRankedPrices(dish, checkdate);
-            dish.cost_price = getCostPrice(dish, checkdate);
-            dish.options = getOptions(dish);
+            dish.roles_prices = row.roles_prices;
+            dish.cost_price = row.cost_price;
+            dish.options = row.options;
 
             // FIXME: Add ingredients
 
             dishes.push(dish);
         }
     });
-
-    for (let i = 0; i < dishes.length; i++) {
-        // eslint-disable-next-line no-await-in-loop
-        dishes[i].roles_prices = await dishes[i].roles_prices;
-        // eslint-disable-next-line no-await-in-loop
-        dishes[i].cost_price = await dishes[i].cost_price;
-        // eslint-disable-next-line no-await-in-loop
-        dishes[i].options = await dishes[i].options;
-    }
     return dishes;
 }
 
@@ -79,16 +95,40 @@ async function getDish(askedDish, datetime) {
         throw new Error("Dish id undefined: can't search for dish in database.");
     }
 
-    const queryText = "SELECT * FROM dishes P WHERE id = $1;";
-    const {
-        rows
-    } = await db_init.getPool().query(queryText, [askedDish._id]);
-    // logger.debug(rows)
-
     let checkdate = datetime;
     if (!datetime) {
         checkdate = new Date();
     }
+
+    const queryText = `SELECT DCP3.*,
+                        COALESCE(json_agg(json_build_object('name', D_O.name, 'price_change', D_O.price_change)) 
+                                 FILTER (WHERE D_O.name IS NOT NULL), '[]')::json as options
+                    FROM (SELECT DCP2.*, 
+                        COALESCE(json_object_agg(DRP.rank_id, DRP.price) 
+                                 FILTER (WHERE DRP.rank_id IS NOT NULL), '{}')::jsonb as roles_prices
+                        FROM (SELECT D.*, COALESCE(DCP.price, 0) as cost_price 
+                                FROM dishes D
+                                LEFT JOIN (SELECT DISTINCT ON (dish_id) dish_id, price 
+                                        FROM dishes_cost_prices date WHERE date <= $1
+                                        ORDER BY dish_id, date DESC
+                                        ) DCP on DCP.dish_id = D.id
+                                WHERE D.id = $2
+                            ) AS DCP2
+                        LEFT JOIN (SELECT DISTINCT ON (rank_id, dish_id) rank_id, dish_id, price
+                                    FROM dishes_ranked_prices WHERE date <= $1
+                                    ORDER BY rank_id, dish_id, date DESC
+                                    ) AS DRP on DRP.dish_id = DCP2.id
+                        GROUP BY DCP2.id, DCP2.name, DCP2.image, DCP2.description,
+                                 DCP2.hidden, DCP2.deleted, DCP2.cost_price
+                        ) AS DCP3
+                    LEFT JOIN dishes_options D_O ON D_O.dish_id = DCP3.id
+                    GROUP BY DCP3.id, DCP3.name, DCP3.image, DCP3.description, DCP3.hidden, 
+                                      DCP3.deleted, DCP3.cost_price, DCP3.roles_prices
+                    ORDER BY DCP3.id;`;
+    const {
+        rows
+    } = await db_init.getPool().query(queryText, [checkdate, askedDish._id]);
+    // logger.debug(rows)
 
     if (rows[0].id !== null) {
         const dish = new Dish();
@@ -99,12 +139,9 @@ async function getDish(askedDish, datetime) {
         dish.hidden = rows[0].hidden;
         dish.deleted = rows[0].deleted;
 
-        dish.roles_prices = getRankedPrices(dish, checkdate);
-        dish.cost_price = getCostPrice(dish, checkdate);
-        dish.options = getOptions(dish);
-        dish.roles_prices = await dish.roles_prices;
-        dish.cost_price = await dish.cost_price;
-        dish.options = await dish.options;
+        dish.roles_prices = rows[0].roles_prices;
+        dish.cost_price = rows[0].cost_price;
+        dish.options = rows[0].options;
         // FIXME: Add ingredients
 
         return dish;
@@ -469,37 +506,6 @@ async function setCostPrice(dish, cost, datetime, client) {
     ];
 
     await client_used.query(queryText, params);
-}
-
-/**
- * Return options of a dish.
- * @param {Dish} dish
- * @returns {Promise<{name:string, price_change:number}[]>}
-*/
-async function getOptions(dish) {
-    if (!(dish instanceof Dish)) {
-        throw new Error("Arg wasn't of Dish type: can't get options for dish in database.");
-    }
-    if (!await dishExists(dish)) {
-        throw new Error("Dish doesn't exist in the database: can't get its options.");
-    }
-    const queryText = "SELECT name, price_change FROM dishes_options "
-                    + "WHERE dish_id = $1;";
-    const {
-        rows
-    } = await db_init.getPool().query(queryText, [dish._id]);
-    // logger.debug(rows)
-    const answ = [];
-    rows.forEach((row) => {
-        if (row.name) {
-            const option = {};
-            option.name = row.name;
-            option.price_change = row.price_change;
-            answ.push(option);
-        }
-    });
-
-    return answ;
 }
 
 /**
